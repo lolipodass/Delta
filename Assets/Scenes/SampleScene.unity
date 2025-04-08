@@ -1219,9 +1219,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 1930081143}
-  speed: 5
+  maxSpeed: 4.5
+  airControlFactor: 0.98
   jumpForce: 18
   extraJumpCount: 1
+  coyoteTime: 0.1
+  jumpBufferTime: 0.1
   groundCheckPos: {fileID: 338494921}
   groundCheckSize: {x: 0.55, y: -0.06}
   groundMask:

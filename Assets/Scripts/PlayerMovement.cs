@@ -1,3 +1,4 @@
+using System;
 using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -6,33 +7,36 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
 
-    [Label("Rigidbody")]
-    [SerializeField] private Rigidbody2D rb;
+    [Header("References")]
+    [Label("Rigidbody")][SerializeField] private Rigidbody2D rb;
 
-    [Label("Speed")]
-    [SerializeField] private float speed = 4f;
+    [Header("Movement Settings")]
+    [Label("Max speed")][SerializeField] private float maxSpeed = 4f;
+    [Label("Air Control")][SerializeField][Range(0f, 1f)] private float airControlFactor = 0.98f;
 
-    [Label("Jump Force")]
-    [SerializeField] private float jumpForce = 10f;
+    [Header("Jump Settings")]
+    [Label("Jump Force")][SerializeField] private float jumpForce = 10f;
 
-    [Label("Extra jump count")]
-    [SerializeField] private int extraJumpCount = 1;
+    [Label("Extra jump count")][SerializeField] private int extraJumpCount = 1;
+    [Label("Coyote Time")][Range(0f, 1f)][SerializeField] private float coyoteTime = 0.1f;
+    [Label("Jump Buffer Time")][Range(0f, 1f)][SerializeField] private float jumpBufferTime = 0.1f;
     private int extraJumpCountLeft;
 
 
-    //ground check
-    public Transform groundCheckPos;
-    public Vector2 groundCheckSize = new Vector2(0.5f, 0.5f);
-    public LayerMask groundMask;
 
+    [Header("Ground Check")]
+    [SerializeField] private Transform groundCheckPos;
+    [SerializeField] private Vector2 groundCheckSize = new(0.5f, 0.5f);
+    [SerializeField] private LayerMask groundMask;
+
+
+    //state
+    private bool isFacingRight = true;
+    private float moveInput;
+    private bool isGrounded;
     private bool isJumping = false;
     private bool isHoldingJump = false;
-    private bool isGrounded;
-
-
-    private bool isFacingRight = true;
-
-    private float moveInput;
+    private float speed = 0f;
 
 
     //timers
@@ -60,29 +64,19 @@ public class PlayerMovement : MonoBehaviour
     {
         moveInput = context.ReadValue<Vector2>().x;
     }
-
-    private bool CanJump()
-    {
-        return (lastGroundedTime > 0 || extraJumpCountLeft > 0) && !isJumping;
-    }
     public void JumpCallback(InputAction.CallbackContext context)
     {
 
-        // Debug.Log(isGrounded);
         if (context.performed)
         {
+            lastJumpPressedTime = jumpBufferTime;
             if (CanJump())
             {
-                isJumping = true;
-                isHoldingJump = true;
-                if (!isGrounded)
+                Jump();
+                if (!isGrounded && lastGroundedTime < 0)
                 {
                     extraJumpCountLeft--;
                 }
-            }
-            else
-            {
-                lastJumpPressedTime = 0.2f;
             }
         }
         else if (context.canceled)
@@ -94,11 +88,10 @@ public class PlayerMovement : MonoBehaviour
 
     void Movement()
     {
+        //jump buffering
         if (lastJumpPressedTime > 0 && CanJump())
         {
-            isJumping = true;
-            isHoldingJump = true;
-            extraJumpCountLeft--;
+            Jump();
             lastJumpPressedTime = 0;
         }
 
@@ -111,17 +104,31 @@ public class PlayerMovement : MonoBehaviour
             // yVelocity = 0f;
         }
 
-        rb.linearVelocity = new Vector2(moveInput * speed, yVelocity);
+        float targetVelocity = moveInput * maxSpeed;
+        float currentVelocity = rb.linearVelocity.x;
+
+        float acceleration = isGrounded ? 20f : 10f;
+        speed = Mathf.Lerp(currentVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
+
+        if (!isGrounded)
+        {
+            speed *= airControlFactor;
+        }
+
+        rb.linearVelocity = new Vector2(speed, yVelocity);
 
     }
 
     void Rotate()
     {
-        float xVelocity = rb.linearVelocity.x;
-        if ((xVelocity < 0 && isFacingRight) || (xVelocity > 0 && !isFacingRight))
+        if (Mathf.Abs(moveInput) > 0.1f)
         {
-            transform.Rotate(0, 180, 0);
-            isFacingRight = !isFacingRight;
+            bool shouldFaceRight = moveInput > 0;
+            if (shouldFaceRight != isFacingRight)
+            {
+                transform.Rotate(0, 180, 0);
+                isFacingRight = shouldFaceRight;
+            }
         }
 
     }
@@ -134,7 +141,7 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded)
         {
             extraJumpCountLeft = extraJumpCount;
-            lastGroundedTime = 0.2f;
+            lastGroundedTime = coyoteTime;
         }
     }
 
@@ -142,6 +149,16 @@ public class PlayerMovement : MonoBehaviour
     {
         lastGroundedTime -= Time.deltaTime;
         lastJumpPressedTime -= Time.deltaTime;
+    }
+
+    void Jump()
+    {
+        isJumping = true;
+        isHoldingJump = true;
+    }
+    private bool CanJump()
+    {
+        return (lastGroundedTime > 0 || extraJumpCountLeft > 0) && !isJumping;
     }
 
     public void OnDrawGizmosSelected()
