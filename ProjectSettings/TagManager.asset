@@ -41,5 +41,20 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: 1 Backgound
+    uniqueID: 113440405
+    locked: 0
+  - name: '2 Backgound '
+    uniqueID: 2272056245
+    locked: 0
+  - name: 3 MidleGround
+    uniqueID: 2292880775
+    locked: 0
+  - name: 4 Player
+    uniqueID: 2183121457
+    locked: 0
+  - name: 5 Foreground
+    uniqueID: 3843740925
+    locked: 0
   m_RenderingLayers:
   - Default
