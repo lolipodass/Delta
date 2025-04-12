@@ -4,16 +4,30 @@ using UnityEngine;
 public class BackgroundController : MonoBehaviour
 {
     private float startPos;
-    [SerializeField] private float speed;
+    private float SpriteLength;
+    [Range(0, 1f)][SerializeField] private float ParallaxEffect;
     [Label("Camera")][SerializeField] private GameObject cam;
     void Start()
     {
         startPos = transform.position.x;
+        SpriteLength = GetComponent<SpriteRenderer>().bounds.size.x;
     }
 
-    void Update()
+    void LateUpdate()
     {
-        float newPos = Mathf.Repeat(Time.time * speed, 20);
-        transform.position = new Vector3(startPos + newPos, transform.position.y, transform.position.z);
+        float cameraPosX = cam.transform.position.x;
+        float newPos = cameraPosX * (1 - ParallaxEffect);
+        float SpritePos = cameraPosX * ParallaxEffect;
+
+        if (SpritePos > startPos + SpriteLength)
+        {
+            startPos += SpriteLength;
+        }
+        else if (SpritePos < startPos - SpriteLength)
+        {
+            startPos -= SpriteLength;
+        }
+
+        transform.position = new(startPos + newPos, cam.transform.position.y);
     }
 }

@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("References")]
     [Label("Rigidbody")][SerializeField] private Rigidbody2D rb;
+    [Label("Animator")][SerializeField] private Animator animator;
 
     [Header("Movement Settings")]
     [Label("Max speed")][SerializeField] private float maxSpeed = 4f;
@@ -52,6 +53,9 @@ public class PlayerMovement : MonoBehaviour
     {
         Rotate();
         HandleTimers();
+
+        Debug.Log(rb.linearVelocity.sqrMagnitude);
+        animator.SetFloat("magnitude", rb.linearVelocity.sqrMagnitude);
     }
 
     void FixedUpdate()
@@ -105,10 +109,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         float targetVelocity = moveInput * maxSpeed;
-        float currentVelocity = rb.linearVelocity.x;
+        // float currentVelocity = rb.linearVelocity.x;
+        speed = targetVelocity;
 
-        float acceleration = isGrounded ? 20f : 10f;
-        speed = Mathf.Lerp(currentVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
+        // float acceleration = isGrounded ? 20f : 10f;
+        // speed = Mathf.Lerp(currentVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
 
         if (!isGrounded)
         {
