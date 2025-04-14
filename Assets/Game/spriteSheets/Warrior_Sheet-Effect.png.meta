@@ -1043,7 +1043,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 207
-        y: 528
+        y: 529
         width: 69
         height: 44
       alignment: 9
@@ -1171,7 +1171,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: hurt_1
+      name: death_6
       rect:
         serializedVersion: 2
         x: 69
@@ -2513,11 +2513,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: hurt_
+      name: hurt_1
       rect:
         serializedVersion: 2
-        x: 69
-        y: 440
+        x: 70
+        y: 441
         width: 69
         height: 44
       alignment: 9
@@ -2688,7 +2688,7 @@ TextureImporter:
       death_3: 85892548
       death_4: -974871839
       death_5: 2138419889203400846
-      death_6: -3793288683446833867
+      death_6: 8207571220096118977
       death_7: 591469598
       death_8: 8758733799639075308
       death_9: 4273360486593703493
@@ -2708,8 +2708,7 @@ TextureImporter:
       fall_1: 3675700599212663255
       fall_2: -6199907869733816761
       fall_3: -9068822172998705990
-      hurt_: -735130672
-      hurt_1: 8207571220096118977
+      hurt_1: -735130672
       hurt_2: 7910466545735013580
       hurt_3: -4360246032673291897
       hurt_4: -6130774247032492815

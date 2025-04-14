@@ -1301,7 +1301,7 @@ TextureImporter:
       - - {x: 6, y: 8}
         - {x: -8, y: 8}
         - {x: -8, y: -8}
-        - {x: 5, y: -8}
+        - {x: 6, y: -8}
       tessellationDetail: 0
       bones: []
       spriteID: 9850b7bcec31383429a77b4c96fb1a9f
