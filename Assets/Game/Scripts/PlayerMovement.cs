@@ -11,6 +11,8 @@ public class PlayerMovement : MonoBehaviour
     [Label("Rigidbody")][SerializeField] private Rigidbody2D rb;
     [Label("Animator")][SerializeField] private Animator animator;
 
+
+
     [Header("Movement Settings")]
     [Label("Max speed")][SerializeField] private float maxSpeed = 4f;
     [Label("Air Control")][SerializeField][Range(0f, 1f)] private float airControlFactor = 0.98f;
@@ -19,16 +21,18 @@ public class PlayerMovement : MonoBehaviour
     [Label("Air Acceleration")][SerializeField] private float airAcceleration = 20f;
 
 
+
     [Header("Jump Settings")]
     [Label("Jump Force")][SerializeField] private float jumpForce = 10f;
     [Label("Wall Jump Y Force")][SerializeField] private float wallJumpYForce = 8f;
     [Label("Wall Jump X Force")][SerializeField] private float wallJumpXForce = 5f;
-    [Label("Extra jump count")][SerializeField] private int extraJumpCount = 1;
     [Label("Coyote Time")][Range(0f, 1f)][SerializeField] private float coyoteTime = 0.1f;
     [Label("Jump Buffer Time")][Range(0f, 1f)][SerializeField] private float jumpBufferTime = 0.1f;
+    [Label("Minimal Jump time")][Range(0f, 0.4f)][SerializeField] private float minimalJumpTime = 0.1f;
+    [Label("Extra jump count")][Range(0, 10)][SerializeField] private int extraJumpCount = 1;
     [Label("Has Wall Jump")][SerializeField] private bool hasWallJump = true;
+    [Label("Has Wall Slide")][SerializeField] private bool hasWallSlide = true;
 
-    private int extraJumpCountLeft;
 
 
     [Foldout("Ground check")]
@@ -50,21 +54,36 @@ public class PlayerMovement : MonoBehaviour
     [Header("Debug")]
     public bool isDebug = false;
 
+    [Button]
+    void addForce()
+    {
+        rb.AddForce(Vector2.up * 20f, ForceMode2D.Impulse);
+    }
+
+    static private float maxJumpTime = 0.4f;
+
     //state
+    private int extraJumpCountLeft;
     private bool isFacingRight = true;
     private float moveInput;
     private bool isGrounded;
     private bool isTouchWall;
     private bool isJumping = false;
+    private bool isInJumpState = false;
     private bool isHoldingJump = false;
     private bool isWallJumping = false;
     // private bool isWallSliding = false;
     private float xVelocity = 0f;
     private float yVelocity = 0f;
 
+    private static readonly int MagnitudeHash = Animator.StringToHash("magnitude");
+    private static readonly int YVelocityHash = Animator.StringToHash("yVelocity");
+    private static readonly int GroundedHash = Animator.StringToHash("onGround");
+    private static readonly int WallHash = Animator.StringToHash("onWall");
     //timers
     private float lastGroundedTime;
     private float lastJumpPressedTime;
+    private float jumpTime;
 
     void Start()
     {
@@ -73,18 +92,16 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        Rotate();
         HandleTimers();
-        Animate();
-
+        UpdateAnimations();
+        Rotate();
     }
 
     void FixedUpdate()
     {
-        GroundCheck();
-        WallCheck();
-        ComputeJumping();
-        ComputeMovement();
+        UpdatePhysicsChecks();
+        HandleJumping();
+        HandleMovement();
     }
 
     public void MoveCallback(InputAction.CallbackContext context)
@@ -118,7 +135,8 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    void ComputeJumping()
+
+    void HandleJumping()
     {
         //jump buffering
         if (lastJumpPressedTime > 0 && CanJump())
@@ -129,7 +147,7 @@ public class PlayerMovement : MonoBehaviour
 
         yVelocity = isJumping ? jumpForce : rb.linearVelocity.y;
 
-        if (!isHoldingJump && yVelocity > 0f)
+        if (CanJumpCut())
         {
             yVelocity /= 2;
         }
@@ -137,29 +155,21 @@ public class PlayerMovement : MonoBehaviour
         //wall jump
         if (isWallJumping)
         {
-            Debug.Log("wall jump");
             yVelocity = wallJumpYForce;
             xVelocity = xVelocity < 0f ? wallJumpXForce : -wallJumpXForce;
             isWallJumping = false;
-            Debug.Log("x" + xVelocity);
-            Debug.Log("y" + yVelocity);
         }
         isJumping = false;
     }
 
-    void ComputeMovement()
+    void HandleMovement()
     {
         //slide
-        if (isTouchWall && yVelocity < 0f && !isGrounded)
+        if (CanWallSlide())
         {
             yVelocity = Mathf.Max(yVelocity, -wallSlideSpeed);
         }
 
-        if (isWallJumping)
-        {
-            Debug.Log("x compute" + xVelocity);
-            Debug.Log("y compute" + yVelocity);
-        }
         float targetXVelocity = moveInput * maxSpeed;
 
 
@@ -179,7 +189,7 @@ public class PlayerMovement : MonoBehaviour
         return Mathf.Lerp(currentVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
     }
 
-    void GroundCheck()
+    void UpdatePhysicsChecks()
     {
         isGrounded = Physics2D.OverlapBox(groundCheckPos.position, groundCheckSize, 0f, groundMask);
 
@@ -187,17 +197,23 @@ public class PlayerMovement : MonoBehaviour
         {
             extraJumpCountLeft = extraJumpCount;
             lastGroundedTime = coyoteTime;
+            isInJumpState = false;
+        }
+
+        isTouchWall = Physics2D.OverlapBox(wallCheckPos.position, wallCheckSize, 0f, wallMask);
+        if (isTouchWall)
+        {
+            isInJumpState = false;
         }
     }
-    void WallCheck()
-    {
-        isTouchWall = Physics2D.OverlapBox(wallCheckPos.position, wallCheckSize, 0f, wallMask);
-    }
+
 
     void Jump()
     {
         isJumping = true;
         isHoldingJump = true;
+        isInJumpState = true;
+        jumpTime = 0f;
     }
     private bool CanJump()
     {
@@ -205,19 +221,28 @@ public class PlayerMovement : MonoBehaviour
     }
     private bool CanWallJump()
     {
-        return isTouchWall && hasWallJump && !isJumping;
+        return isTouchWall && hasWallJump && !isJumping && !isGrounded;
+    }
+    private bool CanWallSlide()
+    {
+        return isTouchWall && !isJumping && yVelocity < 0f && hasWallSlide && !isGrounded;
+    }
+    private bool CanJumpCut()
+    {
+        return !isHoldingJump && yVelocity > 0f && isInJumpState && minimalJumpTime > jumpTime && maxJumpTime < jumpTime && !isGrounded;
     }
     private void HandleTimers()
     {
         lastGroundedTime -= Time.deltaTime;
         lastJumpPressedTime -= Time.deltaTime;
+        jumpTime += Time.deltaTime;
     }
-    void Animate()
+    void UpdateAnimations()
     {
-        animator.SetFloat("magnitude", rb.linearVelocity.sqrMagnitude);
-        animator.SetFloat("yVelocity", rb.linearVelocity.y);
-        animator.SetBool("onGround", isGrounded);
-        animator.SetBool("onWall", isTouchWall);
+        animator.SetFloat(MagnitudeHash, rb.linearVelocity.sqrMagnitude);
+        animator.SetFloat(YVelocityHash, rb.linearVelocity.y);
+        animator.SetBool(GroundedHash, isGrounded);
+        animator.SetBool(WallHash, isTouchWall);
     }
     void Rotate()
     {
