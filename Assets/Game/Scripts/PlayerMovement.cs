@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("References")]
     [Label("Rigidbody")][SerializeField] private Rigidbody2D rb;
     [Label("Animator")][SerializeField] private Animator animator;
+    [Label("Box collider")][SerializeField] private BoxCollider2D boxCollider;
 
 
 
@@ -73,13 +74,18 @@ public class PlayerMovement : MonoBehaviour
     private bool isHoldingJump = false;
     private bool isWallJumping = false;
     // private bool isWallSliding = false;
+    private bool isCrouching = false;
     private float xVelocity = 0f;
     private float yVelocity = 0f;
+    private float boxColliderHeight = 0f;
+    private float boxColliderWidth = 0f;
 
     private static readonly int MagnitudeHash = Animator.StringToHash("magnitude");
     private static readonly int YVelocityHash = Animator.StringToHash("yVelocity");
     private static readonly int GroundedHash = Animator.StringToHash("onGround");
     private static readonly int WallHash = Animator.StringToHash("onWall");
+    private static readonly int CrouchHash = Animator.StringToHash("isCrouching");
+
     //timers
     private float lastGroundedTime;
     private float lastJumpPressedTime;
@@ -87,6 +93,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
+        boxColliderWidth = boxCollider.size.x;
+        boxColliderHeight = boxCollider.size.y;
         extraJumpCountLeft = extraJumpCount;
     }
 
@@ -102,6 +110,7 @@ public class PlayerMovement : MonoBehaviour
         UpdatePhysicsChecks();
         HandleJumping();
         HandleMovement();
+        HandleCrouching();
     }
 
     public void MoveCallback(InputAction.CallbackContext context)
@@ -133,6 +142,18 @@ public class PlayerMovement : MonoBehaviour
             isHoldingJump = false;
         }
 
+    }
+
+    public void CrouchCallback(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            isCrouching = true;
+        }
+        else if (context.canceled)
+        {
+            isCrouching = false;
+        }
     }
 
 
@@ -181,6 +202,19 @@ public class PlayerMovement : MonoBehaviour
         }
         rb.linearVelocity = new Vector2(xVelocity, yVelocity);
         xVelocity = rb.linearVelocity.x;
+    }
+
+    void HandleCrouching()
+    {
+        if (isCrouching)
+        {
+            boxCollider.size = new Vector2(boxCollider.size.x, boxCollider.size.y / 2f);
+            Debug.Log("crouch");
+        }
+        else
+        {
+            boxCollider.size = new Vector2(boxCollider.size.x, boxCollider.size.y * 2f);
+        }
     }
 
     float InterpolateVelocity(float targetVelocity, float currentVelocity)
@@ -243,6 +277,7 @@ public class PlayerMovement : MonoBehaviour
         animator.SetFloat(YVelocityHash, rb.linearVelocity.y);
         animator.SetBool(GroundedHash, isGrounded);
         animator.SetBool(WallHash, isTouchWall);
+        animator.SetBool(CrouchHash, isCrouching);
     }
     void Rotate()
     {
