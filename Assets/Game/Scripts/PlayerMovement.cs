@@ -10,7 +10,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("References")]
     [Label("Rigidbody")][SerializeField] private Rigidbody2D rb;
     [Label("Animator")][SerializeField] private Animator animator;
-    [Label("Box collider")][SerializeField] private BoxCollider2D boxCollider;
+    [Label("Stand Box collider")][SerializeField] private BoxCollider2D standBoxCollider;
+    [Label("Crouch Box collider")][SerializeField] private BoxCollider2D crouchBoxCollider;
 
 
 
@@ -77,8 +78,6 @@ public class PlayerMovement : MonoBehaviour
     private bool isCrouching = false;
     private float xVelocity = 0f;
     private float yVelocity = 0f;
-    private float boxColliderHeight = 0f;
-    private float boxColliderWidth = 0f;
 
     private static readonly int MagnitudeHash = Animator.StringToHash("magnitude");
     private static readonly int YVelocityHash = Animator.StringToHash("yVelocity");
@@ -93,8 +92,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        boxColliderWidth = boxCollider.size.x;
-        boxColliderHeight = boxCollider.size.y;
         extraJumpCountLeft = extraJumpCount;
     }
 
@@ -152,7 +149,13 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (context.canceled)
         {
-            isCrouching = false;
+            if (!Physics2D.OverlapBox(standBoxCollider.bounds.center, standBoxCollider.bounds.size, 0f, groundMask))
+            {
+                Debug.Log(!Physics2D.OverlapBox(standBoxCollider.bounds.center, standBoxCollider.bounds.size, 0f, groundMask));
+                Debug.Log("box" + standBoxCollider.bounds.center + " " + standBoxCollider.bounds.size);
+                isCrouching = false;
+                Debug.Log("dont overlap");
+            }
         }
     }
 
@@ -208,12 +211,13 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isCrouching)
         {
-            boxCollider.size = new Vector2(boxCollider.size.x, boxCollider.size.y / 2f);
-            Debug.Log("crouch");
+            standBoxCollider.enabled = false;
+            crouchBoxCollider.enabled = true;
         }
         else
         {
-            boxCollider.size = new Vector2(boxCollider.size.x, boxCollider.size.y * 2f);
+            standBoxCollider.enabled = true;
+            crouchBoxCollider.enabled = false;
         }
     }
 
