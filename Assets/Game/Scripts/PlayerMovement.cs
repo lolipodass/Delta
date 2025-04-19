@@ -47,11 +47,16 @@ public class PlayerMovement : MonoBehaviour
     [Foldout("Wall check")]
     [SerializeField] private Transform wallCheckPos;
     [Foldout("Wall check")]
-
     [SerializeField] private Vector2 wallCheckSize = new(0.5f, 0.5f);
     [Foldout("Wall check")]
-
     [SerializeField] private LayerMask wallMask;
+
+    [Foldout("Crouch check")]
+    [SerializeField] private Transform crouchCheckPos;
+    [Foldout("Crouch check")]
+    [SerializeField] private Vector2 crouchCheckSize = new(0.5f, 0.5f);
+    [Foldout("Crouch check")]
+    [SerializeField] private LayerMask crouchMask;
 
     [Header("Debug")]
     public bool isDebug = false;
@@ -70,12 +75,13 @@ public class PlayerMovement : MonoBehaviour
     private float moveInput;
     private bool isGrounded;
     private bool isTouchWall;
+    private bool isCrouching = false;
+    private bool isWallJumping = false;
     private bool isJumping = false;
     private bool isInJumpState = false;
-    private bool isHoldingJump = false;
-    private bool isWallJumping = false;
     // private bool isWallSliding = false;
-    private bool isCrouching = false;
+    private bool isHoldJumpButton = false;
+    private bool isHoldCrouchButton = false;
     private float xVelocity = 0f;
     private float yVelocity = 0f;
 
@@ -119,24 +125,29 @@ public class PlayerMovement : MonoBehaviour
 
         if (context.performed)
         {
-            lastJumpPressedTime = jumpBufferTime;
+            isHoldJumpButton = true;
+
 
             if (CanWallJump())
             {
                 isWallJumping = true;
             }
-            else if (CanJump())
+            else if (CanGroundJump())
             {
-                Jump();
-                if (!isGrounded && lastGroundedTime < 0)
-                {
-                    extraJumpCountLeft--;
-                }
+                GroundJump();
+            }
+            else if (CanAirJump())
+            {
+                AirJump();
+            }
+            else
+            {
+                lastJumpPressedTime = jumpBufferTime;
             }
         }
         else if (context.canceled)
         {
-            isHoldingJump = false;
+            isHoldJumpButton = false;
         }
 
     }
@@ -145,28 +156,31 @@ public class PlayerMovement : MonoBehaviour
     {
         if (context.performed)
         {
-            isCrouching = true;
+            isHoldCrouchButton = true;
         }
         else if (context.canceled)
         {
-            if (!Physics2D.OverlapBox(standBoxCollider.bounds.center, standBoxCollider.bounds.size, 0f, groundMask))
-            {
-                Debug.Log(!Physics2D.OverlapBox(standBoxCollider.bounds.center, standBoxCollider.bounds.size, 0f, groundMask));
-                Debug.Log("box" + standBoxCollider.bounds.center + " " + standBoxCollider.bounds.size);
-                isCrouching = false;
-                Debug.Log("dont overlap");
-            }
+
+            isHoldCrouchButton = false;
         }
     }
 
 
     void HandleJumping()
     {
-        //jump buffering
-        if (lastJumpPressedTime > 0 && CanJump())
+        //jump buffer
+        if (lastJumpPressedTime > 0)
         {
-            Jump();
-            lastJumpPressedTime = 0;
+            if (CanGroundJump())
+            {
+                GroundJump();
+                lastJumpPressedTime = 0;
+            }
+            else if (CanWallJump())
+            {
+                isWallJumping = true;
+                lastJumpPressedTime = 0;
+            }
         }
 
         yVelocity = isJumping ? jumpForce : rb.linearVelocity.y;
@@ -179,9 +193,7 @@ public class PlayerMovement : MonoBehaviour
         //wall jump
         if (isWallJumping)
         {
-            yVelocity = wallJumpYForce;
-            xVelocity = xVelocity < 0f ? wallJumpXForce : -wallJumpXForce;
-            isWallJumping = false;
+            WallJump();
         }
         isJumping = false;
     }
@@ -209,15 +221,20 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleCrouching()
     {
-        if (isCrouching)
+        if (isHoldCrouchButton)
         {
             standBoxCollider.enabled = false;
             crouchBoxCollider.enabled = true;
+            isCrouching = true;
         }
         else
         {
-            standBoxCollider.enabled = true;
-            crouchBoxCollider.enabled = false;
+            if (!Physics2D.OverlapBox(crouchCheckPos.position, crouchCheckSize, 0f, crouchMask))
+            {
+                standBoxCollider.enabled = true;
+                crouchBoxCollider.enabled = false;
+                isCrouching = false;
+            }
         }
     }
 
@@ -239,27 +256,43 @@ public class PlayerMovement : MonoBehaviour
         }
 
         isTouchWall = Physics2D.OverlapBox(wallCheckPos.position, wallCheckSize, 0f, wallMask);
-        if (isTouchWall)
+        if (isTouchWall && yVelocity < 0f)
         {
             isInJumpState = false;
         }
     }
 
-
-    void Jump()
+    void AirJump()
     {
         isJumping = true;
-        isHoldingJump = true;
         isInJumpState = true;
         jumpTime = 0f;
+        extraJumpCountLeft--;
     }
-    private bool CanJump()
+    void GroundJump()
     {
-        return (lastGroundedTime > 0 || extraJumpCountLeft > 0) && !isJumping;
+        isJumping = true;
+        isInJumpState = true;
+        jumpTime = 0f;
+        lastGroundedTime = 0f;
+    }
+    void WallJump()
+    {
+        yVelocity = wallJumpYForce;
+        xVelocity = xVelocity < 0f ? wallJumpXForce : -wallJumpXForce;
+        isWallJumping = false;
+    }
+    private bool CanGroundJump()
+    {
+        return lastGroundedTime > 0 && !isJumping && isHoldJumpButton;
+    }
+    private bool CanAirJump()
+    {
+        return extraJumpCountLeft > 0 && !isJumping;
     }
     private bool CanWallJump()
     {
-        return isTouchWall && hasWallJump && !isJumping && !isGrounded;
+        return isTouchWall && hasWallJump && !isJumping && !isGrounded && isHoldJumpButton;
     }
     private bool CanWallSlide()
     {
@@ -267,7 +300,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private bool CanJumpCut()
     {
-        return !isHoldingJump && yVelocity > 0f && isInJumpState && minimalJumpTime > jumpTime && maxJumpTime < jumpTime && !isGrounded;
+        return !isHoldJumpButton && yVelocity > 0f && isInJumpState && jumpTime > minimalJumpTime && jumpTime < maxJumpTime && !isGrounded;
     }
     private void HandleTimers()
     {
@@ -309,5 +342,9 @@ public class PlayerMovement : MonoBehaviour
 
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(wallCheckPos.position, wallCheckSize);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(crouchCheckPos.position, crouchCheckSize);
+        // Gizmos.DrawWireCube(crouchBoxCollider.bounds.center, crouchBoxCollider.bounds.size);
     }
 }
