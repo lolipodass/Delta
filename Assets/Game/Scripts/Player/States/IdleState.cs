@@ -9,7 +9,6 @@ public class IdleState : PlayerBaseState
 
         if (player.LastJumpPressedTime > 0f && player.IsHoldJumpButton)
         {
-            player.ReleaseJumpButton();
             stateMachine.ChangeState(player.jumpState);
             return;
         }
@@ -29,6 +28,11 @@ public class IdleState : PlayerBaseState
         if (player.IsHoldCrouchButton)
         {
             stateMachine.ChangeState(player.crouchState);
+            return;
+        }
+        if (!player.IsGrounded)
+        {
+            stateMachine.ChangeState(player.fallState);
             return;
         }
     }

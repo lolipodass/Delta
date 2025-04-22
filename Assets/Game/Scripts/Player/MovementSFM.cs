@@ -20,8 +20,7 @@ public class PlayerMovementSFM : MonoBehaviour
     [Label("Max speed")][SerializeField] private float maxSpeed = 4f;
     [field: SerializeField] public float AirControlFactor { get; private set; } = 0.98f;
     [field: SerializeField] public float WallSlideSpeed { get; private set; } = 0.5f;
-    [Label("Ground Acceleration")][SerializeField] private float groundAcceleration = 20f;
-    [Label("Air Acceleration")][SerializeField] private float airAcceleration = 20f;
+    [SerializeField] private float MaxFallSpeed = 12f;
 
 
 
@@ -54,7 +53,13 @@ public class PlayerMovementSFM : MonoBehaviour
     [Foldout("Wall check")]
     [SerializeField] private Vector2 wallCheckSize = new(0.5f, 0.5f);
     [Foldout("Wall check")]
+    [SerializeField] private Transform wallCheckPosBack;
+    [Foldout("Wall check")]
+    [SerializeField] private Vector2 wallCheckSizeBack = new(0.5f, 0.5f);
+    [Foldout("Wall check")]
     [SerializeField] private LayerMask wallMask;
+
+
 
     [Foldout("Crouch check")]
     [SerializeField] private Transform crouchCheckPos;
@@ -77,7 +82,8 @@ public class PlayerMovementSFM : MonoBehaviour
     #region Private Variables
     private bool isFacingRight = true;
     private bool isCrouching = false;
-
+    private bool isWallInFront = false;
+    private bool isTouchWallAnimation = false;
     #endregion
 
     #region Properties
@@ -89,6 +95,7 @@ public class PlayerMovementSFM : MonoBehaviour
     public int ExtraJumpCountLeft { get; private set; }
     public float YVelocity { get; private set; }
     public float XVelocity { get; private set; }
+    public bool IsTouchBackWall { get; private set; }
     #endregion
 
     #region State Machine
@@ -103,9 +110,10 @@ public class PlayerMovementSFM : MonoBehaviour
     public const float maxJumpTime = 0.4f;
 
     #region Timers
-    public float lastGroundedTime { get; private set; }
+    public float LastGroundedTime { get; private set; }
+    public float LastWallTouchTime { get; private set; }
     public float LastJumpPressedTime { get; private set; }
-    public float jumpTime { get; private set; }
+    public float JumpTime { get; private set; }
     #endregion
 
 
@@ -138,8 +146,8 @@ public class PlayerMovementSFM : MonoBehaviour
 
     void FixedUpdate()
     {
-        StateMachine.CurrentState.PhysicsUpdate();
         UpdatePhysicsChecks();
+        StateMachine.CurrentState.PhysicsUpdate();
         HandleMovement();
     }
 
@@ -183,8 +191,7 @@ public class PlayerMovementSFM : MonoBehaviour
 
         float targetXVelocity = MoveInput * maxSpeed * StateMachine.CurrentState.HorizontalSpeedMultiplayer;
         XVelocity = InterpolateVelocity(targetXVelocity, XVelocity);
-        // yVelocity = Mathf.Max(yVelocity, yVelocity * StateMachine.CurrentState.VerticalSpeedMultiplayer);
-        YVelocity = YVelocity * StateMachine.CurrentState.VerticalSpeedMultiplayer;
+        YVelocity = Mathf.Max(YVelocity, -MaxFallSpeed * StateMachine.CurrentState.VerticalSpeedMultiplayer);
         rb.linearVelocity = new Vector2(XVelocity, YVelocity);
     }
 
@@ -203,32 +210,41 @@ public class PlayerMovementSFM : MonoBehaviour
         if (IsGrounded)
         {
             ExtraJumpCountLeft = ExtraJumpCount;
-            lastGroundedTime = coyoteTime;
+            LastGroundedTime = coyoteTime;
         }
 
-        IsTouchWall = Physics2D.OverlapBox(wallCheckPos.position, wallCheckSize, 0f, wallMask);
+
+        IsTouchBackWall = Physics2D.OverlapBox(wallCheckPosBack.position, wallCheckSizeBack, 0f, wallMask);
+        isTouchWallAnimation = Physics2D.OverlapBox(wallCheckPos.position, wallCheckSize, 0f, wallMask);
+        IsTouchWall = IsTouchBackWall || isTouchWallAnimation;
+        if (IsTouchWall)
+        {
+            isWallInFront = IsTouchBackWall ? !isFacingRight : isFacingRight;
+            LastWallTouchTime = coyoteTime;
+        }
     }
 
     public void AirJump()
     {
         LastJumpPressedTime = 0f;
-        jumpTime = 0f;
+        JumpTime = 0f;
         ExtraJumpCountLeft--;
         rb.linearVelocityY = airJumpForce;
     }
     public void GroundJump()
     {
         LastJumpPressedTime = 0f;
-        jumpTime = 0f;
-        lastGroundedTime = 0f;
+        JumpTime = 0f;
+        LastGroundedTime = 0f;
         rb.linearVelocityY = jumpForce;
 
     }
     public void WallJump()
     {
-        Debug.Log("wall");
         LastJumpPressedTime = 0f;
-        XVelocity = XVelocity < 0f ? wallJumpXForce : -wallJumpXForce;
+        JumpTime = -1f;
+        XVelocity = isWallInFront ? -wallJumpXForce : wallJumpXForce;
+
         rb.linearVelocityY = wallJumpYForce;
     }
     public void JumpCut()
@@ -248,9 +264,10 @@ public class PlayerMovementSFM : MonoBehaviour
     }
     private void HandleTimers()
     {
-        lastGroundedTime -= Time.deltaTime;
+        LastGroundedTime -= Time.deltaTime;
+        LastWallTouchTime -= Time.deltaTime;
         LastJumpPressedTime -= Time.deltaTime;
-        jumpTime += Time.deltaTime;
+        JumpTime += Time.deltaTime;
     }
     void Rotate()
     {
@@ -276,7 +293,7 @@ public class PlayerMovementSFM : MonoBehaviour
         animator.SetFloat(MagnitudeHash, rb.linearVelocity.sqrMagnitude);
         animator.SetFloat(YVelocityHash, rb.linearVelocity.y);
         animator.SetBool(GroundedHash, IsGrounded);
-        animator.SetBool(WallHash, IsTouchWall);
+        animator.SetBool(WallHash, isTouchWallAnimation);
         animator.SetBool(CrouchHash, isCrouching);
     }
     public void OnDrawGizmos()
@@ -293,6 +310,7 @@ public class PlayerMovementSFM : MonoBehaviour
 
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(wallCheckPos.position, wallCheckSize);
+        Gizmos.DrawWireCube(wallCheckPosBack.position, wallCheckSizeBack);
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(crouchCheckPos.position, crouchCheckSize);

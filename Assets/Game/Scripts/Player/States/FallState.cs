@@ -6,9 +6,11 @@ public class FallState : PlayerBaseState
 
     public override void Enter()
     {
+        //idk if this is needed
         player.ReleaseJumpButton();
-        if (player.YVelocity > 0f && player.jumpTime > player.MinimalJumpTime && player.jumpTime < PlayerMovementSFM.maxJumpTime)
+        if (player.YVelocity > 0f && player.JumpTime > player.MinimalJumpTime && player.JumpTime < PlayerMovementSFM.maxJumpTime)
         {
+            Debug.Log("1");
             player.JumpCut();
         }
     }
@@ -19,8 +21,9 @@ public class FallState : PlayerBaseState
             stateMachine.ChangeState(player.wallSlideState);
             return;
         }
-        if (player.YVelocity > 0f && player.jumpTime > player.MinimalJumpTime && player.jumpTime < PlayerMovementSFM.maxJumpTime)
+        if (player.YVelocity > 0f && player.JumpTime > player.MinimalJumpTime && player.JumpTime < PlayerMovementSFM.maxJumpTime)
         {
+            Debug.Log("2");
             player.JumpCut();
             return;
         }
@@ -29,7 +32,7 @@ public class FallState : PlayerBaseState
             stateMachine.ChangeState(player.idleState);
             return;
         }
-        if (player.IsHoldJumpButton && player.ExtraJumpCountLeft > 0)
+        if (player.IsHoldJumpButton && (player.LastWallTouchTime > 0 || player.ExtraJumpCountLeft > 0))
         {
             stateMachine.ChangeState(player.jumpState);
             return;

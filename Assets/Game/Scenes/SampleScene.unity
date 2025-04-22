@@ -313,6 +313,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &211450212
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 211450213}
+  m_Layer: 0
+  m_Name: WallCheckBack
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &211450213
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 211450212}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.0693, y: -0.0613, z: -0.011862732}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1930081145}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &338494920
 GameObject:
   m_ObjectHideFlags: 0
@@ -6111,7 +6142,7 @@ GameObject:
   m_Component:
   - component: {fileID: 415560859}
   m_Layer: 0
-  m_Name: WallCheck
+  m_Name: WallCheckFront
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7568,6 +7599,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 415560859}
+  - {fileID: 211450213}
   - {fileID: 338494921}
   - {fileID: 709245588}
   m_Father: {fileID: 0}
@@ -7736,13 +7768,12 @@ MonoBehaviour:
   crouchBoxCollider: {fileID: 1930081149}
   maxSpeed: 5
   <AirControlFactor>k__BackingField: 0.98
-  <WallSlideSpeed>k__BackingField: 0.5
-  groundAcceleration: 20
-  airAcceleration: 20
+  <WallSlideSpeed>k__BackingField: 0.1
+  MaxFallSpeed: 20
   jumpForce: 18
   airJumpForce: 15
   wallJumpYForce: 15
-  wallJumpXForce: 35
+  wallJumpXForce: 20
   <coyoteTime>k__BackingField: 0.1
   <JumpBufferTime>k__BackingField: 0.1
   <MinimalJumpTime>k__BackingField: 0.05
@@ -7756,6 +7787,8 @@ MonoBehaviour:
     m_Bits: 8
   wallCheckPos: {fileID: 415560859}
   wallCheckSize: {x: 0.07, y: 1.8}
+  wallCheckPosBack: {fileID: 211450213}
+  wallCheckSizeBack: {x: 0.06, y: 1.8}
   wallMask:
     serializedVersion: 2
     m_Bits: 8
@@ -7764,7 +7797,7 @@ MonoBehaviour:
   crouchMask:
     serializedVersion: 2
     m_Bits: 8
-  isDebug: 0
+  isDebug: 1
 --- !u!95 &1930081148
 Animator:
   serializedVersion: 7

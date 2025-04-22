@@ -27,10 +27,27 @@ public class WallSlideState : PlayerBaseState
         }
         if (player.IsHoldJumpButton && player.HasWallJump)
         {
-            player.ReleaseJumpButton();
             stateMachine.ChangeState(player.jumpState);
             return;
         }
     }
-    public override float VerticalSpeedMultiplayer => player.WallSlideSpeed;
+    public override void PhysicsUpdate()
+    {
+        if (!player.IsTouchWall)
+        {
+            stateMachine.ChangeState(player.fallState);
+            return;
+        }
+    }
+    public override float VerticalSpeedMultiplayer
+    {
+        get
+        {
+            if (!player.IsTouchBackWall)
+            {
+                return player.WallSlideSpeed;
+            }
+            return base.VerticalSpeedMultiplayer;
+        }
+    }
 }
