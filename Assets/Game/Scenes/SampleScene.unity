@@ -193,7 +193,7 @@ MonoBehaviour:
     CustomLookAtTarget: 0
   Lens:
     FieldOfView: 34
-    OrthographicSize: 5
+    OrthographicSize: 5.6
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -6444,7 +6444,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 5.6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -7766,7 +7766,7 @@ MonoBehaviour:
   animator: {fileID: 1930081148}
   standBoxCollider: {fileID: 1930081142}
   crouchBoxCollider: {fileID: 1930081149}
-  maxSpeed: 5
+  maxSpeed: 6
   <AirControlFactor>k__BackingField: 0.98
   <WallSlideSpeed>k__BackingField: 0.1
   MaxFallSpeed: 20
@@ -7776,8 +7776,8 @@ MonoBehaviour:
   wallJumpXForce: 20
   <coyoteTime>k__BackingField: 0.1
   <JumpBufferTime>k__BackingField: 0.1
-  <MinimalJumpTime>k__BackingField: 0.05
-  ExtraJumpCount: 0
+  <MinimalJumpTime>k__BackingField: 0.08
+  ExtraJumpCount: 1
   <HasWallJump>k__BackingField: 1
   <HasWallSlide>k__BackingField: 1
   groundCheckPos: {fileID: 338494921}
@@ -7797,7 +7797,7 @@ MonoBehaviour:
   crouchMask:
     serializedVersion: 2
     m_Bits: 8
-  isDebug: 1
+  isDebug: 0
 --- !u!95 &1930081148
 Animator:
   serializedVersion: 7

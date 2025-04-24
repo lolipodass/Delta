@@ -26,11 +26,12 @@ public class JumpState : PlayerBaseState
     {
         if (!player.IsHoldJumpButton)
         {
-            stateMachine.ChangeState(player.fallState);
+            stateMachine.ChangeState(player.jumpCutState);
             return;
         }
         if (player.YVelocity < 0f)
         {
+            player.ReleaseJumpButton();
             stateMachine.ChangeState(player.fallState);
             return;
         }

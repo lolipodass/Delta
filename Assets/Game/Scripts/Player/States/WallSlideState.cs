@@ -4,11 +4,13 @@ public class WallSlideState : PlayerBaseState
 {
     public WallSlideState(PlayerMovementSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
+
+    private bool isHoldOnEnterJumpButton = false;
     public override void Enter()
     {
-        if (player.LastJumpPressedTime > 0f && player.HasWallJump && player.IsHoldJumpButton)
+        isHoldOnEnterJumpButton = player.IsHoldJumpButton;
+        if (player.LastJumpPressedTime > 0f && player.IsHoldJumpButton && player.HasWallJump && player.IsHoldJumpButton)
         {
-            player.ReleaseJumpButton();
             stateMachine.ChangeState(player.jumpState);
             return;
         }
@@ -25,11 +27,12 @@ public class WallSlideState : PlayerBaseState
             stateMachine.ChangeState(player.fallState);
             return;
         }
-        if (player.IsHoldJumpButton && player.HasWallJump)
+        if (player.IsHoldJumpButton && player.HasWallJump && !isHoldOnEnterJumpButton)
         {
             stateMachine.ChangeState(player.jumpState);
             return;
         }
+        isHoldOnEnterJumpButton = player.IsHoldJumpButton;
     }
     public override void PhysicsUpdate()
     {

@@ -103,6 +103,7 @@ public class PlayerMovementSFM : MonoBehaviour
     public IdleState idleState;
     public MoveState moveState;
     public JumpState jumpState;
+    public JumpCutState jumpCutState;
     public FallState fallState;
     public WallSlideState wallSlideState;
     public CrouchState crouchState;
@@ -130,6 +131,7 @@ public class PlayerMovementSFM : MonoBehaviour
         idleState = new IdleState(this, StateMachine);
         moveState = new MoveState(this, StateMachine);
         jumpState = new JumpState(this, StateMachine);
+        jumpCutState = new JumpCutState(this, StateMachine);
         fallState = new FallState(this, StateMachine);
         wallSlideState = new WallSlideState(this, StateMachine);
         crouchState = new CrouchState(this, StateMachine);
@@ -139,6 +141,10 @@ public class PlayerMovementSFM : MonoBehaviour
     void Update()
     {
         StateMachine.CurrentState.LogicUpdate();
+        if (isDebug)
+        {
+            Debug.Log(StateMachine.CurrentState);
+        }
         HandleTimers();
         UpdateAnimations();
         Rotate();
