@@ -7,7 +7,7 @@ public class JumpCutState : PlayerBaseState
     }
     public override void LogicUpdate()
     {
-        if (player.YVelocity > 0f && player.JumpTime > player.MinimalJumpTime && player.JumpTime < PlayerMovementSFM.maxJumpTime)
+        if (player.YVelocity > 0f && player.TimeJump > player.MinimalJumpTime && player.TimeJump < PlayerMovementSFM.maxJumpTime)
         {
             player.JumpCut();
             // return;

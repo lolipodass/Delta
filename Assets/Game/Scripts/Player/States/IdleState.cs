@@ -7,7 +7,7 @@ public class IdleState : PlayerBaseState
     public override void Enter()
     {
 
-        if (player.LastJumpPressedTime > 0f && player.IsHoldJumpButton)
+        if (player.TimeLastJumpPressed > 0f && player.ButtonJump)
         {
             stateMachine.ChangeState(player.jumpState);
             return;
@@ -15,17 +15,17 @@ public class IdleState : PlayerBaseState
     }
     public override void LogicUpdate()
     {
-        if (player.IsHoldJumpButton && player.LastJumpPressedTime > 0f)
+        if (player.ButtonJump && player.TimeLastJumpPressed > 0f)
         {
             stateMachine.ChangeState(player.jumpState);
             return;
         }
-        if (player.MoveInput != 0f)
+        if (player.ButtonMoveInput != 0f)
         {
             stateMachine.ChangeState(player.moveState);
             return;
         }
-        if (player.IsHoldCrouchButton)
+        if (player.ButtonCrouch)
         {
             stateMachine.ChangeState(player.crouchState);
             return;
@@ -33,6 +33,11 @@ public class IdleState : PlayerBaseState
         if (!player.IsGrounded)
         {
             stateMachine.ChangeState(player.fallState);
+            return;
+        }
+        if (player.ButtonDash)
+        {
+            stateMachine.ChangeState(player.dashState);
             return;
         }
     }

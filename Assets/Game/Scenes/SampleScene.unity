@@ -7501,7 +7501,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.125, y: 0.38}
+  m_Size: {x: 0.125, y: 0.385}
   m_EdgeRadius: 0
 --- !u!50 &1930081143
 Rigidbody2D:
@@ -7745,6 +7745,22 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1930081147}
+        m_TargetAssemblyTypeName: PlayerMovementSFM, Assembly-CSharp
+        m_MethodName: DashCallback
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 29d108f0-0c0a-4443-bb7c-419daa83390a
+    m_ActionName: 'Player/Dash[/Keyboard/shift]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -7770,6 +7786,9 @@ MonoBehaviour:
   <AirControlFactor>k__BackingField: 0.98
   <WallSlideSpeed>k__BackingField: 0.1
   MaxFallSpeed: 20
+  <DashTime>k__BackingField: 1
+  DashForce: 0.3
+  DashCooldown: 1
   jumpForce: 18
   airJumpForce: 15
   wallJumpYForce: 15
@@ -7827,7 +7846,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1930081141}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 6200000, guid: dbbee48e217e0f6489db8211c1956a14, type: 2}
@@ -7854,7 +7873,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.155}
+  m_Offset: {x: 0, y: -0.16}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.39, y: 0.5}

@@ -10,7 +10,7 @@ public class CrouchState : PlayerBaseState
     }
     public override void LogicUpdate()
     {
-        if (!player.IsHoldCrouchButton && player.CanStandUp())
+        if (!player.ButtonCrouch && player.CanStandUp())
         {
             player.ToggleCrouch(false);
             stateMachine.ChangeState(player.idleState);

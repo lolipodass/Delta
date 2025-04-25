@@ -6,12 +6,12 @@ public class JumpState : PlayerBaseState
 
     public override void Enter()
     {
-        if (player.IsGrounded || player.LastGroundedTime > 0f)
+        if (player.IsGrounded || player.TimeLastGrounded > 0f)
         {
             player.GroundJump();
             return;
         }
-        if (player.IsTouchWall || player.LastWallTouchTime > 0f)
+        if (player.IsTouchWall || player.TimeLastWallTouch > 0f)
         {
             player.WallJump();
             return;
@@ -24,7 +24,7 @@ public class JumpState : PlayerBaseState
     }
     public override void LogicUpdate()
     {
-        if (!player.IsHoldJumpButton)
+        if (!player.ButtonJump)
         {
             stateMachine.ChangeState(player.jumpCutState);
             return;

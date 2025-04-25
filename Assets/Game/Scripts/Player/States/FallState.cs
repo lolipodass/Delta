@@ -7,7 +7,7 @@ public class FallState : PlayerBaseState
     private bool isHoldOnEnterJumpButton = false;
     public override void Enter()
     {
-        isHoldOnEnterJumpButton = player.IsHoldJumpButton;
+        isHoldOnEnterJumpButton = player.ButtonJump;
     }
     public override void LogicUpdate()
     {
@@ -24,12 +24,12 @@ public class FallState : PlayerBaseState
             stateMachine.ChangeState(player.idleState);
             return;
         }
-        if (player.IsHoldJumpButton && !isHoldOnEnterJumpButton && (player.LastWallTouchTime > 0 || player.ExtraJumpCountLeft > 0))
+        if (player.ButtonJump && !isHoldOnEnterJumpButton && (player.TimeLastWallTouch > 0 || player.ExtraJumpCountLeft > 0))
         {
             stateMachine.ChangeState(player.jumpState);
             return;
         }
-        isHoldOnEnterJumpButton = player.IsHoldJumpButton;
+        isHoldOnEnterJumpButton = player.ButtonJump;
     }
     public override float HorizontalSpeedMultiplayer => player.AirControlFactor;
 
