@@ -4,7 +4,6 @@ public class DashState : PlayerBaseState
 {
     public DashState(PlayerMovementSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine)
     {
-        Debug.Log("dash");
         dashTime = player.DashTime;
     }
 

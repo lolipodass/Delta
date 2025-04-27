@@ -35,7 +35,7 @@ public class IdleState : PlayerBaseState
             stateMachine.ChangeState(player.fallState);
             return;
         }
-        if (player.ButtonDash)
+        if (player.ButtonDash && player.HasDash && player.CanDash)
         {
             stateMachine.ChangeState(player.dashState);
             return;

@@ -18,7 +18,7 @@ public class MoveState : PlayerBaseState
             stateMachine.ChangeState(player.idleState);
             return;
         }
-        if (player.ButtonJump && player.TimeLastJumpPressed > 0f)
+        if (player.ButtonJump)
         {
             stateMachine.ChangeState(player.jumpState);
             return;
@@ -33,14 +33,11 @@ public class MoveState : PlayerBaseState
             stateMachine.ChangeState(player.fallState);
             return;
         }
-        if (player.ButtonCrouch)
+        if (player.ButtonDash && player.HasDash && player.CanDash)
         {
-            stateMachine.ChangeState(player.crouchState);
+            stateMachine.ChangeState(player.dashState);
             return;
         }
     }
 
-    public override void PhysicsUpdate()
-    {
-    }
 }

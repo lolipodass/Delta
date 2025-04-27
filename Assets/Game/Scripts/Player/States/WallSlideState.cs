@@ -41,6 +41,7 @@ public class WallSlideState : PlayerBaseState
             stateMachine.ChangeState(player.fallState);
             return;
         }
+        Movement();
     }
     public override float VerticalSpeedMultiplayer
     {

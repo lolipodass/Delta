@@ -9,18 +9,19 @@ public class PlayerMovementSFM : MonoBehaviour
 
     #region Unity Variables
     [Header("References")]
-    [Label("Rigidbody")][SerializeField] private Rigidbody2D rb;
-    [Label("Animator")][SerializeField] private Animator animator;
+    [Label("Rigidbody")][SerializeField] public Rigidbody2D rb;
+    [Label("Animator")][SerializeField] public Animator animator;
     [Label("Stand Box collider")][SerializeField] private BoxCollider2D standBoxCollider;
     [Label("Crouch Box collider")][SerializeField] private BoxCollider2D crouchBoxCollider;
 
 
 
     [Header("Movement Settings")]
-    [Label("Max speed")][SerializeField] private float maxSpeed = 4f;
+    [field: SerializeField] public float maxSpeed { get; private set; } = 4f;
     [field: SerializeField] public float AirControlFactor { get; private set; } = 0.98f;
     [field: SerializeField] public float WallSlideSpeed { get; private set; } = 0.5f;
-    [SerializeField] private float MaxFallSpeed = 12f;
+    [field: SerializeField] public float MaxFallSpeed { get; private set; } = 12f;
+    [field: SerializeField] public bool HasDash { get; private set; } = true;
     [field: SerializeField] public float DashTime { get; private set; } = 1f;
     [SerializeField] private float DashForce = 1f;
     [SerializeField] private float DashCooldown = 1f;
@@ -86,13 +87,14 @@ public class PlayerMovementSFM : MonoBehaviour
     #endregion
 
     #region Private Variables
-    private bool isFacingRight = true;
     private bool isCrouching = false;
     private bool isWallInFront = false;
     private bool isTouchWallAnimation = false;
+    private bool isInDashState = false;
     #endregion
 
     #region Properties
+    public bool isFacingRight { get; private set; } = true;
     public float ButtonMoveInput { get; private set; }
     public bool ButtonJump { get; private set; }
     public bool ButtonCrouch { get; private set; }
@@ -104,7 +106,8 @@ public class PlayerMovementSFM : MonoBehaviour
     public int ExtraJumpCountLeft { get; private set; }
     public float YVelocity { get; private set; }
     public float XVelocity { get; private set; }
-    public bool CanDash { get; private set; }
+
+    public bool CanDash => timeDashCooldown <= 0f;
     #endregion
 
     #region State Machine
@@ -165,37 +168,6 @@ public class PlayerMovementSFM : MonoBehaviour
     {
         UpdatePhysicsChecks();
         StateMachine.CurrentState.PhysicsUpdate();
-        HandleMovement();
-    }
-    void HandleMovement()
-    {
-        YVelocity = rb.linearVelocity.y;
-
-        if (!StateMachine.CurrentState.CanMoveHorizontal)
-        {
-            return;//?? if only vertical movement
-        }
-
-        XVelocity = rb.linearVelocity.x;
-        Debug.Log("XVelocity: " + XVelocity);
-        // float targetXVelocity = ButtonMoveInput * maxSpeed * StateMachine.CurrentState.HorizontalSpeedMultiplayer;
-        // if (Mathf.Abs(XVelocity) > Mathf.Abs(targetXVelocity))
-        // {
-        //     Debug.Log("here");
-        //     XVelocity = targetXVelocity;
-        // }
-        // XVelocity = InterpolateVelocity(targetXVelocity, XVelocity);
-        Debug.Log("XVelocity after: " + XVelocity);
-
-        YVelocity = Mathf.Max(YVelocity, -MaxFallSpeed * StateMachine.CurrentState.VerticalSpeedMultiplayer);
-
-
-        rb.linearVelocity = new Vector2(XVelocity, YVelocity);
-    }
-
-    float InterpolateVelocity(float targetVelocity, float currentVelocity)
-    {
-        return Mathf.Lerp(currentVelocity, targetVelocity, 10f * Time.fixedDeltaTime);
     }
 
     void UpdatePhysicsChecks()
@@ -240,7 +212,7 @@ public class PlayerMovementSFM : MonoBehaviour
         TimeJump = -1f;
         XVelocity = isWallInFront ? -wallJumpXForce : wallJumpXForce;
 
-        rb.linearVelocityY = wallJumpYForce;
+        rb.linearVelocity = new Vector2(XVelocity, wallJumpYForce);
     }
     public void JumpCut()
     {
@@ -249,8 +221,8 @@ public class PlayerMovementSFM : MonoBehaviour
 
     public void Dash()
     {
-
-        rb.AddForce(new Vector2(isFacingRight ? 1f : -1f, 0f) * DashForce, ForceMode2D.Impulse);
+        // rb.AddForce(new Vector2(isFacingRight ? 1f : -1f, 0f) * DashForce, ForceMode2D.Impulse);
+        rb.linearVelocityX = isFacingRight ? DashForce : -DashForce;
     }
 
     public bool CanStandUp() =>
@@ -285,6 +257,7 @@ public class PlayerMovementSFM : MonoBehaviour
         }
     }
 
+    #region Input
     public void MoveCallback(InputAction.CallbackContext context)
     {
         ButtonMoveInput = context.ReadValue<Vector2>().x;
@@ -316,11 +289,15 @@ public class PlayerMovementSFM : MonoBehaviour
             ButtonDash = false;
     }
 
+    #endregion
+
+    #region Animation
     private static readonly int MagnitudeHash = Animator.StringToHash("magnitude");
     private static readonly int YVelocityHash = Animator.StringToHash("yVelocity");
     private static readonly int GroundedHash = Animator.StringToHash("onGround");
     private static readonly int WallHash = Animator.StringToHash("onWall");
     private static readonly int CrouchHash = Animator.StringToHash("isCrouching");
+    private static readonly int DashHash = Animator.StringToHash("isDashing");
 
     void UpdateAnimations()
     {
@@ -329,7 +306,9 @@ public class PlayerMovementSFM : MonoBehaviour
         animator.SetBool(GroundedHash, IsGrounded);
         animator.SetBool(WallHash, isTouchWallAnimation);
         animator.SetBool(CrouchHash, isCrouching);
+        animator.SetBool(DashHash, isInDashState);
     }
+    #endregion
     public void OnDrawGizmos()
     {
         if (isDebug)
