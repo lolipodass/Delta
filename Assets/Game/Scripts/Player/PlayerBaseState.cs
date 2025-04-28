@@ -19,17 +19,19 @@ public abstract class PlayerBaseState
 
     virtual public void Movement()
     {
-
-        //     if (!StateMachine.CurrentState.CanMoveHorizontal)
-        //     {
-        //         return;//?? if only vertical movement
-        //     }
-
         XVelocity = player.rb.linearVelocity.x;
         YVelocity = player.rb.linearVelocity.y;
-        float targetXVelocity = player.ButtonMoveInput * player.maxSpeed * HorizontalSpeedMultiplayer;
-        XVelocity = Mathf.Lerp(XVelocity, targetXVelocity, 10f * Time.fixedDeltaTime);
-        YVelocity = Mathf.Max(YVelocity, -player.MaxFallSpeed * VerticalSpeedMultiplayer);
+
+        if (CanMoveHorizontal)
+        {
+            float targetXVelocity = player.ButtonMoveInput * player.MaxSpeed * HorizontalSpeedMultiplayer;
+            XVelocity = Mathf.Lerp(XVelocity, targetXVelocity, 10f * Time.fixedDeltaTime);
+        }
+        if (CanMoveVertical)
+            YVelocity = Mathf.Max(YVelocity, -player.MaxFallSpeed * VerticalSpeedMultiplayer);
+        else
+            YVelocity = 0;
+
         player.rb.linearVelocity = new Vector2(XVelocity, YVelocity);
 
     }
@@ -42,4 +44,5 @@ public abstract class PlayerBaseState
 
     public virtual float HorizontalSpeedMultiplayer => 1f;
     public virtual float VerticalSpeedMultiplayer => 1f;
+    public virtual bool CanRotate => true;
 }

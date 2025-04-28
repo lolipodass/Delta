@@ -15,16 +15,15 @@ public class PlayerMovementSFM : MonoBehaviour
     [Label("Crouch Box collider")][SerializeField] private BoxCollider2D crouchBoxCollider;
 
 
-
     [Header("Movement Settings")]
-    [field: SerializeField] public float maxSpeed { get; private set; } = 4f;
+    [field: SerializeField] public float MaxSpeed { get; private set; } = 4f;
     [field: SerializeField] public float AirControlFactor { get; private set; } = 0.98f;
     [field: SerializeField] public float WallSlideSpeed { get; private set; } = 0.5f;
     [field: SerializeField] public float MaxFallSpeed { get; private set; } = 12f;
     [field: SerializeField] public bool HasDash { get; private set; } = true;
     [field: SerializeField] public float DashTime { get; private set; } = 1f;
-    [SerializeField] private float DashForce = 1f;
-    [SerializeField] private float DashCooldown = 1f;
+    [field: SerializeField] public float DashForce { get; private set; } = 1f;
+    [field: SerializeField] public float DashCooldown { get; private set; } = 1f;
 
 
 
@@ -40,7 +39,6 @@ public class PlayerMovementSFM : MonoBehaviour
     [field: SerializeField] public float coyoteTime { get; private set; } = 0.1f;
     [field: SerializeField] public float JumpBufferTime { get; private set; } = 0.1f;
     [field: SerializeField] public float MinimalJumpTime { get; private set; } = 0.1f;
-    // [Range(0f, 0.4f)][SerializeField] float minimalJumpTime = 0.1f;
 
     [Range(0, 10)][SerializeField] private int ExtraJumpCount = 1;
     [field: SerializeField] public bool HasWallJump { get; private set; } = true;
@@ -87,14 +85,18 @@ public class PlayerMovementSFM : MonoBehaviour
     #endregion
 
     #region Private Variables
-    private bool isCrouching = false;
     private bool isWallInFront = false;
     private bool isTouchWallAnimation = false;
-    private bool isInDashState = false;
+    #endregion
+
+    #region Animations Properties
+    public bool AnimationDash = false;
+    public bool AnimationCrouch = false;
     #endregion
 
     #region Properties
-    public bool isFacingRight { get; private set; } = true;
+    public bool isFacingRight
+    { get; private set; } = true;
     public float ButtonMoveInput { get; private set; }
     public bool ButtonJump { get; private set; }
     public bool ButtonCrouch { get; private set; }
@@ -128,7 +130,7 @@ public class PlayerMovementSFM : MonoBehaviour
     public float TimeLastWallTouch { get; private set; }
     public float TimeLastJumpPressed { get; private set; }
     public float TimeJump { get; private set; }
-    private float timeDashCooldown = 0f;
+    public float timeDashCooldown = 0f;
     #endregion
 
 
@@ -155,13 +157,14 @@ public class PlayerMovementSFM : MonoBehaviour
 
     void Update()
     {
+        HandleTimers();
         StateMachine.CurrentState.LogicUpdate();
         if (isDebug)
             Debug.Log(StateMachine.CurrentState);
 
-        HandleTimers();
         UpdateAnimations();
-        Rotate();
+        if (StateMachine.CurrentState.CanRotate)
+            Rotate();
     }
 
     void FixedUpdate()
@@ -214,24 +217,14 @@ public class PlayerMovementSFM : MonoBehaviour
 
         rb.linearVelocity = new Vector2(XVelocity, wallJumpYForce);
     }
-    public void JumpCut()
-    {
-        rb.linearVelocityY /= 2f;
-    }
-
-    public void Dash()
-    {
-        // rb.AddForce(new Vector2(isFacingRight ? 1f : -1f, 0f) * DashForce, ForceMode2D.Impulse);
-        rb.linearVelocityX = isFacingRight ? DashForce : -DashForce;
-    }
 
     public bool CanStandUp() =>
         !Physics2D.OverlapBox(crouchCheckPos.position, crouchCheckSize, 0f, crouchMask);
+
     public void ToggleCrouch(bool isCrouching)
     {
         standBoxCollider.enabled = !isCrouching;
         crouchBoxCollider.enabled = isCrouching;
-        this.isCrouching = isCrouching;
     }
     public void ReleaseJumpButton() =>
         ButtonJump = false;
@@ -305,8 +298,8 @@ public class PlayerMovementSFM : MonoBehaviour
         animator.SetFloat(YVelocityHash, rb.linearVelocity.y);
         animator.SetBool(GroundedHash, IsGrounded);
         animator.SetBool(WallHash, isTouchWallAnimation);
-        animator.SetBool(CrouchHash, isCrouching);
-        animator.SetBool(DashHash, isInDashState);
+        animator.SetBool(CrouchHash, AnimationCrouch);
+        animator.SetBool(DashHash, AnimationDash);
     }
     #endregion
     public void OnDrawGizmos()

@@ -7782,13 +7782,14 @@ MonoBehaviour:
   animator: {fileID: 1930081148}
   standBoxCollider: {fileID: 1930081142}
   crouchBoxCollider: {fileID: 1930081149}
-  maxSpeed: 6
+  <MaxSpeed>k__BackingField: 4
   <AirControlFactor>k__BackingField: 0.98
   <WallSlideSpeed>k__BackingField: 0.1
-  MaxFallSpeed: 20
-  <DashTime>k__BackingField: 1
-  DashForce: 0.3
-  DashCooldown: 1
+  <MaxFallSpeed>k__BackingField: 20
+  <HasDash>k__BackingField: 1
+  <DashTime>k__BackingField: 0.7
+  <DashForce>k__BackingField: 10
+  <DashCooldown>k__BackingField: 2
   jumpForce: 18
   airJumpForce: 15
   wallJumpYForce: 15
@@ -7817,6 +7818,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   isDebug: 0
+  AnimationDash: 0
+  AnimationCrouch: 0
+  timeDashCooldown: 0
 --- !u!95 &1930081148
 Animator:
   serializedVersion: 7

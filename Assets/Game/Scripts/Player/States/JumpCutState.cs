@@ -8,7 +8,7 @@ public class JumpCutState : PlayerBaseState
     {
         if (YVelocity > 0f && player.TimeJump > player.MinimalJumpTime && player.TimeJump < PlayerMovementSFM.maxJumpTime)
         {
-            player.JumpCut();
+            player.rb.linearVelocityY /= 2;
             // return;
         }
         if (YVelocity <= 0f)
