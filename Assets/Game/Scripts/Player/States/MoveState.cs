@@ -38,6 +38,11 @@ public class MoveState : PlayerBaseState
             stateMachine.ChangeState(player.dashState);
             return;
         }
+        if (player.ButtonAttack)
+        {
+            stateMachine.ChangeState(player.attackState);
+            return;
+        }
     }
 
 }

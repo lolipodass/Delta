@@ -4,15 +4,26 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(HealthComponent))]
+[RequireComponent(typeof(Animator))]
 public class PlayerSFM : MonoBehaviour
 {
 
     #region Unity Variables
     [Header("References")]
-    [Label("Rigidbody")][SerializeField] public Rigidbody2D rb;
-    [Label("Animator")][SerializeField] public Animator animator;
-    [Label("Stand Box collider")][SerializeField] private BoxCollider2D standBoxCollider;
-    [Label("Crouch Box collider")][SerializeField] private BoxCollider2D crouchBoxCollider;
+    public Rigidbody2D rb;
+    public Animator animator;
+    [SerializeField] private HealthComponent healthComponent;
+    [SerializeField] private BoxCollider2D standBoxCollider;
+    [SerializeField] private BoxCollider2D crouchBoxCollider;
+    [SerializeField] private BoxCollider2D wallBoxCollider;
+
+
+    [Header("Timers")]
+    [field: SerializeField] public float AttackTime { get; private set; } = 0.7f;
+    [field: SerializeField] public float AttackCooldown { get; private set; } = 0.5f;
+    [field: SerializeField] public float InvincibilityAfterHit { get; private set; } = 0.5f;
+
 
 
     [Header("Movement Settings")]
@@ -26,11 +37,11 @@ public class PlayerSFM : MonoBehaviour
     [field: SerializeField] public float DashCooldown { get; private set; } = 1f;
 
     [Header("Jump Settings")]
-    [Label("Jump Force")][SerializeField] private float jumpForce = 10f;
-    [Label("Air Jump Force")][SerializeField] private float airJumpForce = 10f;
+    [SerializeField] private float jumpForce = 10f;
+    [SerializeField] private float airJumpForce = 10f;
 
-    [Label("Wall Jump Y Force")][SerializeField] private float wallJumpYForce = 8f;
-    [Label("Wall Jump X Force")][SerializeField] private float wallJumpXForce = 5f;
+    [SerializeField] private float wallJumpYForce = 8f;
+    [SerializeField] private float wallJumpXForce = 5f;
     [field: SerializeField] public float coyoteTime { get; private set; } = 0.1f;
     [field: SerializeField] public float JumpBufferTime { get; private set; } = 0.1f;
     [field: SerializeField] public float MinimalJumpTime { get; private set; } = 0.1f;
@@ -53,6 +64,7 @@ public class PlayerSFM : MonoBehaviour
     [SerializeField] private Vector2 wallCheckSize = new(0.5f, 0.5f);
     [Foldout("Wall check")]
     [SerializeField] private Transform wallCheckPosBack;
+
     [Foldout("Wall check")]
     [SerializeField] private Vector2 wallCheckSizeBack = new(0.5f, 0.5f);
     [Foldout("Wall check")]
@@ -95,6 +107,7 @@ public class PlayerSFM : MonoBehaviour
     public bool ButtonJump { get; private set; }
     public bool ButtonCrouch { get; private set; }
     public bool ButtonDash { get; private set; }
+    public bool ButtonAttack { get; private set; }
 
     public bool IsGrounded { get; private set; }
     public bool IsTouchWall { get; private set; }
@@ -116,6 +129,9 @@ public class PlayerSFM : MonoBehaviour
     public WallSlideState wallSlideState;
     public CrouchState crouchState;
     public DashState dashState;
+    public AttackState attackState;
+    public HurtState hurtState;
+    public DeathState deathState;
     #endregion
     public const float maxJumpTime = 0.4f;
 
@@ -132,11 +148,28 @@ public class PlayerSFM : MonoBehaviour
     {
         ExtraJumpCountLeft = ExtraJumpCount;
     }
+    void OnEnable()
+    {
+        if (healthComponent != null)
+        {
+            healthComponent.OnDamage += HurtCallback;
+            healthComponent.OnDeath += DeathCallback;
+        }
+    }
+    void OnDisable()
+    {
+        if (healthComponent != null)
+        {
+            healthComponent.OnDamage -= HurtCallback;
+            healthComponent.OnDeath -= DeathCallback;
+        }
+    }
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        healthComponent = GetComponent<HealthComponent>();
         StateMachine = new PlayerStateMachine(this);
         idleState = new IdleState(this, StateMachine);
         moveState = new MoveState(this, StateMachine);
@@ -146,6 +179,10 @@ public class PlayerSFM : MonoBehaviour
         wallSlideState = new WallSlideState(this, StateMachine);
         crouchState = new CrouchState(this, StateMachine);
         dashState = new DashState(this, StateMachine);
+        attackState = new AttackState(this, StateMachine);
+        hurtState = new HurtState(this, StateMachine);
+        deathState = new DeathState(this, StateMachine);
+
         StateMachine.InitializeState(idleState);
     }
 
@@ -276,6 +313,33 @@ public class PlayerSFM : MonoBehaviour
             ButtonDash = false;
     }
 
+    public void AttackCallback(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            ButtonAttack = true;
+        else if (context.canceled)
+            ButtonAttack = false;
+    }
+    #endregion
+
+    #region CallBacks
+    private void HurtCallback(int amount)
+    {
+        StateMachine.ChangeState(hurtState);
+    }
+
+    private void DeathCallback()
+    {
+        StateMachine.ChangeState(deathState);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.TryGetComponent<DamageDealer>(out var damageDealer))
+        {
+            healthComponent.TakeDamage(damageDealer.damageAmount);
+        }
+    }
     #endregion
 
     #region Animation
