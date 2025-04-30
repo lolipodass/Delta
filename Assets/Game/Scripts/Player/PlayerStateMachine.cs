@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class PlayerStateMachine
 {
-    public PlayerStateMachine(PlayerMovementSFM playerMovementSFM) => this.playerMovementSFM = playerMovementSFM;
-    public PlayerMovementSFM playerMovementSFM;
+    public PlayerStateMachine(PlayerSFM playerMovementSFM) => this.playerMovementSFM = playerMovementSFM;
+    public PlayerSFM playerMovementSFM;
     public PlayerBaseState CurrentState { get; set; }
     public void InitializeState(PlayerBaseState state)
     {

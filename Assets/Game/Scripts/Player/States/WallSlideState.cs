@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class WallSlideState : PlayerBaseState
 {
-    public WallSlideState(PlayerMovementSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public WallSlideState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
 
     private bool isHoldOnEnterJumpButton = false;

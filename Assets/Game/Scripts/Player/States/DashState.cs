@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DashState : PlayerBaseState
 {
-    public DashState(PlayerMovementSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine)
+    public DashState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine)
     {
         dashTime = player.DashTime;
     }

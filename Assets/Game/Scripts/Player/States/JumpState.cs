@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class JumpState : PlayerBaseState
 {
-    public JumpState(PlayerMovementSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public JumpState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     public override void Enter()
     {

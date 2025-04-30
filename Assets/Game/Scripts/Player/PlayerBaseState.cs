@@ -3,8 +3,8 @@ using UnityEngine;
 public abstract class PlayerBaseState
 {
     protected PlayerStateMachine stateMachine;
-    protected PlayerMovementSFM player;
-    protected PlayerBaseState(PlayerMovementSFM player, PlayerStateMachine stateMachine)
+    protected PlayerSFM player;
+    protected PlayerBaseState(PlayerSFM player, PlayerStateMachine stateMachine)
     {
         this.player = player;
         this.stateMachine = stateMachine;

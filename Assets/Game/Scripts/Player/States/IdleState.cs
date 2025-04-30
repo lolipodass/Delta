@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 public class IdleState : PlayerBaseState
 {
-    public IdleState(PlayerMovementSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public IdleState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     public override void Enter()
     {

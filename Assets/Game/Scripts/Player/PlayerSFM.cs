@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerMovementSFM : MonoBehaviour
+public class PlayerSFM : MonoBehaviour
 {
 
     #region Unity Variables
@@ -25,11 +25,6 @@ public class PlayerMovementSFM : MonoBehaviour
     [field: SerializeField] public float DashForce { get; private set; } = 1f;
     [field: SerializeField] public float DashCooldown { get; private set; } = 1f;
 
-
-
-
-
-
     [Header("Jump Settings")]
     [Label("Jump Force")][SerializeField] private float jumpForce = 10f;
     [Label("Air Jump Force")][SerializeField] private float airJumpForce = 10f;
@@ -43,7 +38,6 @@ public class PlayerMovementSFM : MonoBehaviour
     [Range(0, 10)][SerializeField] private int ExtraJumpCount = 1;
     [field: SerializeField] public bool HasWallJump { get; private set; } = true;
     [field: SerializeField] public bool HasWallSlide { get; private set; } = true;
-
 
 
     [Foldout("Ground check")]

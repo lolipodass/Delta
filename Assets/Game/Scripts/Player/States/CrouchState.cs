@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CrouchState : PlayerBaseState
 {
-    public CrouchState(PlayerMovementSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public CrouchState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     public override void Enter()
     {

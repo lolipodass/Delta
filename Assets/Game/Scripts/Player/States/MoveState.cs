@@ -1,6 +1,6 @@
 public class MoveState : PlayerBaseState
 {
-    public MoveState(PlayerMovementSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public MoveState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     public override void Enter()
     {

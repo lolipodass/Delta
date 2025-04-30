@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class FallState : PlayerBaseState
 {
-    public FallState(PlayerMovementSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public FallState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     private bool isHoldOnEnterJumpButton = false;
     public override void Enter()
