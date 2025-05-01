@@ -26,6 +26,11 @@ public class DashState : PlayerBaseState
             stateMachine.ChangeState(player.idleState);
         }
         player.rb.linearVelocityX = player.isFacingRight ? player.DashForce : -player.DashForce;
+        if (player.ButtonAttack)
+        {
+            stateMachine.ChangeState(player.dashAttackState);
+            return;
+        }
     }
 
     public override void Exit()

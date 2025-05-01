@@ -9,10 +9,11 @@ public class DeathState : PlayerBaseState
     }
     public override void PhysicsUpdate()
     {
-
+        player.rb.linearVelocityX = 0f;
     }
     public override void Exit()
     {
         player.animator.ResetTrigger("Death");
     }
+    public override bool CanRotate => false;
 }

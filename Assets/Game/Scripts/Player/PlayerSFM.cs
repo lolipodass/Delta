@@ -132,6 +132,7 @@ public class PlayerSFM : MonoBehaviour
     public AttackState attackState;
     public HurtState hurtState;
     public DeathState deathState;
+    public DashAttackState dashAttackState;
     #endregion
     public const float maxJumpTime = 0.4f;
 
@@ -182,7 +183,7 @@ public class PlayerSFM : MonoBehaviour
         attackState = new AttackState(this, StateMachine);
         hurtState = new HurtState(this, StateMachine);
         deathState = new DeathState(this, StateMachine);
-
+        dashAttackState = new DashAttackState(this, StateMachine);
         StateMachine.InitializeState(idleState);
     }
 
