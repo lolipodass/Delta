@@ -1,10 +1,13 @@
 using UnityEngine;
-public class DashAttackState : PlayerBaseState
+public class DashAttackState : PlayerBaseState, IAttackHandler
 {
     public DashAttackState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
-
     private float attackTime = 0;
-    // private bool releaseButton = false;
+    public override bool CanRotate => false;
+    public override bool CanHurt => false;
+    int IAttackHandler.Damage => player.Damage;
+    Vector2 IAttackHandler.Position => player.DashAttackCheckPos.position;
+    Vector2 IAttackHandler.Size => player.DashAttackCheckSize;
 
     public override void Enter()
     {
@@ -13,25 +16,19 @@ public class DashAttackState : PlayerBaseState
     }
     public override void PhysicsUpdate()
     {
-        player.rb.linearVelocityX = 1f;
+        float targetXVelocity = 0;
+        player.rb.linearVelocityX = Mathf.Lerp(player.rb.linearVelocity.x, targetXVelocity, 4f * Time.fixedDeltaTime);
         attackTime -= Time.deltaTime;
         if (attackTime <= 0f)
         {
             player.StateMachine.ChangeState(player.idleState);
             return;
         }
-        // if (releaseButton && player.ButtonAttack)
-        // {
-        //     player.StateMachine.ChangeState(player.attackState);
-        //     Debug.Log("doubleAttack");
-        //     return;
-        // }
-        // if (!player.ButtonAttack)
-        //     releaseButton = true;
     }
     public override void Exit()
     {
         player.animator.ResetTrigger("Attack");
     }
-    public override bool CanRotate => false;
+
+
 }

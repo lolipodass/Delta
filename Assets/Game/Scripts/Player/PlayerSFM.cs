@@ -16,14 +16,11 @@ public class PlayerSFM : MonoBehaviour
     [SerializeField] private HealthComponent healthComponent;
     [SerializeField] private BoxCollider2D standBoxCollider;
     [SerializeField] private BoxCollider2D crouchBoxCollider;
-    [SerializeField] private BoxCollider2D wallBoxCollider;
-
 
     [Header("Timers")]
     [field: SerializeField] public float AttackTime { get; private set; } = 0.7f;
     [field: SerializeField] public float AttackCooldown { get; private set; } = 0.5f;
     [field: SerializeField] public float InvincibilityAfterHit { get; private set; } = 0.5f;
-
 
 
     [Header("Movement Settings")]
@@ -50,37 +47,36 @@ public class PlayerSFM : MonoBehaviour
     [field: SerializeField] public bool HasWallJump { get; private set; } = true;
     [field: SerializeField] public bool HasWallSlide { get; private set; } = true;
 
+    #region Masks
 
-    [Foldout("Ground check")]
-    [SerializeField] private Transform groundCheckPos;
-    [Foldout("Ground check")]
-    [SerializeField] private Vector2 groundCheckSize = new(0.5f, 0.5f);
-    [Foldout("Ground check")]
-    [SerializeField] private LayerMask groundMask;
+    [Foldout("Ground check")][SerializeField] private Transform groundCheckPos;
+    [Foldout("Ground check")][SerializeField] private Vector2 groundCheckSize = new(0.5f, 0.5f);
+    [Foldout("Ground check")][SerializeField] private LayerMask groundMask;
 
-    [Foldout("Wall check")]
-    [SerializeField] private Transform wallCheckPos;
-    [Foldout("Wall check")]
-    [SerializeField] private Vector2 wallCheckSize = new(0.5f, 0.5f);
-    [Foldout("Wall check")]
-    [SerializeField] private Transform wallCheckPosBack;
+    [Foldout("Wall check")][SerializeField] private Transform wallCheckPos;
+    [Foldout("Wall check")][SerializeField] private Vector2 wallCheckSize = new(0.5f, 0.5f);
+    [Foldout("Wall check")][SerializeField] private Transform wallCheckPosBack;
 
-    [Foldout("Wall check")]
-    [SerializeField] private Vector2 wallCheckSizeBack = new(0.5f, 0.5f);
-    [Foldout("Wall check")]
-    [SerializeField] private LayerMask wallMask;
+    [Foldout("Wall check")][SerializeField] private Vector2 wallCheckSizeBack = new(0.5f, 0.5f);
+    [Foldout("Wall check")][SerializeField] private LayerMask wallMask;
+
+    [Foldout("Crouch check")][SerializeField] private Transform crouchCheckPos;
+    [Foldout("Crouch check")][SerializeField] private Vector2 crouchCheckSize = new(0.5f, 0.5f);
+    [Foldout("Crouch check")][SerializeField] private LayerMask crouchMask;
+
+    [Header("Attack Settings")]
+    [field: SerializeField] public int Damage { get; private set; } = 1;
+    [field: SerializeField] public Transform AttackCheckPos { get; private set; }
+    [field: SerializeField] public Vector2 AttackCheckSize { get; private set; } = new(1f, 1f);
+    [field: SerializeField] public Transform DashAttackCheckPos { get; private set; }
+    [field: SerializeField] public Vector2 DashAttackCheckSize { get; private set; } = new(1f, 1f);
 
 
-
-    [Foldout("Crouch check")]
-    [SerializeField] private Transform crouchCheckPos;
-    [Foldout("Crouch check")]
-    [SerializeField] private Vector2 crouchCheckSize = new(0.5f, 0.5f);
-    [Foldout("Crouch check")]
-    [SerializeField] private LayerMask crouchMask;
+    #endregion
 
     [Header("Debug")]
     public bool isDebug = false;
+    public bool ShowAttackCheck = false;
 
     [Button]
     void addForce()
@@ -96,8 +92,8 @@ public class PlayerSFM : MonoBehaviour
     #endregion
 
     #region Animations Properties
-    public bool AnimationDash = false;
-    public bool AnimationCrouch = false;
+    [HideInInspector] public bool AnimationDash = false;
+    [HideInInspector] public bool AnimationCrouch = false;
     #endregion
 
     #region Properties
@@ -141,7 +137,7 @@ public class PlayerSFM : MonoBehaviour
     public float TimeLastWallTouch { get; private set; }
     public float TimeLastJumpPressed { get; private set; }
     public float TimeJump { get; private set; }
-    public float timeDashCooldown = 0f;
+    [HideInInspector] public float timeDashCooldown = 0f;
     #endregion
 
 
@@ -153,16 +149,25 @@ public class PlayerSFM : MonoBehaviour
     {
         if (healthComponent != null)
         {
-            healthComponent.OnDamage += HurtCallback;
-            healthComponent.OnDeath += DeathCallback;
+            healthComponent.OnDamage += OnHurt;
+            healthComponent.OnDeath += OnDeath;
         }
     }
     void OnDisable()
     {
         if (healthComponent != null)
         {
-            healthComponent.OnDamage -= HurtCallback;
-            healthComponent.OnDeath -= DeathCallback;
+            healthComponent.OnDamage -= OnHurt;
+            healthComponent.OnDeath -= OnDeath;
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!StateMachine.CurrentState.CanHurt) return;
+
+        if (collision.TryGetComponent<DamageDealer>(out var damageDealer))
+        {
+            healthComponent.TakeDamage(damageDealer.damageAmount);
         }
     }
 
@@ -216,6 +221,7 @@ public class PlayerSFM : MonoBehaviour
         }
 
 
+        //possible move this into state machine
         IsTouchBackWall = Physics2D.OverlapBox(wallCheckPosBack.position, wallCheckSizeBack, 0f, wallMask);
         isTouchWallAnimation = Physics2D.OverlapBox(wallCheckPos.position, wallCheckSize, 0f, wallMask);
         IsTouchWall = IsTouchBackWall || isTouchWallAnimation;
@@ -324,21 +330,20 @@ public class PlayerSFM : MonoBehaviour
     #endregion
 
     #region CallBacks
-    private void HurtCallback(int amount)
+    private void OnHurt(int amount)
     {
         StateMachine.ChangeState(hurtState);
     }
 
-    private void DeathCallback()
+    private void OnDeath()
     {
         StateMachine.ChangeState(deathState);
     }
-
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void AnimationEvent_Attack()
     {
-        if (collision.TryGetComponent<DamageDealer>(out var damageDealer))
+        if (StateMachine.CurrentState is IAttackHandler attackHandler)
         {
-            healthComponent.TakeDamage(damageDealer.damageAmount);
+            attackHandler.Attack();
         }
     }
     #endregion
@@ -378,5 +383,11 @@ public class PlayerSFM : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(crouchCheckPos.position, crouchCheckSize);
         // Gizmos.DrawWireCube(crouchBoxCollider.bounds.center, crouchBoxCollider.bounds.size);
+        if (ShowAttackCheck)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(AttackCheckPos.position, AttackCheckSize);
+            Gizmos.DrawWireCube(DashAttackCheckPos.position, DashAttackCheckSize);
+        }
     }
 }

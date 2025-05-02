@@ -6,6 +6,8 @@ public class DashState : PlayerBaseState
     {
         dashTime = player.DashTime;
     }
+    public override bool CanRotate => false;
+    public override bool CanHurt => false;
     private float gravity;
     public override void Enter()
     {
@@ -38,6 +40,7 @@ public class DashState : PlayerBaseState
         player.AnimationDash = false;
         player.rb.gravityScale = gravity;
     }
-    public override bool CanRotate => false;
+
+
     // public override float HorizontalSpeedMultiplayer => 0.5f;
 }

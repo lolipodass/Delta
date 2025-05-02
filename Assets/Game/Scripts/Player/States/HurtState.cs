@@ -3,6 +3,8 @@ public class HurtState : PlayerBaseState
 {
     public HurtState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
+    public override bool CanRotate => false;
+    public override bool CanHurt => false;
     private float hurtTime = 0;
     public override void Enter()
     {

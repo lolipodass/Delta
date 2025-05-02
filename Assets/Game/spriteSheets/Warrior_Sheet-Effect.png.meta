@@ -2516,8 +2516,8 @@ TextureImporter:
       name: hurt_1
       rect:
         serializedVersion: 2
-        x: 70
-        y: 441
+        x: 69
+        y: 440
         width: 69
         height: 44
       alignment: 9

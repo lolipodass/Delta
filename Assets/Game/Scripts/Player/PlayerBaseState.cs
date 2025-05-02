@@ -45,4 +45,5 @@ public abstract class PlayerBaseState
     public virtual float HorizontalSpeedMultiplayer => 1f;
     public virtual float VerticalSpeedMultiplayer => 1f;
     public virtual bool CanRotate => true;
+    public virtual bool CanHurt => true;
 }
