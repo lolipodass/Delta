@@ -144,6 +144,7 @@ public class PlayerSFM : MonoBehaviour
     void Start()
     {
         ExtraJumpCountLeft = ExtraJumpCount;
+        GameManager.Instance.SetPlayer(gameObject);
     }
     void OnEnable()
     {
