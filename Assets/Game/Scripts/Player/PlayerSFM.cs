@@ -17,35 +17,9 @@ public class PlayerSFM : MonoBehaviour
     [SerializeField] private BoxCollider2D standBoxCollider;
     [SerializeField] private BoxCollider2D crouchBoxCollider;
 
-    [Header("Timers")]
-    [field: SerializeField] public float AttackTime { get; private set; } = 0.7f;
-    [field: SerializeField] public float AttackCooldown { get; private set; } = 0.5f;
-    [field: SerializeField] public float InvincibilityAfterHit { get; private set; } = 0.5f;
-
-
-    [Header("Movement Settings")]
-    [field: SerializeField] public float MaxSpeed { get; private set; } = 4f;
-    [field: SerializeField] public float AirControlFactor { get; private set; } = 0.98f;
-    [field: SerializeField] public float WallSlideSpeed { get; private set; } = 0.5f;
-    [field: SerializeField] public float MaxFallSpeed { get; private set; } = 12f;
-    [field: SerializeField] public bool HasDash { get; private set; } = true;
-    [field: SerializeField] public float DashTime { get; private set; } = 1f;
-    [field: SerializeField] public float DashForce { get; private set; } = 1f;
-    [field: SerializeField] public float DashCooldown { get; private set; } = 1f;
-
-    [Header("Jump Settings")]
-    [SerializeField] private float jumpForce = 10f;
-    [SerializeField] private float airJumpForce = 10f;
-
-    [SerializeField] private float wallJumpYForce = 8f;
-    [SerializeField] private float wallJumpXForce = 5f;
-    [field: SerializeField] public float coyoteTime { get; private set; } = 0.1f;
-    [field: SerializeField] public float JumpBufferTime { get; private set; } = 0.1f;
-    [field: SerializeField] public float MinimalJumpTime { get; private set; } = 0.1f;
-
-    [Range(0, 10)][SerializeField] private int ExtraJumpCount = 1;
-    [field: SerializeField] public bool HasWallJump { get; private set; } = true;
-    [field: SerializeField] public bool HasWallSlide { get; private set; } = true;
+    [field: SerializeField] public PlayerConfig PlayerConfig { get; private set; }
+    [field: SerializeField] public PlayerAttackConfig StandAttackConfig { get; private set; }
+    [field: SerializeField] public PlayerAttackConfig DashAttackConfig { get; private set; }
 
     #region Masks
 
@@ -65,11 +39,8 @@ public class PlayerSFM : MonoBehaviour
     [Foldout("Crouch check")][SerializeField] private LayerMask crouchMask;
 
     [Header("Attack Settings")]
-    [field: SerializeField] public int Damage { get; private set; } = 1;
     [field: SerializeField] public Transform AttackCheckPos { get; private set; }
-    [field: SerializeField] public Vector2 AttackCheckSize { get; private set; } = new(1f, 1f);
     [field: SerializeField] public Transform DashAttackCheckPos { get; private set; }
-    [field: SerializeField] public Vector2 DashAttackCheckSize { get; private set; } = new(1f, 1f);
 
 
     #endregion
@@ -143,7 +114,7 @@ public class PlayerSFM : MonoBehaviour
 
     void Start()
     {
-        ExtraJumpCountLeft = ExtraJumpCount;
+        ExtraJumpCountLeft = PlayerConfig.ExtraJumpCount;
         GameManager.Instance.SetPlayer(gameObject);
     }
     void OnEnable()
@@ -217,8 +188,8 @@ public class PlayerSFM : MonoBehaviour
 
         if (IsGrounded)
         {
-            ExtraJumpCountLeft = ExtraJumpCount;
-            TimeLastGrounded = coyoteTime;
+            ExtraJumpCountLeft = PlayerConfig.ExtraJumpCount;
+            TimeLastGrounded = PlayerConfig.CoyoteTime;
         }
 
 
@@ -229,7 +200,7 @@ public class PlayerSFM : MonoBehaviour
         if (IsTouchWall)
         {
             isWallInFront = IsTouchBackWall ? !isFacingRight : isFacingRight;
-            TimeLastWallTouch = coyoteTime;
+            TimeLastWallTouch = PlayerConfig.CoyoteTime;
         }
     }
 
@@ -238,23 +209,23 @@ public class PlayerSFM : MonoBehaviour
         TimeLastJumpPressed = 0f;
         TimeJump = 0f;
         ExtraJumpCountLeft--;
-        rb.linearVelocityY = airJumpForce;
+        rb.linearVelocityY = PlayerConfig.airJumpForce;
     }
     public void GroundJump()
     {
         TimeLastJumpPressed = 0f;
         TimeJump = 0f;
         TimeLastGrounded = 0f;
-        rb.linearVelocityY = jumpForce;
+        rb.linearVelocityY = PlayerConfig.jumpForce;
 
     }
     public void WallJump()
     {
         TimeLastJumpPressed = 0f;
         TimeJump = -1f;
-        XVelocity = isWallInFront ? -wallJumpXForce : wallJumpXForce;
+        XVelocity = isWallInFront ? -PlayerConfig.WallJumpXForce : PlayerConfig.WallJumpXForce;
 
-        rb.linearVelocity = new Vector2(XVelocity, wallJumpYForce);
+        rb.linearVelocity = new Vector2(XVelocity, PlayerConfig.WallJumpYForce);
     }
 
     public bool CanStandUp() =>
@@ -299,7 +270,7 @@ public class PlayerSFM : MonoBehaviour
         if (context.performed)
         {
             ButtonJump = true;
-            TimeLastJumpPressed = JumpBufferTime;
+            TimeLastJumpPressed = PlayerConfig.JumpBufferTime;
         }
         else if (context.canceled)
             ButtonJump = false;
@@ -387,8 +358,8 @@ public class PlayerSFM : MonoBehaviour
         if (ShowAttackCheck)
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(AttackCheckPos.position, AttackCheckSize);
-            Gizmos.DrawWireCube(DashAttackCheckPos.position, DashAttackCheckSize);
+            Gizmos.DrawWireCube(AttackCheckPos.position, StandAttackConfig.Size);
+            Gizmos.DrawWireCube(DashAttackCheckPos.position, DashAttackConfig.Size);
         }
     }
 }

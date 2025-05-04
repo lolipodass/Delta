@@ -3,15 +3,16 @@ public class AttackState : PlayerBaseState, IAttackHandler
 {
     public AttackState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
     public override bool CanRotate => false;
-    int IAttackHandler.Damage => player.Damage;
+    int IAttackHandler.Damage => (int)(player.StandAttackConfig.DamageMultiplier * player.PlayerConfig.Damage);
     Vector2 IAttackHandler.Position => player.AttackCheckPos.position;
-    Vector2 IAttackHandler.Size => player.AttackCheckSize;
+    Vector2 IAttackHandler.Size => player.StandAttackConfig.Size;
 
     private float attackTime = 0;
 
     public override void Enter()
     {
-        player.animator.SetTrigger("Attack"); attackTime = player.AttackTime;
+        player.animator.SetTrigger("Attack");
+        attackTime = player.StandAttackConfig.AttackTime;
     }
     public override void PhysicsUpdate()
     {

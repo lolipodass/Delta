@@ -5,14 +5,14 @@ public class DashAttackState : PlayerBaseState, IAttackHandler
     private float attackTime = 0;
     public override bool CanRotate => false;
     public override bool CanHurt => false;
-    int IAttackHandler.Damage => player.Damage;
+    int IAttackHandler.Damage => (int)(player.DashAttackConfig.DamageMultiplier * player.PlayerConfig.Damage);
     Vector2 IAttackHandler.Position => player.DashAttackCheckPos.position;
-    Vector2 IAttackHandler.Size => player.DashAttackCheckSize;
+    Vector2 IAttackHandler.Size => player.DashAttackConfig.Size;
 
     public override void Enter()
     {
         player.animator.SetTrigger("Attack");
-        attackTime = player.AttackTime;
+        attackTime = player.DashAttackConfig.AttackTime;
     }
     public override void PhysicsUpdate()
     {

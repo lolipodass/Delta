@@ -1,9 +1,12 @@
+using UnityEditor;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public GameObject Player { get; private set; }
+
+    private const string PreviousScenePathKey = "PlayFromZeroScene_PreviousScenePath";
 
     public void Awake()
     {
@@ -12,6 +15,19 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             SceneLoader.LoadMenu();
+
+#if UNITY_EDITOR
+            string previousScenePath = EditorPrefs.GetString(PreviousScenePathKey, "");
+            if (!string.IsNullOrEmpty(previousScenePath))
+            {
+                SceneLoader.LoadScene(previousScenePath);
+            }
+            else
+            {
+                SceneLoader.LoadMenu();
+            }
+
+#endif
         }
         else
         {

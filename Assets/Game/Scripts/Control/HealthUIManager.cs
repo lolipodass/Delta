@@ -18,7 +18,7 @@ public class HealthUIManager : MonoBehaviour
     }
     public void UpdateHealthUI(int hp)
     {
-        HealthText.text = "HP: " + hp;
+        HealthText.text = "HP configured: " + hp;
     }
     public void OnDestroy()
     {

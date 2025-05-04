@@ -10,7 +10,7 @@ public class HurtState : PlayerBaseState
     {
         Debug.Log("hurt");
         player.animator.SetTrigger("Hurt");
-        hurtTime = player.InvincibilityAfterHit;
+        hurtTime = player.PlayerConfig.InvincibilityAfterHit;
     }
 
     public override void PhysicsUpdate()

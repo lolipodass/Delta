@@ -24,11 +24,11 @@ public abstract class PlayerBaseState
 
         if (CanMoveHorizontal)
         {
-            float targetXVelocity = player.ButtonMoveInput * player.MaxSpeed * HorizontalSpeedMultiplayer;
+            float targetXVelocity = player.ButtonMoveInput * player.PlayerConfig.MaxSpeed * HorizontalSpeedMultiplayer;
             XVelocity = Mathf.Lerp(XVelocity, targetXVelocity, 10f * Time.fixedDeltaTime);
         }
         if (CanMoveVertical)
-            YVelocity = Mathf.Max(YVelocity, -player.MaxFallSpeed * VerticalSpeedMultiplayer);
+            YVelocity = Mathf.Max(YVelocity, -player.PlayerConfig.MaxFallSpeed * VerticalSpeedMultiplayer);
         else
             YVelocity = 0;
 

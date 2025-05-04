@@ -44,6 +44,6 @@ public class JumpState : PlayerBaseState
         // }
     }
 
-    public override float HorizontalSpeedMultiplayer => player.AirControlFactor;
+    public override float HorizontalSpeedMultiplayer => player.PlayerConfig.AirControlFactor;
 
 }

@@ -8818,27 +8818,9 @@ MonoBehaviour:
   healthComponent: {fileID: 1930081150}
   standBoxCollider: {fileID: 1930081142}
   crouchBoxCollider: {fileID: 1930081149}
-  <AttackTime>k__BackingField: 0.7
-  <AttackCooldown>k__BackingField: 0.5
-  <InvincibilityAfterHit>k__BackingField: 0.5
-  <MaxSpeed>k__BackingField: 4
-  <AirControlFactor>k__BackingField: 0.98
-  <WallSlideSpeed>k__BackingField: 0.1
-  <MaxFallSpeed>k__BackingField: 20
-  <HasDash>k__BackingField: 1
-  <DashTime>k__BackingField: 0.7
-  <DashForce>k__BackingField: 10
-  <DashCooldown>k__BackingField: 2
-  jumpForce: 18
-  airJumpForce: 15
-  wallJumpYForce: 15
-  wallJumpXForce: 20
-  <coyoteTime>k__BackingField: 0.1
-  <JumpBufferTime>k__BackingField: 0.1
-  <MinimalJumpTime>k__BackingField: 0.08
-  ExtraJumpCount: 1
-  <HasWallJump>k__BackingField: 1
-  <HasWallSlide>k__BackingField: 1
+  <PlayerConfig>k__BackingField: {fileID: 11400000, guid: d036ed95c63a6bd49a73d0fd7ff3be45, type: 2}
+  <StandAttackConfig>k__BackingField: {fileID: 11400000, guid: d2f459fb5f0f176488cb1ae25a3a15f3, type: 2}
+  <DashAttackConfig>k__BackingField: {fileID: 11400000, guid: 50d7781506294b34491eb5eafe1e5fac, type: 2}
   groundCheckPos: {fileID: 338494921}
   groundCheckSize: {x: 0.6, y: -0.06}
   groundMask:
@@ -8856,7 +8838,6 @@ MonoBehaviour:
   crouchMask:
     serializedVersion: 2
     m_Bits: 8
-  <Damage>k__BackingField: 1
   <AttackCheckPos>k__BackingField: {fileID: 1696482614}
   <AttackCheckSize>k__BackingField: {x: 3.3, y: 2.7}
   <DashAttackCheckPos>k__BackingField: {fileID: 923903605}

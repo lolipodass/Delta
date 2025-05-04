@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdc54a012a5bdaa4c820db910014e7d6, type: 3}
+  m_Name: PlayerInfo
+  m_EditorClassIdentifier: 
+  Damage: 1
+  InvincibilityAfterHit: 0.5
+  MaxSpeed: 4
+  AirControlFactor: 0.98
+  MaxFallSpeed: 20
+  jumpForce: 18
+  airJumpForce: 15
+  ExtraJumpCount: 1
+  CoyoteTime: 0.1
+  JumpBufferTime: 0.1
+  MinimalJumpTime: 0.08
+  HasWallSlide: 1
+  WallSlideSpeed: 0.1
+  HasWallJump: 1
+  WallJumpYForce: 15
+  WallJumpXForce: 20
+  HasDash: 1
+  DashTime: 0.7
+  DashForce: 10
+  DashCooldown: 2
