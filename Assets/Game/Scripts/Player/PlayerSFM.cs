@@ -17,7 +17,7 @@ public class PlayerSFM : MonoBehaviour
     [SerializeField] private BoxCollider2D standBoxCollider;
     [SerializeField] private BoxCollider2D crouchBoxCollider;
 
-    [field: SerializeField] public PlayerConfig PlayerConfig { get; private set; }
+    [field: SerializeField] public PlayerBaseInfo PlayerConfig { get; private set; }
     [field: SerializeField] public PlayerAttackConfig StandAttackConfig { get; private set; }
     [field: SerializeField] public PlayerAttackConfig DashAttackConfig { get; private set; }
 

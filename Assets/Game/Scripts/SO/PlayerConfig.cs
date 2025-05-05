@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "MovementInfo", menuName = "Scriptable Objects/PlayerConfig")]
-public class PlayerConfig : ScriptableObject
+[CreateAssetMenu(fileName = "MovementInfo", menuName = "Scriptable Objects/PlayerBaseInfo")]
+public class PlayerBaseInfo : ScriptableObject
 {
     public float Damage;
     public float InvincibilityAfterHit;
@@ -25,6 +25,5 @@ public class PlayerConfig : ScriptableObject
     public float DashTime;
     public float DashForce;
     public float DashCooldown;
-
 
 }
