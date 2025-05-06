@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -5,6 +6,10 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
+    public event Action<string> OnSceneLoaded;
+    public event Action<string> OnSceneUnloaded;
+    public event Action OnGameplayUILoaded;
+    public event Action OnFirstSceneLoaded;
     public static SceneLoader Instance;
     public void Awake()
     {
@@ -34,21 +39,20 @@ public class SceneLoader : MonoBehaviour
         // loadedRoomScenes.Add(initialRoomSceneName);
 
         Debug.Log($"Scene loaded: {initialRoomSceneName}");
+        OnFirstSceneLoaded?.Invoke();
+        OnSceneLoaded?.Invoke(initialRoomSceneName);
 
         if (!SceneManager.GetSceneByName(gameplayUISceneName).isLoaded)
         {
             yield return SceneManager.LoadSceneAsync(gameplayUISceneName, LoadSceneMode.Additive);
             Debug.Log($"Scene loaded: {gameplayUISceneName} (Additive)");
-            // Здесь можно добавить код, который уведомит GameManager/PauseManager о загрузке UI сцены
-            // чтобы они могли найти нужные UI элементы (панель паузы, HP бар и т.д.)
-            // Например: GameManager.Instance.NotifyGameplayUILoaded();
+            OnSceneLoaded?.Invoke(gameplayUISceneName);
+            OnGameplayUILoaded?.Invoke();
         }
 
         Debug.Log("Initial game scenes loaded.");
-        // Возможно, здесь GameManger активирует скрипты игрового процесса,
-        // которые могли ждать полной загрузки сцен.
-        // GameManager.Instance.StartGameplayLogic();
     }
+
 
     public static void LoadScene(string sceneName)
     {

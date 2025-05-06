@@ -12,7 +12,7 @@ public class FallState : PlayerBaseState
     public override void LogicUpdate()
     {
 
-        if (player.IsTouchWall && player.PlayerConfig.HasWallSlide)
+        if (player.IsTouchWall && Stats.Stats.HasWallSlide)
         {
             stateMachine.ChangeState(player.wallSlideState);
             return;
@@ -31,6 +31,6 @@ public class FallState : PlayerBaseState
         }
         isHoldOnEnterJumpButton = player.ButtonJump;
     }
-    public override float HorizontalSpeedMultiplayer => player.PlayerConfig.AirControlFactor;
+    public override float HorizontalSpeedMultiplayer => Stats.Stats.AirControlFactor;
 
 }

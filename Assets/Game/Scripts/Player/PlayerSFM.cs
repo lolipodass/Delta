@@ -13,11 +13,9 @@ public class PlayerSFM : MonoBehaviour
     [Header("References")]
     public Rigidbody2D rb;
     public Animator animator;
-    [SerializeField] private HealthComponent healthComponent;
+    public PlayerStats PlayerStats { get; private set; }
     [SerializeField] private BoxCollider2D standBoxCollider;
     [SerializeField] private BoxCollider2D crouchBoxCollider;
-
-    [field: SerializeField] public PlayerBaseInfo PlayerConfig { get; private set; }
     [field: SerializeField] public PlayerAttackConfig StandAttackConfig { get; private set; }
     [field: SerializeField] public PlayerAttackConfig DashAttackConfig { get; private set; }
 
@@ -48,12 +46,6 @@ public class PlayerSFM : MonoBehaviour
     [Header("Debug")]
     public bool isDebug = false;
     public bool ShowAttackCheck = false;
-
-    [Button]
-    void addForce()
-    {
-        rb.AddForce(Vector2.up * 20f, ForceMode2D.Impulse);
-    }
 
     #endregion
 
@@ -114,23 +106,23 @@ public class PlayerSFM : MonoBehaviour
 
     void Start()
     {
-        ExtraJumpCountLeft = PlayerConfig.ExtraJumpCount;
+        ExtraJumpCountLeft = PlayerStats.Stats.ExtraJumpCount;
         GameManager.Instance.SetPlayer(gameObject);
     }
     void OnEnable()
     {
-        if (healthComponent != null)
+        if (PlayerStats.Health != null)
         {
-            healthComponent.OnDamage += OnHurt;
-            healthComponent.OnDeath += OnDeath;
+            PlayerStats.Health.OnDamage += OnHurt;
+            PlayerStats.Health.OnDeath += OnDeath;
         }
     }
     void OnDisable()
     {
-        if (healthComponent != null)
+        if (PlayerStats.Health != null)
         {
-            healthComponent.OnDamage -= OnHurt;
-            healthComponent.OnDeath -= OnDeath;
+            PlayerStats.Health.OnDamage -= OnHurt;
+            PlayerStats.Health.OnDeath -= OnDeath;
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -139,7 +131,7 @@ public class PlayerSFM : MonoBehaviour
 
         if (collision.TryGetComponent<DamageDealer>(out var damageDealer))
         {
-            healthComponent.TakeDamage(damageDealer.damageAmount);
+            PlayerStats.Health.TakeDamage(damageDealer.damageAmount);
         }
     }
 
@@ -147,7 +139,7 @@ public class PlayerSFM : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        healthComponent = GetComponent<HealthComponent>();
+        PlayerStats = GetComponent<PlayerStats>();
         StateMachine = new PlayerStateMachine(this);
         idleState = new IdleState(this, StateMachine);
         moveState = new MoveState(this, StateMachine);
@@ -188,8 +180,8 @@ public class PlayerSFM : MonoBehaviour
 
         if (IsGrounded)
         {
-            ExtraJumpCountLeft = PlayerConfig.ExtraJumpCount;
-            TimeLastGrounded = PlayerConfig.CoyoteTime;
+            ExtraJumpCountLeft = PlayerStats.Stats.ExtraJumpCount;
+            TimeLastGrounded = PlayerStats.Stats.CoyoteTime;
         }
 
 
@@ -200,7 +192,7 @@ public class PlayerSFM : MonoBehaviour
         if (IsTouchWall)
         {
             isWallInFront = IsTouchBackWall ? !isFacingRight : isFacingRight;
-            TimeLastWallTouch = PlayerConfig.CoyoteTime;
+            TimeLastWallTouch = PlayerStats.Stats.CoyoteTime;
         }
     }
 
@@ -209,23 +201,23 @@ public class PlayerSFM : MonoBehaviour
         TimeLastJumpPressed = 0f;
         TimeJump = 0f;
         ExtraJumpCountLeft--;
-        rb.linearVelocityY = PlayerConfig.airJumpForce;
+        rb.linearVelocityY = PlayerStats.Stats.AirJumpForce;
     }
     public void GroundJump()
     {
         TimeLastJumpPressed = 0f;
         TimeJump = 0f;
         TimeLastGrounded = 0f;
-        rb.linearVelocityY = PlayerConfig.jumpForce;
+        rb.linearVelocityY = PlayerStats.Stats.JumpForce;
 
     }
     public void WallJump()
     {
         TimeLastJumpPressed = 0f;
         TimeJump = -1f;
-        XVelocity = isWallInFront ? -PlayerConfig.WallJumpXForce : PlayerConfig.WallJumpXForce;
+        XVelocity = isWallInFront ? -PlayerStats.Stats.WallJumpXForce : PlayerStats.Stats.WallJumpXForce;
 
-        rb.linearVelocity = new Vector2(XVelocity, PlayerConfig.WallJumpYForce);
+        rb.linearVelocity = new Vector2(XVelocity, PlayerStats.Stats.WallJumpYForce);
     }
 
     public bool CanStandUp() =>
@@ -270,7 +262,7 @@ public class PlayerSFM : MonoBehaviour
         if (context.performed)
         {
             ButtonJump = true;
-            TimeLastJumpPressed = PlayerConfig.JumpBufferTime;
+            TimeLastJumpPressed = PlayerStats.Stats.JumpBufferTime;
         }
         else if (context.canceled)
             ButtonJump = false;
@@ -304,11 +296,13 @@ public class PlayerSFM : MonoBehaviour
     #region CallBacks
     private void OnHurt(int amount)
     {
+        Debug.Log("onHurt");
         StateMachine.ChangeState(hurtState);
     }
 
     private void OnDeath()
     {
+        Debug.Log("OnDeath");
         StateMachine.ChangeState(deathState);
     }
     public void AnimationEvent_Attack()

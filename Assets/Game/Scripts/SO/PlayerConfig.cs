@@ -26,4 +26,34 @@ public class PlayerBaseInfo : ScriptableObject
     public float DashForce;
     public float DashCooldown;
 
+    public float GetNumericStat(PlayerStatType type)
+    {
+        return type switch
+        {
+            PlayerStatType.MaxHP => 100,
+            PlayerStatType.Damage => Damage,
+            PlayerStatType.InvincibilityAfterHit => InvincibilityAfterHit,
+            PlayerStatType.Speed => MaxSpeed,
+            PlayerStatType.AirControlFactor => AirControlFactor,
+            PlayerStatType.FallSpeed => MaxFallSpeed,
+            PlayerStatType.JumpForce => jumpForce,
+            PlayerStatType.AirJumpForce => airJumpForce,
+            PlayerStatType.ExtraJumpCount => ExtraJumpCount,
+            PlayerStatType.WallSlideSpeed => WallSlideSpeed,
+            PlayerStatType.DashTime => DashTime,
+            PlayerStatType.DashForce => DashForce,
+            PlayerStatType.DashCooldown => DashCooldown,
+            _ => 0,
+        };
+    }
+    public bool GetBooleanStat(PlayerStatType type)
+    {
+        return type switch
+        {
+            PlayerStatType.HasWallSlide => HasWallSlide,
+            PlayerStatType.HasWallJump => HasWallJump,
+            PlayerStatType.HasDash => HasDash,
+            _ => false,
+        };
+    }
 }

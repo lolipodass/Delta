@@ -3,11 +3,13 @@ using UnityEngine;
 public abstract class PlayerBaseState
 {
     protected PlayerStateMachine stateMachine;
+    protected PlayerStats Stats { get; private set; }
     protected PlayerSFM player;
     protected PlayerBaseState(PlayerSFM player, PlayerStateMachine stateMachine)
     {
         this.player = player;
         this.stateMachine = stateMachine;
+        Stats = player.PlayerStats;
     }
     virtual public void Enter() { }
     virtual public void LogicUpdate() { }
@@ -24,11 +26,11 @@ public abstract class PlayerBaseState
 
         if (CanMoveHorizontal)
         {
-            float targetXVelocity = player.ButtonMoveInput * player.PlayerConfig.MaxSpeed * HorizontalSpeedMultiplayer;
+            float targetXVelocity = player.ButtonMoveInput * Stats.Stats.MaxSpeed * HorizontalSpeedMultiplayer;
             XVelocity = Mathf.Lerp(XVelocity, targetXVelocity, 10f * Time.fixedDeltaTime);
         }
         if (CanMoveVertical)
-            YVelocity = Mathf.Max(YVelocity, -player.PlayerConfig.MaxFallSpeed * VerticalSpeedMultiplayer);
+            YVelocity = Mathf.Max(YVelocity, -Stats.Stats.MaxFallSpeed * VerticalSpeedMultiplayer);
         else
             YVelocity = 0;
 

@@ -33,7 +33,7 @@ public class MoveState : PlayerBaseState
             stateMachine.ChangeState(player.fallState);
             return;
         }
-        if (player.ButtonDash && player.PlayerConfig.HasDash && player.CanDash)
+        if (player.ButtonDash && Stats.Stats.HasDash && player.CanDash)
         {
             stateMachine.ChangeState(player.dashState);
             return;

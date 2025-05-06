@@ -4,14 +4,14 @@ public class DashState : PlayerBaseState
 {
     public DashState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine)
     {
-        dashTime = player.PlayerConfig.DashTime;
+        dashTime = Stats.Stats.DashTime;
     }
     public override bool CanRotate => false;
     public override bool CanHurt => false;
     private float gravity;
     public override void Enter()
     {
-        dashTime = player.PlayerConfig.DashTime;
+        dashTime = Stats.Stats.DashTime;
         player.AnimationDash = true;
         gravity = player.rb.gravityScale;
         player.rb.gravityScale = 0;
@@ -24,10 +24,10 @@ public class DashState : PlayerBaseState
         dashTime -= Time.deltaTime;
         if (dashTime <= 0f)
         {
-            player.timeDashCooldown = player.PlayerConfig.DashCooldown;
+            player.timeDashCooldown = Stats.Stats.DashCooldown;
             stateMachine.ChangeState(player.idleState);
         }
-        player.rb.linearVelocityX = player.isFacingRight ? player.PlayerConfig.DashForce : -player.PlayerConfig.DashForce;
+        player.rb.linearVelocityX = player.isFacingRight ? Stats.Stats.DashForce : -Stats.Stats.DashForce;
         if (player.ButtonAttack && player.IsGrounded)
         {
             stateMachine.ChangeState(player.dashAttackState);

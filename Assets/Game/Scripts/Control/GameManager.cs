@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,8 +15,9 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            SceneLoader.LoadMenu();
 
+            SceneLoader.LoadMenu();
+            SceneLoader.Instance.OnFirstSceneLoaded += OnFirstSceneLoaded;
 #if UNITY_EDITOR
             string previousScenePath = EditorPrefs.GetString(PreviousScenePathKey, "");
             if (!string.IsNullOrEmpty(previousScenePath))
@@ -26,8 +28,11 @@ public class GameManager : MonoBehaviour
             {
                 SceneLoader.LoadMenu();
             }
-
+            return;
 #endif
+#pragma warning disable CS0162 
+            SceneLoader.LoadMenu();
+#pragma warning restore CS0162
         }
         else
         {
@@ -35,9 +40,26 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private bool isNewGame = false;
+    void OnFirstSceneLoaded()
+    {
+
+        if (isNewGame)
+        {
+            SaveLoadManager.Instance.SaveGame();
+            isNewGame = false;
+        }
+        StartGameplayLogic();
+    }
+
     public void StartGame()
     {
         SceneLoader.Instance.StartNewGame("FirstLevel");
+    }
+    public void CreateNewGame()
+    {
+        SceneLoader.Instance.StartNewGame("FirstLevel");
+        isNewGame = true;
     }
 
     public void SetPlayer(GameObject player)
@@ -45,4 +67,14 @@ public class GameManager : MonoBehaviour
         Player = player;
     }
 
+    public void StartGameplayLogic()
+    {
+        SaveLoadManager.Instance.LoadGame();
+    }
+
+    public void ExitGame()
+    {
+        SaveLoadManager.Instance.SaveGame();
+        SceneLoader.BackToMainMenu();
+    }
 }

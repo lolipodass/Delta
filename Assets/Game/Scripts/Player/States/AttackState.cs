@@ -3,7 +3,7 @@ public class AttackState : PlayerBaseState, IAttackHandler
 {
     public AttackState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
     public override bool CanRotate => false;
-    int IAttackHandler.Damage => (int)(player.StandAttackConfig.DamageMultiplier * player.PlayerConfig.Damage);
+    int IAttackHandler.Damage => (int)(player.StandAttackConfig.DamageMultiplier * Stats.Stats.Damage);
     Vector2 IAttackHandler.Position => player.AttackCheckPos.position;
     Vector2 IAttackHandler.Size => player.StandAttackConfig.Size;
 

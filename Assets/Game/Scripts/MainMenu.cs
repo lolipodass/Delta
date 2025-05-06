@@ -3,7 +3,11 @@ using UnityEngine;
 public class MainMenu : MonoBehaviour
 {
 
-    public void PlayPressed()
+    public void PlayNewGamePressed()
+    {
+        GameManager.Instance.CreateNewGame();
+    }
+    public void ContinuePressed()
     {
         GameManager.Instance.StartGame();
     }

@@ -9,7 +9,7 @@ public class WallSlideState : PlayerBaseState
     public override void Enter()
     {
         isHoldOnEnterJumpButton = player.ButtonJump;
-        if (player.TimeLastJumpPressed > 0f && player.ButtonJump && player.PlayerConfig.HasWallSlide && player.ButtonJump)
+        if (player.TimeLastJumpPressed > 0f && player.ButtonJump && Stats.Stats.HasWallSlide && player.ButtonJump)
         {
             stateMachine.ChangeState(player.jumpState);
             return;
@@ -27,7 +27,7 @@ public class WallSlideState : PlayerBaseState
             stateMachine.ChangeState(player.fallState);
             return;
         }
-        if (player.ButtonJump && player.PlayerConfig.HasWallJump && !isHoldOnEnterJumpButton)
+        if (player.ButtonJump && Stats.Stats.HasWallJump && !isHoldOnEnterJumpButton)
         {
             stateMachine.ChangeState(player.jumpState);
             return;
@@ -49,7 +49,7 @@ public class WallSlideState : PlayerBaseState
         {
             if (!player.IsTouchBackWall)
             {
-                return player.PlayerConfig.WallSlideSpeed;
+                return Stats.Stats.WallSlideSpeed;
             }
             return base.VerticalSpeedMultiplayer;
         }

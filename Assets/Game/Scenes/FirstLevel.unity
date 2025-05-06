@@ -8451,6 +8451,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1930081145}
+  - component: {fileID: 1930081151}
   - component: {fileID: 1930081150}
   - component: {fileID: 1930081147}
   - component: {fileID: 1930081143}
@@ -8815,10 +8816,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 1930081143}
   animator: {fileID: 1930081148}
-  healthComponent: {fileID: 1930081150}
   standBoxCollider: {fileID: 1930081142}
   crouchBoxCollider: {fileID: 1930081149}
-  <PlayerConfig>k__BackingField: {fileID: 11400000, guid: d036ed95c63a6bd49a73d0fd7ff3be45, type: 2}
   <StandAttackConfig>k__BackingField: {fileID: 11400000, guid: d2f459fb5f0f176488cb1ae25a3a15f3, type: 2}
   <DashAttackConfig>k__BackingField: {fileID: 11400000, guid: 50d7781506294b34491eb5eafe1e5fac, type: 2}
   groundCheckPos: {fileID: 338494921}
@@ -8839,9 +8838,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   <AttackCheckPos>k__BackingField: {fileID: 1696482614}
-  <AttackCheckSize>k__BackingField: {x: 3.3, y: 2.7}
   <DashAttackCheckPos>k__BackingField: {fileID: 923903605}
-  <DashAttackCheckSize>k__BackingField: {x: 3.8, y: 2.5}
   isDebug: 0
   ShowAttackCheck: 0
   AnimationDash: 0
@@ -8928,6 +8925,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <MaxHealth>k__BackingField: 2
+--- !u!114 &1930081151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930081141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d51a3c8a01744c446aad4093a33ce3cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Health>k__BackingField: {fileID: 1930081150}
+  _playerConfig: {fileID: 11400000, guid: d036ed95c63a6bd49a73d0fd7ff3be45, type: 2}
 --- !u!1 &1944673112
 GameObject:
   m_ObjectHideFlags: 0

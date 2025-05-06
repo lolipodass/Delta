@@ -6,7 +6,7 @@ public class JumpCutState : PlayerBaseState
 
     public override void LogicUpdate()
     {
-        if (YVelocity > 0f && player.TimeJump > player.PlayerConfig.MinimalJumpTime && player.TimeJump < PlayerSFM.maxJumpTime)
+        if (YVelocity > 0f && player.TimeJump > Stats.Stats.MinimalJumpTime && player.TimeJump < PlayerSFM.maxJumpTime)
         {
             player.rb.linearVelocityY /= 2;
             // return;

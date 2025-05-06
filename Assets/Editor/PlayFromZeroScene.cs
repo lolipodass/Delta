@@ -17,6 +17,12 @@ public static class PlayFromZeroScene
     {
         if (state == PlayModeStateChange.ExitingEditMode)
         {
+            Scene currentScene = SceneManager.GetActiveScene();
+
+            if (currentScene.isDirty)
+            {
+                EditorSceneManager.SaveScene(currentScene);
+            }
             string currentScenePath = SceneManager.GetActiveScene().path;
             EditorPrefs.SetString(PreviousScenePathKey, currentScenePath);
             EditorPrefs.SetBool(ShouldLoadPreviousSceneKey, true);

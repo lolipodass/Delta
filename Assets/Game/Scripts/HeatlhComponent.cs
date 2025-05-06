@@ -25,8 +25,12 @@ public class HealthComponent : MonoBehaviour
     {
         if (isDead)
             return;
+        Debug.Log($"Health: {CurrentHealth}");
+        Debug.Log($"TakeDamage: {damage}");
         CurrentHealth -= damage;
+        Debug.Log($"Damage: {damage}");
 
+        Debug.Log($"Health: {CurrentHealth}");
         try
         {
             OnDamage?.Invoke(damage);
@@ -34,6 +38,7 @@ public class HealthComponent : MonoBehaviour
             if (CurrentHealth <= 0)
             {
                 isDead = true;
+                Debug.Log("isDead");
                 OnDeath?.Invoke();
             }
         }
@@ -65,5 +70,9 @@ public class HealthComponent : MonoBehaviour
         isDead = false;
         CurrentHealth = MaxHealth;
         OnHealthChanged?.Invoke(CurrentHealth);
+    }
+    public void SetMaxHealth(int maxHealth)
+    {
+        MaxHealth = maxHealth;
     }
 }

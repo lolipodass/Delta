@@ -1,13 +1,13 @@
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 
 [System.Serializable]
 public class PlayerStatsManager
 {
-    public PlayerBaseInfo _playerBaseInfo;
+    private PlayerBaseInfo _playerBaseInfo;
+    public PlayerBaseInfo PlayerBaseInfo => _playerBaseInfo;
 
-    public List<UpgradeItemData> UpgradeItems { get; private set; }
+    private List<UpgradeModifier> _modifiers;
+    public List<UpgradeModifier> Modifiers => _modifiers;
 
     public float CoyoteTime => _playerBaseInfo.CoyoteTime;
     public float JumpBufferTime => _playerBaseInfo.JumpBufferTime;
@@ -17,104 +17,142 @@ public class PlayerStatsManager
 
     private int _cachedMaxHP;
     private int _cachedDamage;
-    private int _cachedInvincibilityAfterHit;
+    private float _cachedInvincibilityAfterHit;
     private float _cachedSpeed;
     private float _cachedAirControlFactor;
     private float _cachedFallSpeed;
     private float _cachedJumpForce;
     private float _cachedAirJumpForce;
     private int _cachedExtraJumpCount;
-    private bool _cachedHasWallSlide;
     private float _cachedWallSlideSpeed;
-    private bool _cachedHasWallJump;
-    private float _cachedWallJumpYForce;
-    private float _cachedWallJumpXForce;
-    private bool _cachedHasDash;
     private float _cachedDashTime;
     private float _cachedDashForce;
     private float _cachedDashCooldown;
+
+    private bool _cachedHasWallSlide;
+    private bool _cachedHasWallJump;
+    private bool _cachedHasDash;
     public int MaxHP => _cachedMaxHP;
     public int Damage => _cachedDamage;
-    public int InvincibilityAfterHit => _cachedInvincibilityAfterHit;
-    public float Speed => _cachedSpeed;
+    public float InvincibilityAfterHit => _cachedInvincibilityAfterHit;
+    public float MaxSpeed => _cachedSpeed;
     public float AirControlFactor => _cachedAirControlFactor;
-    public float FallSpeed => _cachedFallSpeed;
+    public float MaxFallSpeed => _cachedFallSpeed;
     public float JumpForce => _cachedJumpForce;
     public float AirJumpForce => _cachedAirJumpForce;
     public int ExtraJumpCount => _cachedExtraJumpCount;
-    public bool HasWallSlide => _cachedHasWallSlide;
     public float WallSlideSpeed => _cachedWallSlideSpeed;
-    public bool HasWallJump => _cachedHasWallJump;
-    public bool HasDash => _cachedHasDash;
     public float DashTime => _cachedDashTime;
     public float DashForce => _cachedDashForce;
     public float DashCooldown => _cachedDashCooldown;
 
+    public bool HasWallSlide => _cachedHasWallSlide;
+    public bool HasWallJump => _cachedHasWallJump;
+    public bool HasDash => _cachedHasDash;
+
     public PlayerStatsManager(PlayerBaseInfo playerBaseInfo)
     {
         _playerBaseInfo = playerBaseInfo;
-        UpgradeItems = new List<UpgradeItemData>();
+        _modifiers = new List<UpgradeModifier>();
     }
 
-    public void AddUpgradeItem(UpgradeItemData upgradeItemData)
+    public void SetPlayerBaseInfo(PlayerBaseInfo playerBaseInfo)
     {
-        UpgradeItems.Add(upgradeItemData);
+        _playerBaseInfo = playerBaseInfo;
         RecalculateStats();
     }
 
-    public void RemoveUpgradeItem(UpgradeItemData upgradeItemData)
+    public void AddModifier(UpgradeModifier upgradeItem)
     {
-        UpgradeItems.Remove(upgradeItemData);
+        _modifiers.Add(upgradeItem);
+        RecalculateStats();
+    }
+    public void AddModifiers(List<UpgradeModifier> upgradeItems)
+    {
+        _modifiers.AddRange(upgradeItems);
+        RecalculateStats();
+    }
+
+    public void RemoveModifiers(string upgradeItemID)
+    {
+        _modifiers.RemoveAll(x => x.SourceID == upgradeItemID);
         RecalculateStats();
     }
     public void RecalculateStats()
     {
+        _cachedHasWallSlide = CalculateBool(PlayerStatType.HasWallSlide);
+        _cachedHasWallJump = CalculateBool(PlayerStatType.HasWallJump);
+        _cachedHasDash = CalculateBool(PlayerStatType.HasDash);
+
         _cachedMaxHP = (int)CalculateStats(PlayerStatType.MaxHP);
         _cachedDamage = (int)CalculateStats(PlayerStatType.Damage);
-        _cachedInvincibilityAfterHit = (int)CalculateStats(PlayerStatType.InvincibilityAfterHit);
+        _cachedInvincibilityAfterHit = CalculateStats(PlayerStatType.InvincibilityAfterHit);
         _cachedSpeed = CalculateStats(PlayerStatType.Speed);
         _cachedAirControlFactor = CalculateStats(PlayerStatType.AirControlFactor);
         _cachedFallSpeed = CalculateStats(PlayerStatType.FallSpeed);
         _cachedJumpForce = CalculateStats(PlayerStatType.JumpForce);
         _cachedAirJumpForce = CalculateStats(PlayerStatType.AirJumpForce);
         _cachedExtraJumpCount = (int)CalculateStats(PlayerStatType.ExtraJumpCount);
-        // _cachedHasWallSlide = CalculateStats(PlayerStatType.HasWallSlide);
         _cachedWallSlideSpeed = CalculateStats(PlayerStatType.WallSlideSpeed);
-        // _cachedHasWallJump = CalculateStats(PlayerStatType.HasWallJump);
-        // _cachedHasDash = CalculateStats(PlayerStatType.HasDash);
         _cachedDashTime = CalculateStats(PlayerStatType.DashTime);
         _cachedDashForce = CalculateStats(PlayerStatType.DashForce);
         _cachedDashCooldown = CalculateStats(PlayerStatType.DashCooldown);
     }
     private float CalculateStats(PlayerStatType type)
     {
-        float value = 0;
-        foreach (var upgradeItem in UpgradeItems)
+        float value = _playerBaseInfo.GetNumericStat(type);
+        float additiveBonus = 0;
+        float multiplicativeBonus = 1;
+        float overrideValue = 0;
+        int priorityOverride = UpgradeModifier.MinPriority;
+        foreach (var modifier in _modifiers)
         {
-            foreach (var modifier in upgradeItem.modifiersToApply)
+            if (modifier.Type == type)
             {
-                if (modifier.Type == type)
+                switch (modifier.ModType)
                 {
-                    switch (modifier.ModType)
-                    {
-                        case ModifierType.Additive:
-                            value += modifier.Value;
-                            break;
-                        case ModifierType.Multiplicative:
-                            value *= modifier.Value;
-                            break;
-                        case ModifierType.Override:
-                            value = modifier.Value;
-                            break;
-                    }
+                    case ModifierType.Additive:
+                        additiveBonus += modifier.Value;
+                        break;
+                    case ModifierType.Multiplicative:
+                        multiplicativeBonus *= modifier.Value;
+                        break;
+                    case ModifierType.Override:
+                        if (priorityOverride < modifier.Priority)
+                            overrideValue = modifier.Value;
+                        break;
                 }
             }
         }
-        return value;
+        if (priorityOverride > UpgradeModifier.MinPriority)
+            return overrideValue;
+        return value * multiplicativeBonus + additiveBonus;
     }
-    public void SetLoadedModifiers(List<UpgradeItemData> loadedModifiers)
+    private bool CalculateBool(PlayerStatType type)
     {
-        UpgradeItems = loadedModifiers ?? new List<UpgradeItemData>();
+        bool value = _playerBaseInfo.GetBooleanStat(type);
+        int priorityOverride = UpgradeModifier.MinPriority;
+        bool overrideValue = false;
+        foreach (var modifier in _modifiers)
+        {
+            if (modifier.Type == type)
+            {
+                switch (modifier.ModType)
+                {
+                    case ModifierType.UnlockAbility:
+                        if (priorityOverride < modifier.Priority)
+                            overrideValue = modifier.Value > 0;
+                        break;
+                }
+            }
+        }
+        return priorityOverride > -UpgradeModifier.MinPriority ? overrideValue : value;
+    }
+
+    public void SetLoadedModifiers(List<UpgradeModifier> loadedModifiers)
+    {
+        _modifiers = loadedModifiers ?? new List<UpgradeModifier>();
         RecalculateStats();
     }
+
 }

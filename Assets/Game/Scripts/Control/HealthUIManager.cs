@@ -11,8 +11,20 @@ public class HealthUIManager : MonoBehaviour
     }
     public void Start()
     {
-
-        _healthComponent = GameManager.Instance.Player.GetComponent<HealthComponent>();
+        PlayerStats playerStats = FindAnyObjectByType<PlayerStats>();
+        if (playerStats == null)
+        {
+            Debug.LogError("HealthUIManager: PlayerStats component not found!");
+            enabled = false;
+            return;
+        }
+        if (playerStats.Health == null)
+        {
+            Debug.LogError("HealthUIManager: HealthComponent component not found!");
+            enabled = false;
+            return;
+        }
+        _healthComponent = playerStats.Health;
         _healthComponent.OnHealthChanged += UpdateHealthUI;
         UpdateHealthUI(_healthComponent.CurrentHealth);
     }
