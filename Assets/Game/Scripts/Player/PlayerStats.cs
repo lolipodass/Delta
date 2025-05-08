@@ -16,7 +16,6 @@ public class PlayerStats : MonoBehaviour
         }
         Stats = new PlayerStatsManager(_playerConfig);
         Health = GetComponent<HealthComponent>();
-        Debug.Log($"Stats: {Stats}");
     }
 
     public PlayerStatsDataSave GetSaveData()

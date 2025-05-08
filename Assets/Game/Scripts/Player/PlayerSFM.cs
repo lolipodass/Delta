@@ -14,6 +14,7 @@ public class PlayerSFM : MonoBehaviour
     public Rigidbody2D rb;
     public Animator animator;
     public PlayerStats PlayerStats { get; private set; }
+    public PlayerInput Input { get; private set; }
     [SerializeField] private BoxCollider2D standBoxCollider;
     [SerializeField] private BoxCollider2D crouchBoxCollider;
     [field: SerializeField] public PlayerAttackConfig StandAttackConfig { get; private set; }
@@ -140,6 +141,8 @@ public class PlayerSFM : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         PlayerStats = GetComponent<PlayerStats>();
+        Input = GetComponent<PlayerInput>();
+        SubscribeInput();
         StateMachine = new PlayerStateMachine(this);
         idleState = new IdleState(this, StateMachine);
         moveState = new MoveState(this, StateMachine);
@@ -156,6 +159,39 @@ public class PlayerSFM : MonoBehaviour
         StateMachine.InitializeState(idleState);
     }
 
+    void OnDestroy()
+    {
+        UnsubscribeInput();
+    }
+    void UnsubscribeInput()
+    {
+        var actions = Input.actions;
+        actions.FindAction("Move").performed -= MoveCallback;
+        actions.FindAction("Move").canceled -= MoveCallback;
+        actions.FindAction("Jump").performed -= JumpCallback;
+        actions.FindAction("Jump").canceled -= JumpCallback;
+        actions.FindAction("Crouch").performed -= CrouchCallback;
+        actions.FindAction("Crouch").canceled -= CrouchCallback;
+        actions.FindAction("Dash").performed -= DashCallback;
+        actions.FindAction("Dash").canceled -= DashCallback;
+        actions.FindAction("Attack").performed -= AttackCallback;
+        actions.FindAction("Attack").canceled -= AttackCallback;
+    }
+
+    void SubscribeInput()
+    {
+        var actions = Input.actions;
+        actions.FindAction("Move").performed += MoveCallback;
+        actions.FindAction("Move").canceled += MoveCallback;
+        actions.FindAction("Jump").performed += JumpCallback;
+        actions.FindAction("Jump").canceled += JumpCallback;
+        actions.FindAction("Crouch").performed += CrouchCallback;
+        actions.FindAction("Crouch").canceled += CrouchCallback;
+        actions.FindAction("Dash").performed += DashCallback;
+        actions.FindAction("Dash").canceled += DashCallback;
+        actions.FindAction("Attack").performed += AttackCallback;
+        actions.FindAction("Attack").canceled += AttackCallback;
+    }
     void Update()
     {
         HandleTimers();

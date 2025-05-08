@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
             string previousScenePath = EditorPrefs.GetString(PreviousScenePathKey, "");
             if (!string.IsNullOrEmpty(previousScenePath))
             {
-                SceneLoader.LoadScene(previousScenePath);
+                SceneLoader.Instance.StartNewGame(previousScenePath);
             }
             else
             {
@@ -43,7 +43,6 @@ public class GameManager : MonoBehaviour
     private bool isNewGame = false;
     void OnFirstSceneLoaded()
     {
-
         if (isNewGame)
         {
             SaveLoadManager.Instance.SaveGame();
