@@ -1,14 +1,11 @@
 using TMPro;
 using UnityEngine;
 
-public class GameplayUIManager : MonoBehaviour
+public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 {
     public TextMeshProUGUI HealthText;
     private HealthComponent _healthComponent;
-    public void Awake()
-    {
-        // DontDestroyOnLoad(gameObject);
-    }
+
     public void Start()
     {
         PlayerStats playerStats = FindAnyObjectByType<PlayerStats>();

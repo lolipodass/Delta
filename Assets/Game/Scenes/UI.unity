@@ -521,7 +521,6 @@ GameObject:
   m_Component:
   - component: {fileID: 714521282}
   - component: {fileID: 714521284}
-  - component: {fileID: 714521285}
   - component: {fileID: 714521283}
   m_Layer: 5
   m_Name: HP
@@ -648,19 +647,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 714521281}
   m_CullTransparentMesh: 1
---- !u!114 &714521285
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 714521281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 328430f9b2f4f6d4089ee63b808fbdf6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HealthText: {fileID: 714521283}
 --- !u!1 &741487935
 GameObject:
   m_ObjectHideFlags: 0
@@ -672,8 +658,9 @@ GameObject:
   - component: {fileID: 741487937}
   - component: {fileID: 741487936}
   - component: {fileID: 741487938}
+  - component: {fileID: 741487939}
   m_Layer: 0
-  m_Name: PauseManager
+  m_Name: Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -723,6 +710,19 @@ MonoBehaviour:
   <GameplayUI>k__BackingField: {fileID: 647768733}
   <DeathUI>k__BackingField: {fileID: 1076325580}
   <SaveUI>k__BackingField: {fileID: 786062887}
+--- !u!114 &741487939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 741487935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 328430f9b2f4f6d4089ee63b808fbdf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HealthText: {fileID: 714521283}
 --- !u!1 &786062887
 GameObject:
   m_ObjectHideFlags: 0

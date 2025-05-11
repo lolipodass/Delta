@@ -2,20 +2,15 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : PersistSingleton<GameManager>
 {
-    public static GameManager Instance;
     public GameObject Player { get; private set; }
 
     private const string PreviousScenePathKey = "PlayFromZeroScene_PreviousScenePath";
 
-    public void Awake()
+    protected override void Awake()
     {
-        if (Instance != null)
-            Destroy(gameObject);
-        else
-            Instance = this;
-        DontDestroyOnLoad(gameObject);
+        base.Awake();
 
         SceneLoader.LoadMenu();
         SceneLoader.Instance.OnFirstSceneLoaded += OnFirstSceneLoaded;
@@ -24,9 +19,7 @@ public class GameManager : MonoBehaviour
         if (!string.IsNullOrEmpty(previousScenePath))
         {
             Debug.Log($"Loading previous scene: {previousScenePath}");
-            if (previousScenePath.Contains("MainMenu"))
-                SceneLoader.LoadMenu();
-            else if (previousScenePath.Contains("Pause"))
+            if (previousScenePath.Contains("MainMenu") || previousScenePath.Contains("Pause"))
                 SceneLoader.LoadMenu();
             else
                 SceneLoader.Instance.StartNewGame(previousScenePath);

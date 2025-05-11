@@ -1,25 +1,16 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PauseManager : MonoBehaviour
+public class PauseManager : PersistSingleton<PauseManager>
 {
-    public static PauseManager Instance;
 
     [field: SerializeField] public GameObject PauseMenu { get; private set; }
 
     private bool isPaused = false;
     private float timeScale;
-    public void Awake()
+    protected override void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();
 
         if (PauseMenu == null)
         {
