@@ -51,6 +51,12 @@ TagManager:
   - name: 3 MidleGround
     uniqueID: 2292880775
     locked: 0
+  - name: items
+    uniqueID: 67817761
+    locked: 0
+  - name: Items_on_top
+    uniqueID: 4209014019
+    locked: 0
   - name: 4 Player
     uniqueID: 2183121457
     locked: 0

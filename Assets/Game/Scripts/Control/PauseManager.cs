@@ -68,10 +68,23 @@ public class PauseManager : MonoBehaviour
         if (isPaused)
             return;
 
-        isPaused = true;
-        timeScale = Time.timeScale;
-        Time.timeScale = 0;
-        PauseMenu.SetActive(true);
+
+        PlayerStats playerStats = GameManager.Instance.Player.GetComponent<PlayerStats>();
+        PlayerSFM player = GameManager.Instance.Player.GetComponent<PlayerSFM>();
+        if (playerStats.LastSavePoint != null)
+        {
+            playerStats.SetSavePoint(playerStats.LastSavePoint);
+            player.StateMachine.ChangeState(player.saveState);
+            SaveLoadManager.Instance.SaveGame();
+            Debug.Log("Saved");
+        }
+        else
+        {
+            isPaused = true;
+            timeScale = Time.timeScale;
+            Time.timeScale = 0;
+            PauseMenu.SetActive(true);
+        }
 
     }
 
@@ -80,9 +93,14 @@ public class PauseManager : MonoBehaviour
         if (!isPaused)
             return;
 
+
         isPaused = false;
         Time.timeScale = timeScale;
         PauseMenu.SetActive(false);
     }
-
+    public void GoToMenu()
+    {
+        SaveLoadManager.Instance.SaveGame();
+        SceneLoader.LoadMenu();
+    }
 }

@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class HealthUIManager : MonoBehaviour
+public class GameplayUIManager : MonoBehaviour
 {
     public TextMeshProUGUI HealthText;
     private HealthComponent _healthComponent;

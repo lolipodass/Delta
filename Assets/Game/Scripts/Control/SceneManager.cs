@@ -24,6 +24,10 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
     [SerializeField] private string gameplayUISceneName = "UI";
     public void StartNewGame(string initialRoomSceneName)
     {
@@ -83,7 +87,7 @@ public class SceneLoader : MonoBehaviour
 
     public static void BackToMainMenu()
     {
-        LoadScene("MainMenu");
+        LoadMenu();
         // loadedRoomScenes.Clear();
         Debug.Log("Returned to Main Menu.");
     }

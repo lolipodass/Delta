@@ -11,33 +11,32 @@ public class GameManager : MonoBehaviour
 
     public void Awake()
     {
-        if (Instance == null)
-        {
+        if (Instance != null)
+            Destroy(gameObject);
+        else
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
 
-            SceneLoader.LoadMenu();
-            SceneLoader.Instance.OnFirstSceneLoaded += OnFirstSceneLoaded;
+        SceneLoader.LoadMenu();
+        SceneLoader.Instance.OnFirstSceneLoaded += OnFirstSceneLoaded;
 #if UNITY_EDITOR
-            string previousScenePath = EditorPrefs.GetString(PreviousScenePathKey, "");
-            if (!string.IsNullOrEmpty(previousScenePath))
-            {
-                SceneLoader.Instance.StartNewGame(previousScenePath);
-            }
-            else
-            {
+        string previousScenePath = EditorPrefs.GetString(PreviousScenePathKey, "");
+        if (!string.IsNullOrEmpty(previousScenePath))
+        {
+            Debug.Log($"Loading previous scene: {previousScenePath}");
+            if (previousScenePath.Contains("MainMenu"))
                 SceneLoader.LoadMenu();
-            }
-            return;
-#endif
-#pragma warning disable CS0162 
-            SceneLoader.LoadMenu();
-#pragma warning restore CS0162
+            else if (previousScenePath.Contains("Pause"))
+                SceneLoader.LoadMenu();
+            else
+                SceneLoader.Instance.StartNewGame(previousScenePath);
         }
         else
         {
-            Destroy(gameObject);
+            SceneLoader.LoadMenu();
         }
+        return;
+#endif
     }
 
     private bool isNewGame = false;
@@ -49,6 +48,18 @@ public class GameManager : MonoBehaviour
             isNewGame = false;
         }
         StartGameplayLogic();
+    }
+    public void HandlePlayerDeath()
+    {
+        SaveLoadManager.Instance.SaveGame();
+        Player.GetComponent<PlayerSFM>().Restart();
+        MovePlayerToSavePoint();
+    }
+
+    public void MovePlayerToSavePoint()
+    {
+        if (CheckObject(Player, "Player")) return;
+        Player.transform.position = SaveLoadManager.Instance.GameData.playerStatsDataSave.SavePointPosition;
     }
 
     public void StartGame()
@@ -63,17 +74,32 @@ public class GameManager : MonoBehaviour
 
     public void SetPlayer(GameObject player)
     {
+        if (Player != null)
+            Player.GetComponent<PlayerStats>().Health.OnDeath -= HandlePlayerDeath;
+
         Player = player;
+        Player.GetComponent<PlayerStats>().Health.OnDeath += HandlePlayerDeath;
     }
 
     public void StartGameplayLogic()
     {
         SaveLoadManager.Instance.LoadGame();
+
     }
 
     public void ExitGame()
     {
         SaveLoadManager.Instance.SaveGame();
         SceneLoader.BackToMainMenu();
+    }
+    private bool CheckObject<T>(T ob, string name)
+    {
+        if (ob == null)
+        {
+            Debug.LogError($"GameManager requires a {name} GameObject reference!");
+            enabled = false;
+            return true;
+        }
+        return false;
     }
 }

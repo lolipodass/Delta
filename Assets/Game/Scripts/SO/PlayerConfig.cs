@@ -8,6 +8,8 @@ public class PlayerBaseInfo : ScriptableObject
     public float MaxSpeed;
     public float AirControlFactor;
     public float MaxFallSpeed;
+    public float DeathTime;
+    [Header("Jump")]
     public float jumpForce;
     public float airJumpForce;
     public int ExtraJumpCount;

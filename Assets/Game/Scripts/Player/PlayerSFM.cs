@@ -20,6 +20,7 @@ public class PlayerSFM : MonoBehaviour
     [field: SerializeField] public PlayerAttackConfig StandAttackConfig { get; private set; }
     [field: SerializeField] public PlayerAttackConfig DashAttackConfig { get; private set; }
 
+
     #region Masks
 
     [Foldout("Ground check")][SerializeField] private Transform groundCheckPos;
@@ -43,10 +44,6 @@ public class PlayerSFM : MonoBehaviour
 
 
     #endregion
-
-    [Header("Debug")]
-    public bool isDebug = false;
-    public bool ShowAttackCheck = false;
 
     #endregion
 
@@ -93,6 +90,7 @@ public class PlayerSFM : MonoBehaviour
     public HurtState hurtState;
     public DeathState deathState;
     public DashAttackState dashAttackState;
+    public SaveState saveState;
     #endregion
     public const float maxJumpTime = 0.4f;
 
@@ -103,6 +101,10 @@ public class PlayerSFM : MonoBehaviour
     public float TimeJump { get; private set; }
     [HideInInspector] public float timeDashCooldown = 0f;
     #endregion
+
+    [Header("Debug")]
+    public bool isDebug = false;
+    public bool ShowAttackCheck = false;
 
 
     void Start()
@@ -156,6 +158,7 @@ public class PlayerSFM : MonoBehaviour
         hurtState = new HurtState(this, StateMachine);
         deathState = new DeathState(this, StateMachine);
         dashAttackState = new DashAttackState(this, StateMachine);
+        saveState = new SaveState(this, StateMachine);
         StateMachine.InitializeState(idleState);
     }
 
@@ -209,7 +212,6 @@ public class PlayerSFM : MonoBehaviour
         UpdatePhysicsChecks();
         StateMachine.CurrentState.PhysicsUpdate();
     }
-
     void UpdatePhysicsChecks()
     {
         IsGrounded = Physics2D.OverlapBox(groundCheckPos.position, groundCheckSize, 0f, groundMask) && YVelocity > -0.1f;
@@ -256,6 +258,11 @@ public class PlayerSFM : MonoBehaviour
         rb.linearVelocity = new Vector2(XVelocity, PlayerStats.Stats.WallJumpYForce);
     }
 
+    public void Restart()
+    {
+        StateMachine.ChangeState(idleState);
+        PlayerStats.Restart();
+    }
     public bool CanStandUp() =>
         !Physics2D.OverlapBox(crouchCheckPos.position, crouchCheckSize, 0f, crouchMask);
 

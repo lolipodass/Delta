@@ -4,6 +4,7 @@ using UnityEngine;
 public class SaveLoadManager : MonoBehaviour
 {
     public static SaveLoadManager Instance { get; private set; }
+    public GameDataSave GameData { get; private set; }
 
     public void Awake()
     {
@@ -27,8 +28,7 @@ public class SaveLoadManager : MonoBehaviour
         string filePath = GetSaveFilePath(slotName);
         GameDataSave saveData = new();
 
-        PlayerStats playerStats = FindAnyObjectByType<PlayerStats>();
-        if (playerStats != null)
+        if (GameManager.Instance.Player.TryGetComponent<PlayerStats>(out var playerStats))
         {
             saveData.playerStatsDataSave = playerStats.GetSaveData();
         }
@@ -38,7 +38,9 @@ public class SaveLoadManager : MonoBehaviour
             return;
         }
 
+
         string json = JsonUtility.ToJson(saveData);
+        Debug.Log(json);
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
@@ -64,13 +66,13 @@ public class SaveLoadManager : MonoBehaviour
         {
             string json = File.ReadAllText(filePath);
 
-            GameDataSave saveData = JsonUtility.FromJson<GameDataSave>(json);
+            GameData = JsonUtility.FromJson<GameDataSave>(json);
 
             PlayerStats playerStats = FindAnyObjectByType<PlayerStats>();
             if (playerStats != null)
             {
-                playerStats.Stats.SetLoadedModifiers(saveData.playerStatsDataSave.activePlayerModifiers);
-                playerStats.Health.SetMaxHealth(saveData.playerStatsDataSave.HP);
+                playerStats.Stats.SetLoadedModifiers(GameData.playerStatsDataSave.activePlayerModifiers);
+                playerStats.Health.SetMaxHealth(GameData.playerStatsDataSave.HP);
             }
             else
             {
