@@ -1,36 +1,31 @@
 using System.IO;
 using UnityEngine;
 
-public class SaveLoadManager : MonoBehaviour
+public class SaveLoadManager : PersistSingleton<SaveLoadManager>
 {
-    public static SaveLoadManager Instance { get; private set; }
     public GameDataSave GameData { get; private set; }
-
-    public void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
     private string GetSaveFilePath(string slotName)
     {
         return Path.Combine(Application.persistentDataPath, slotName + ".json");
     }
+    public void CreateNewGame(string slotName = "slot1")
+    {
+        GameData = new GameDataSave();
+        SaveGame(slotName);
+    }
     public void SaveGame(string slotName = "slot1")
     {
         string filePath = GetSaveFilePath(slotName);
-        GameDataSave saveData = new();
 
         if (GameManager.Instance.Player.TryGetComponent<PlayerStats>(out var playerStats))
         {
-            saveData.playerStatsDataSave = playerStats.GetSaveData();
+            Debug.Log("SaveGame");
+            Debug.Log(GameData);
+            Debug.Log(GameData.player);
+            Debug.Log(playerStats.GetSaveData());
+            GameData.player = playerStats.GetSaveData();
+            Debug.Log(GameData.player.savePoint.Position);
         }
         else
         {
@@ -39,7 +34,7 @@ public class SaveLoadManager : MonoBehaviour
         }
 
 
-        string json = JsonUtility.ToJson(saveData);
+        string json = JsonUtility.ToJson(GameData);
         Debug.Log(json);
         try
         {
@@ -71,8 +66,7 @@ public class SaveLoadManager : MonoBehaviour
             PlayerStats playerStats = FindAnyObjectByType<PlayerStats>();
             if (playerStats != null)
             {
-                playerStats.Stats.SetLoadedModifiers(GameData.playerStatsDataSave.activePlayerModifiers);
-                playerStats.Health.SetMaxHealth(GameData.playerStatsDataSave.HP);
+                playerStats.SetSavedData(GameData.player);
             }
             else
             {

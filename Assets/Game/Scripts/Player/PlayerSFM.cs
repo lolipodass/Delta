@@ -110,7 +110,6 @@ public class PlayerSFM : MonoBehaviour
     void Start()
     {
         ExtraJumpCountLeft = PlayerStats.Stats.ExtraJumpCount;
-        GameManager.Instance.SetPlayer(gameObject);
     }
     void OnEnable()
     {
@@ -140,6 +139,7 @@ public class PlayerSFM : MonoBehaviour
 
     void Awake()
     {
+        GameManager.Instance.SetPlayer(gameObject);
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         PlayerStats = GetComponent<PlayerStats>();

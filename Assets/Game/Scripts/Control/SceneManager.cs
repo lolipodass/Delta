@@ -36,7 +36,7 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator LoadInitialScenesAsync(string initialRoomSceneName)
     {
-        Debug.Log($"Start loading initial scenes: {initialRoomSceneName}");
+        Debug.Log($"Start loading initial scene: {initialRoomSceneName}");
 
         yield return SceneManager.LoadSceneAsync(initialRoomSceneName, LoadSceneMode.Single);
         // loadedRoomScenes.Clear();

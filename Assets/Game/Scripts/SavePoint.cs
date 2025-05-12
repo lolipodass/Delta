@@ -5,6 +5,11 @@ public class SavePoint : MonoBehaviour
     public string Name;
     public Vector3 Position;
     public GameObject Tooltip;
+    public SavePoint(string name, Vector3 position)
+    {
+        Name = name;
+        Position = position;
+    }
 
     public void Awake()
     {
@@ -26,7 +31,7 @@ public class SavePoint : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            GameManager.Instance.Player.GetComponent<PlayerStats>().SetLastSavePoint(this);
+            GameManager.Instance.Player.GetComponent<PlayerStats>().SetLastSavePoint(null);
             if (Tooltip != null)
                 Tooltip.SetActive(false);
         }

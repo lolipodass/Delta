@@ -8,7 +8,6 @@ public class HurtState : PlayerBaseState
     private float hurtTime = 0;
     public override void Enter()
     {
-        Debug.Log("hurt");
         player.animator.SetTrigger("Hurt");
         hurtTime = Stats.Stats.InvincibilityAfterHit;
     }

@@ -8,17 +8,45 @@ public class GameDataSave
     [System.Serializable]
     public class PlayerStatsDataSave
     {
+        public PlayerStatsDataSave()
+        {
+            activePlayerModifiers = new List<UpgradeModifier>();
+            HP = 0;
+            savePoint = new SavePointInfo();
+        }
         public List<UpgradeModifier> activePlayerModifiers;
         public int HP;
-        public string savePointName;
-        public Vector3 SavePointPosition;
+        public SavePointInfo savePoint;
+        [System.Serializable]
+        public class SavePointInfo
+        {
+            public string Name;
+            public Vector3 Position;
+            public SavePointInfo()
+            {
+                Name = "";
+                Position = Vector3.zero;
+            }
+
+            public SavePointInfo(string name, Vector3 position)
+            {
+                Name = name;
+                Position = position;
+            }
+            public SavePointInfo(SavePoint savePoint)
+            {
+                Name = savePoint.Name;
+                Position = savePoint.Position;
+            }
+        }
     }
 
-    public PlayerStatsDataSave playerStatsDataSave;
+    public PlayerStatsDataSave player;
 
     public GameDataSave()
     {
-        playerStatsDataSave = new PlayerStatsDataSave();
+        player = new PlayerStatsDataSave();
+
     }
 
 }
