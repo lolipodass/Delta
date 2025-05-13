@@ -1,20 +1,15 @@
 using UnityEngine;
+using PrimeTween;
 
-public class UIManager : MonoBehaviour
+public class UIManager : MonoSingleton<UIManager>
 {
-    public static UIManager Instance;
-
     [field: SerializeField] public GameObject PauseMenu { get; private set; }
     [field: SerializeField] public GameObject GameplayUI { get; private set; }
     [field: SerializeField] public GameObject DeathUI { get; private set; }
     [field: SerializeField] public GameObject SaveUI { get; private set; }
-    public void Awake()
+    protected override void Awake()
     {
-        if (Instance != null)
-            Destroy(gameObject);
-        else
-            Instance = this;
-        DontDestroyOnLoad(gameObject);
+        base.Awake();
 
         if (!CheckObject(PauseMenu, "PauseMenu")) return;
         if (!CheckObject(GameplayUI, "GameplayUI")) return;
@@ -22,37 +17,14 @@ public class UIManager : MonoBehaviour
         if (!CheckObject(SaveUI, "SaveUI")) return;
     }
 
-    public void ShowPauseMenu()
+    public void FadeIn(GameObject ui)
     {
-        PauseMenu.SetActive(true);
+        // Tween
+        ui.SetActive(true);
     }
-    public void HidePauseMenu()
+    public void FadeOut(GameObject ui)
     {
-        PauseMenu.SetActive(false);
-    }
-    public void ShowGameplayUI()
-    {
-        GameplayUI.SetActive(true);
-    }
-    public void HideGameplayUI()
-    {
-        GameplayUI.SetActive(false);
-    }
-    public void ShowDeathUI()
-    {
-        DeathUI.SetActive(true);
-    }
-    public void HideDeathUI()
-    {
-        DeathUI.SetActive(false);
-    }
-    public void ShowSaveUI()
-    {
-        SaveUI.SetActive(true);
-    }
-    public void HideSaveUI()
-    {
-        SaveUI.SetActive(false);
+        ui.SetActive(false);
     }
     private bool CheckObject(GameObject ui, string name)
     {

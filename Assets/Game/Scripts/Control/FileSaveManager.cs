@@ -1,7 +1,7 @@
 using System.IO;
 using UnityEngine;
 
-public class SaveLoadManager : PersistSingleton<SaveLoadManager>
+public class FileSaveManager : PersistSingleton<FileSaveManager>
 {
     public GameDataSave GameData { get; private set; }
 

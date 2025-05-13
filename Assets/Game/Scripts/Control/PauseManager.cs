@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PauseManager : PersistSingleton<PauseManager>
+public class PauseManager : MonoSingleton<PauseManager>
 {
 
     private bool isPaused = false;
@@ -41,7 +41,7 @@ public class PauseManager : PersistSingleton<PauseManager>
     }
     public void GoToMenu()
     {
-        SaveLoadManager.Instance.SaveGame();
+        FileSaveManager.Instance.SaveGame();
         SceneLoader.LoadMenu();
     }
 }

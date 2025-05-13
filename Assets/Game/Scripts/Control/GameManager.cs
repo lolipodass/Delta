@@ -6,7 +6,10 @@ using UnityEngine.InputSystem;
 public class GameManager : PersistSingleton<GameManager>
 {
     public GameObject Player { get; private set; }
+    public PlayerStats playerStats;
+    public PlayerSFM playerSFM;
     public PlayerInput playerInput;
+
 
     private const string PreviousScenePathKey = "PlayFromZeroScene_PreviousScenePath";
 
@@ -57,38 +60,28 @@ public class GameManager : PersistSingleton<GameManager>
             if (ObjectIsNull(Player, "Player"))
                 return;
 
-            var stats = Player.GetComponent<PlayerStats>();
-            var player = Player.GetComponent<PlayerSFM>();
-            if (stats.LastSavePoint != null)
-            {
-                stats.SetSavePoint(Player.GetComponent<PlayerStats>().LastSavePoint);
-                player.StateMachine.ChangeState(player.saveState);
-                SaveLoadManager.Instance.SaveGame();
-                Debug.Log("Saved");
-            }
+            if (playerStats.LastSavePoint != null)
+                SaveManager.Instance.SaveGame();
             else
-            {
                 PauseManager.Instance.TogglePause();
-            }
         }
     }
+
     private bool isNewGame = false;
     void OnFirstSceneLoaded()
     {
         if (isNewGame)
         {
-            SaveLoadManager.Instance.CreateNewGame();
+            FileSaveManager.Instance.CreateNewGame();
             isNewGame = false;
         }
 
-        playerInput = FindAnyObjectByType<PlayerInput>();
-
-        StartGameplayLogic();
+        LoadVariables();
         MovePlayerToSavePoint();
     }
     public void HandlePlayerDeath()
     {
-        SaveLoadManager.Instance.SaveGame();
+        FileSaveManager.Instance.SaveGame();
 
         Player.GetComponent<PlayerSFM>().Restart();
         MovePlayerToSavePoint();
@@ -97,7 +90,7 @@ public class GameManager : PersistSingleton<GameManager>
     public void MovePlayerToSavePoint()
     {
         if (ObjectIsNull(Player, "Player")) return;
-        Player.transform.position = SaveLoadManager.Instance.GameData.player.savePoint.Position;
+        Player.transform.position = FileSaveManager.Instance.GameData.player.savePoint.Position;
     }
 
     public void StartGame()
@@ -120,14 +113,18 @@ public class GameManager : PersistSingleton<GameManager>
         Player.GetComponent<PlayerStats>().Health.OnDeath += HandlePlayerDeath;
     }
 
-    public void StartGameplayLogic()
+    public void LoadVariables()
     {
-        SaveLoadManager.Instance.LoadGame();
+        FileSaveManager.Instance.LoadGame();
+        playerInput = FindAnyObjectByType<PlayerInput>();
+        playerSFM = FindAnyObjectByType<PlayerSFM>();
+        playerStats = FindAnyObjectByType<PlayerStats>();
+
     }
 
     public void ExitGame()
     {
-        SaveLoadManager.Instance.SaveGame();
+        FileSaveManager.Instance.SaveGame();
         SceneLoader.BackToMainMenu();
     }
     private bool ObjectIsNull<T>(T ob, string name)

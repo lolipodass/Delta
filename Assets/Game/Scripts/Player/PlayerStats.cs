@@ -18,6 +18,7 @@ public class PlayerStats : MonoBehaviour
             enabled = false;
             return;
         }
+        LastSavePoint = null;
         Stats = new PlayerStatsManager(_playerConfig);
         Health = GetComponent<HealthComponent>();
     }
