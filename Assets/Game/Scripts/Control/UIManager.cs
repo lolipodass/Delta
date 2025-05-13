@@ -46,11 +46,10 @@ public class UIManager : MonoSingleton<UIManager>
     }
     public void HideDeathUI()
     {
-        DeathUI.SetActive(false);
         var image = DeathUI.GetComponentInChildren<Image>();
         if (image != null)
         {
-            Tween.Alpha(image, 0f, 1f, Ease.InOutCubic).OnComplete(target: DeathUI, ui => ui.SetActive(false));
+            Tween.Alpha(image, 0f, 0.8f, Ease.InOutCubic).OnComplete(target: DeathUI, ui => ui.SetActive(false));
         }
     }
     public void ShowGameplayUI()

@@ -14,7 +14,6 @@ public class PlayerStatsManager
     public float MinimalJumpTime => _playerBaseInfo.MinimalJumpTime;
     public float WallJumpYForce => _playerBaseInfo.WallJumpYForce;
     public float WallJumpXForce => _playerBaseInfo.WallJumpXForce;
-    public float DeathTime => _playerBaseInfo.DeathTime;
 
     private int _cachedMaxHP;
     private int _cachedDamage;
