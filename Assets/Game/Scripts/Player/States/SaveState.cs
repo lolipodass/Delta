@@ -9,7 +9,6 @@ public class SaveState : PlayerBaseState
     {
         saveTime = 1f;
         player.animator.Play("Base.Save");
-        Debug.Log("SaveState Enter");
     }
 
     public override void PhysicsUpdate()

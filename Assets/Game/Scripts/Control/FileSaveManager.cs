@@ -20,12 +20,7 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
 
         if (GameManager.Instance.Player.TryGetComponent<PlayerStats>(out var playerStats))
         {
-            Debug.Log("SaveGame");
-            Debug.Log(GameData);
-            Debug.Log(GameData.player);
-            Debug.Log(playerStats.GetSaveData());
             GameData.player = playerStats.GetSaveData();
-            Debug.Log(GameData.player.savePoint.Position);
         }
         else
         {

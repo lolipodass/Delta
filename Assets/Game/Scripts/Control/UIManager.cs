@@ -1,5 +1,7 @@
 using UnityEngine;
 using PrimeTween;
+using TMPro;
+using UnityEngine.UI;
 
 public class UIManager : MonoSingleton<UIManager>
 {
@@ -17,15 +19,59 @@ public class UIManager : MonoSingleton<UIManager>
         if (!CheckObject(SaveUI, "SaveUI")) return;
     }
 
-    public void FadeIn(GameObject ui)
+    public void ShowSaveUI()
     {
-        // Tween
-        ui.SetActive(true);
+        SaveUI.SetActive(true);
+        if (SaveUI.TryGetComponent<TextMeshProUGUI>(out var text))
+        {
+            Tween.Alpha(text, 1f, 0.5f);
+        }
     }
-    public void FadeOut(GameObject ui)
+    public void HideSaveUI()
     {
-        ui.SetActive(false);
+        if (SaveUI.TryGetComponent<TextMeshProUGUI>(out var text))
+        {
+            Tween.Alpha(text, 0f, 0.5f).OnComplete(target: SaveUI, ui => ui.SetActive(false));
+        }
     }
+
+    public void ShowDeathUI()
+    {
+        DeathUI.SetActive(true);
+        var image = DeathUI.GetComponentInChildren<Image>();
+        if (image != null)
+        {
+            Tween.Alpha(image, 1f, 1f, Ease.InOutCubic);
+        }
+    }
+    public void HideDeathUI()
+    {
+        DeathUI.SetActive(false);
+        var image = DeathUI.GetComponentInChildren<Image>();
+        if (image != null)
+        {
+            Tween.Alpha(image, 0f, 1f, Ease.InOutCubic).OnComplete(target: DeathUI, ui => ui.SetActive(false));
+        }
+    }
+    public void ShowGameplayUI()
+    {
+        GameplayUI.SetActive(true);
+    }
+    public void HideGameplayUI()
+    {
+        GameplayUI.SetActive(false);
+    }
+
+    public void ShowPauseMenu()
+    {
+        PauseMenu.SetActive(true);
+    }
+    public void HidePauseMenu()
+    {
+        PauseMenu.SetActive(false);
+    }
+
+
     private bool CheckObject(GameObject ui, string name)
     {
         if (ui == null)

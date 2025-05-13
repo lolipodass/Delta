@@ -27,7 +27,7 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
     }
     public void UpdateHealthUI(int hp)
     {
-        HealthText.text = "HP configured: " + hp;
+        HealthText.text = "HP: " + hp;
     }
     public void OnDestroy()
     {

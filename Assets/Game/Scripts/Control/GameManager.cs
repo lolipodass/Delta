@@ -81,10 +81,8 @@ public class GameManager : PersistSingleton<GameManager>
     }
     public void HandlePlayerDeath()
     {
+        DeathManager.Instance.HandleDeath();
         FileSaveManager.Instance.SaveGame();
-
-        Player.GetComponent<PlayerSFM>().Restart();
-        MovePlayerToSavePoint();
     }
 
     public void MovePlayerToSavePoint()
