@@ -19,7 +19,7 @@ public class PlayerSFM : MonoBehaviour
     [SerializeField] private BoxCollider2D crouchBoxCollider;
     [field: SerializeField] public PlayerAttackConfig StandAttackConfig { get; private set; }
     [field: SerializeField] public PlayerAttackConfig DashAttackConfig { get; private set; }
-
+    [field: SerializeField] public EffectData HurtEffect { get; private set; }
 
     #region Masks
 
@@ -341,6 +341,8 @@ public class PlayerSFM : MonoBehaviour
     {
         Debug.Log("onHurt");
         StateMachine.ChangeState(hurtState);
+        if (HurtEffect != null)
+            EffectManager.Instance.PlayEffect(HurtEffect);
     }
 
     private void OnDeath()

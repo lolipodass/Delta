@@ -11468,6 +11468,7 @@ MonoBehaviour:
   crouchBoxCollider: {fileID: 1930081149}
   <StandAttackConfig>k__BackingField: {fileID: 11400000, guid: d2f459fb5f0f176488cb1ae25a3a15f3, type: 2}
   <DashAttackConfig>k__BackingField: {fileID: 11400000, guid: 50d7781506294b34491eb5eafe1e5fac, type: 2}
+  <HurtEffect>k__BackingField: {fileID: 11400000, guid: a3787b6da62c7414abaa15d72c14df73, type: 2}
   groundCheckPos: {fileID: 338494921}
   groundCheckSize: {x: 0.6, y: -0.06}
   groundMask:

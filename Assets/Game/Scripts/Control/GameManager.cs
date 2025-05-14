@@ -9,7 +9,7 @@ public class GameManager : PersistSingleton<GameManager>
     public PlayerStats playerStats;
     public PlayerSFM playerSFM;
     public PlayerInput playerInput;
-
+    public Camera Camera { get; private set; }
 
     private const string PreviousScenePathKey = "PlayFromZeroScene_PreviousScenePath";
 
@@ -117,6 +117,8 @@ public class GameManager : PersistSingleton<GameManager>
         playerInput = FindAnyObjectByType<PlayerInput>();
         playerSFM = FindAnyObjectByType<PlayerSFM>();
         playerStats = FindAnyObjectByType<PlayerStats>();
+
+        Camera = FindAnyObjectByType<Camera>();
 
     }
 

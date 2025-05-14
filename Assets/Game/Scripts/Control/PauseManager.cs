@@ -23,7 +23,7 @@ public class PauseManager : MonoSingleton<PauseManager>
         isPaused = true;
         timeScale = Time.timeScale;
         Time.timeScale = 0;
-        UIManager.Instance.PauseMenu.SetActive(true);
+        UIManager.Instance.ShowPauseMenu();
 
 
     }
@@ -36,7 +36,7 @@ public class PauseManager : MonoSingleton<PauseManager>
 
         isPaused = false;
         Time.timeScale = timeScale;
-        UIManager.Instance.PauseMenu.SetActive(false);
+        UIManager.Instance.HidePauseMenu();
     }
     public void GoToMenu()
     {
