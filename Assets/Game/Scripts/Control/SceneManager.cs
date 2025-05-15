@@ -1,28 +1,16 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 
-public class SceneLoader : MonoBehaviour
+public class SceneLoader : PersistSingleton<SceneLoader>
 {
     public event Action<string> OnSceneLoaded;
     public event Action<string> OnSceneUnloaded;
     public event Action OnGameplayUILoaded;
     public event Action OnFirstSceneLoaded;
-    public static SceneLoader Instance;
-    public void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
     public void RestartGame()
     {
@@ -67,7 +55,7 @@ public class SceneLoader : MonoBehaviour
     {
         SceneManager.LoadScene(sceneIndex);
     }
-    public void LoadSceneAdditive(string sceneName)
+    public static void LoadSceneAdditive(string sceneName)
     {
         SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
     }
@@ -92,6 +80,14 @@ public class SceneLoader : MonoBehaviour
         Debug.Log("Returned to Main Menu.");
     }
 
+    public static void LoadSettings()
+    {
+        LoadSceneAdditive("Settings");
+    }
+    public static void UnloadSettings()
+    {
+        UnloadScene("Settings");
+    }
     public static void QuitGame()
     {
         Debug.Log("Quitting game.");

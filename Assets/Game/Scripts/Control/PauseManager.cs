@@ -38,6 +38,10 @@ public class PauseManager : MonoSingleton<PauseManager>
         Time.timeScale = timeScale;
         UIManager.Instance.HidePauseMenu();
     }
+    public void LoadSettings()
+    {
+        SceneLoader.LoadSettings();
+    }
     public void GoToMenu()
     {
         FileSaveManager.Instance.SaveGame();

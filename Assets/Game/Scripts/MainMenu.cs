@@ -13,7 +13,7 @@ public class MainMenu : MonoBehaviour
     }
     public void SettingsPressed()
     {
-        Debug.Log("Settings pressed");
+        SceneLoader.LoadSettings();
     }
     public void ExitPressed()
     {
