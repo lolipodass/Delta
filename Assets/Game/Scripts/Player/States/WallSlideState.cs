@@ -6,6 +6,7 @@ public class WallSlideState : PlayerBaseState
 
 
     private bool isHoldOnEnterJumpButton = false;
+    protected override string AnimationName => "wall slide";
     public override void Enter()
     {
         isHoldOnEnterJumpButton = player.ButtonJump;
@@ -14,6 +15,8 @@ public class WallSlideState : PlayerBaseState
             stateMachine.ChangeState(player.jumpState);
             return;
         }
+        if (player.IsTouchWall && !player.IsTouchBackWall)
+            PlayAnimation();
     }
     public override void LogicUpdate()
     {

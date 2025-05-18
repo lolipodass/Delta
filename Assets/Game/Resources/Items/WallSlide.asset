@@ -22,3 +22,8 @@ MonoBehaviour:
     Value: 1
     Priority: 0
     SourceID: 
+  - Type: 11
+    ModType: 3
+    Value: 1
+    Priority: 0
+    SourceID: 

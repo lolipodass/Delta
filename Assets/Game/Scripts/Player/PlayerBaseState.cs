@@ -19,6 +19,8 @@ public abstract class PlayerBaseState
     }
     virtual public void Exit() { }
 
+
+
     virtual public void Movement()
     {
         XVelocity = player.rb.linearVelocity.x;
@@ -38,6 +40,11 @@ public abstract class PlayerBaseState
 
     }
 
+    protected void PlayAnimation()
+    {
+        player.animator.Play("Base." + AnimationName);
+    }
+    protected virtual string AnimationName => "idle";
     protected float YVelocity;
     protected float XVelocity;
 

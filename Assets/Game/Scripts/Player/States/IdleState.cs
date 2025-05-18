@@ -5,9 +5,11 @@ public class IdleState : PlayerBaseState
 {
     public IdleState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
+    protected override string AnimationName => "idle";
+
     public override void Enter()
     {
-
+        PlayAnimation();
         if (player.TimeLastJumpPressed > 0f && player.ButtonJump)
         {
             stateMachine.ChangeState(player.jumpState);

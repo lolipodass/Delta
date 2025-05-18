@@ -8,15 +8,15 @@ public class GameDataSave
     [System.Serializable]
     public class PlayerStatsDataSave
     {
+        public string[] items;
+        public int HP;
+        public SavePointInfo savePoint;
         public PlayerStatsDataSave()
         {
             items = new string[0];
             HP = 0;
             savePoint = new SavePointInfo();
         }
-        public string[] items;
-        public int HP;
-        public SavePointInfo savePoint;
         [System.Serializable]
         public class SavePointInfo
         {

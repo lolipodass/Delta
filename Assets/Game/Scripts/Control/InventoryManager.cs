@@ -47,13 +47,12 @@ public class InventoryManager : MonoSingleton<InventoryManager>
 
     public void LoadInventory(string[] ids)
     {
-        inventory = new(ids.Length);
         for (int i = 0; i < ids.Length; i++)
         {
             var item = GetByID(ids[i]);
             if (item != null)
             {
-                inventory[i] = item;
+                inventory.Add(item);
             }
         }
         OnInventoryChanged?.Invoke();

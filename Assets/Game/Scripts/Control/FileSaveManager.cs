@@ -28,6 +28,10 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
             return;
         }
 
+        if (InventoryManager.Instance.Inventory.Count > 0)
+        {
+            GameData.player.items = InventoryManager.Instance.SaveInventory();
+        }
 
         string json = JsonUtility.ToJson(GameData);
         Debug.Log(json);
@@ -66,6 +70,10 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
             else
             {
                 Debug.LogError("LoadGame: PlayerStats component not found!");
+            }
+            if (InventoryManager.Instance != null)
+            {
+                InventoryManager.Instance.LoadInventory(GameData.player.items);
             }
         }
         catch (System.Exception e)

@@ -4,9 +4,10 @@ public class DeathState : PlayerBaseState
     public DeathState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
     public override bool CanRotate => false;
     public override bool CanHurt => false;
+    protected override string AnimationName => "death";
     public override void Enter()
     {
-        player.animator.Play("Base.death");
+        PlayAnimation();
         player.animator.SetBool("isDead", true);
     }
     public override void PhysicsUpdate()
@@ -16,7 +17,6 @@ public class DeathState : PlayerBaseState
     public override void Exit()
     {
         player.animator.SetBool("isDead", false);
-        player.animator.Play("Base.idle");
     }
 
 }
