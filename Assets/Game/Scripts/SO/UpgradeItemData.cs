@@ -4,10 +4,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "UpgradeItem", menuName = "Items/Upgrade Item")]
 public class UpgradeItemData : ScriptableObject
 {
-    public string itemID;
-    public string itemName;
-    public Sprite itemIcon;
-    [TextArea] public string itemDescription;
+    public string ID;
+    public string Name;
+    public Sprite Icon;
+    [TextArea] public string Description;
 
     public List<UpgradeModifier> modifiersToApply = new();
 }

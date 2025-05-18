@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b39ad9f5479d8549a6081286c4185ee, type: 3}
   m_Name: WallSlide
   m_EditorClassIdentifier: 
-  itemID: 3
-  itemName: wall slide
-  itemIcon: {fileID: 21300000, guid: 5bf3897bff7ef8f47bccf6aee5fa7b29, type: 3}
-  itemDescription: "sliding\t"
+  ID: 3
+  Name: slides
+  Icon: {fileID: 21300000, guid: 5bf3897bff7ef8f47bccf6aee5fa7b29, type: 3}
+  Description: 
   modifiersToApply:
   - Type: 9
     ModType: 3

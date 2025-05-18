@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b39ad9f5479d8549a6081286c4185ee, type: 3}
   m_Name: DoubleJump
   m_EditorClassIdentifier: 
-  itemID: 1
-  itemName: Jump boots
-  itemIcon: {fileID: 21300000, guid: 902aea4c509c3094584cc7674fca0c7c, type: 3}
-  itemDescription: boots
+  ID: 1
+  Name: Jump boots
+  Icon: {fileID: 21300000, guid: 902aea4c509c3094584cc7674fca0c7c, type: 3}
+  Description: 
   modifiersToApply:
   - Type: 8
     ModType: 0

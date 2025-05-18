@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class InventoryManager : MonoSingleton<InventoryManager>
 {
 
-    private UpgradeItemData[] inventory;
-    public UpgradeItemData[] Inventory { get => inventory; }
+    private List<UpgradeItemData> inventory;
+    public List<UpgradeItemData> Inventory { get => inventory; }
 
     private Dictionary<string, UpgradeItemData> itemsRegistry;
     public event Action OnInventoryChanged;
@@ -19,9 +20,10 @@ public class InventoryManager : MonoSingleton<InventoryManager>
         base.Awake();
         itemsRegistry = new Dictionary<string, UpgradeItemData>();
         UpgradeItemData[] items = Resources.LoadAll<UpgradeItemData>("Items");
+        inventory = new();
         foreach (var item in items)
         {
-            itemsRegistry.Add(item.itemID, item);
+            itemsRegistry.Add(item.ID, item);
         }
     }
 
@@ -39,14 +41,14 @@ public class InventoryManager : MonoSingleton<InventoryManager>
         List<string> result = new();
         foreach (var item in inventory)
         {
-            result.Add(item.itemID);
+            result.Add(item.ID);
         }
         return result.ToArray();
     }
 
     public void LoadInventory(string[] ids)
     {
-        inventory = new UpgradeItemData[ids.Length];
+        inventory = new(ids.Length);
         for (int i = 0; i < ids.Length; i++)
         {
             var item = GetByID(ids[i]);
@@ -57,6 +59,14 @@ public class InventoryManager : MonoSingleton<InventoryManager>
         }
     }
 
-
-
+    public void AddItem(UpgradeItemData item)
+    {
+        inventory.Add(item);
+        OnInventoryChanged?.Invoke();
+    }
+    public void RemoveItem(UpgradeItemData item)
+    {
+        inventory.Remove(item);
+        OnInventoryChanged?.Invoke();
+    }
 }
