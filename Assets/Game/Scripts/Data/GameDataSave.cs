@@ -10,11 +10,11 @@ public class GameDataSave
     {
         public PlayerStatsDataSave()
         {
-            activePlayerModifiers = new List<UpgradeModifier>();
+            items = new string[0];
             HP = 0;
             savePoint = new SavePointInfo();
         }
-        public List<UpgradeModifier> activePlayerModifiers;
+        public string[] items;
         public int HP;
         public SavePointInfo savePoint;
         [System.Serializable]

@@ -19,11 +19,18 @@ public class PickupItem : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log(other.gameObject.name);
         if (other.CompareTag("Player"))
         {
             InventoryManager.Instance.AddItem(Data);
             Destroy(gameObject);
+        }
+    }
+    private void OnValidate()
+    {
+        if (Data != null)
+        {
+            var image = GetComponent<SpriteRenderer>();
+            image.sprite = Data.Icon;
         }
     }
 }

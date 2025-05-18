@@ -17,19 +17,21 @@ public class FallState : PlayerBaseState
             stateMachine.ChangeState(player.wallSlideState);
             return;
         }
-
-
         if (player.IsGrounded)
         {
             stateMachine.ChangeState(player.idleState);
             return;
         }
-        if (player.ButtonJump && !isHoldOnEnterJumpButton && (player.TimeLastWallTouch > 0 || player.ExtraJumpCountLeft > 0))
+        if (player.ButtonJump && CanJump())
         {
             stateMachine.ChangeState(player.jumpState);
             return;
         }
         isHoldOnEnterJumpButton = player.ButtonJump;
+    }
+    private bool CanJump()
+    {
+        return !isHoldOnEnterJumpButton && ((player.TimeLastWallTouch > 0 && Stats.Stats.HasWallJump) || player.ExtraJumpCountLeft > 0);
     }
     public override float HorizontalSpeedMultiplayer => Stats.Stats.AirControlFactor;
 

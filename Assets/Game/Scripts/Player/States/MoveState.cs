@@ -2,9 +2,11 @@ public class MoveState : PlayerBaseState
 {
     public MoveState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
+    private bool isHoldOnEnterJumpButton = false;
     public override void Enter()
     {
 
+        isHoldOnEnterJumpButton = player.ButtonJump;
         if (player.TimeLastJumpPressed > 0f && player.ButtonJump)
         {
             stateMachine.ChangeState(player.jumpState);
@@ -18,7 +20,7 @@ public class MoveState : PlayerBaseState
             stateMachine.ChangeState(player.idleState);
             return;
         }
-        if (player.ButtonJump)
+        if (player.ButtonJump && player.TimeLastJumpPressed > 0f && !isHoldOnEnterJumpButton)
         {
             stateMachine.ChangeState(player.jumpState);
             return;
@@ -43,6 +45,7 @@ public class MoveState : PlayerBaseState
             stateMachine.ChangeState(player.attackState);
             return;
         }
+        isHoldOnEnterJumpButton = false;
     }
 
 }

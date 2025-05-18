@@ -11,7 +11,6 @@ public class InventoryManager : MonoSingleton<InventoryManager>
 
     private Dictionary<string, UpgradeItemData> itemsRegistry;
     public event Action OnInventoryChanged;
-    public event Action OnActiveModifiersChanged;
     public event Action<UpgradeItemData> OnItemAdded;
     public event Action<UpgradeItemData> OnItemRemoved;
 
@@ -57,16 +56,20 @@ public class InventoryManager : MonoSingleton<InventoryManager>
                 inventory[i] = item;
             }
         }
+        OnInventoryChanged?.Invoke();
     }
+
 
     public void AddItem(UpgradeItemData item)
     {
         inventory.Add(item);
         OnInventoryChanged?.Invoke();
+        OnItemAdded?.Invoke(item);
     }
     public void RemoveItem(UpgradeItemData item)
     {
         inventory.Remove(item);
         OnInventoryChanged?.Invoke();
+        OnItemRemoved?.Invoke(item);
     }
 }

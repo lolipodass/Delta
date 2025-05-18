@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using static GameDataSave;
 using static GameDataSave.PlayerStatsDataSave;
@@ -21,6 +22,13 @@ public class PlayerStats : MonoBehaviour
         LastSavePoint = null;
         Stats = new PlayerStatsManager(_playerConfig);
         Health = GetComponent<HealthComponent>();
+        InventoryManager.Instance.OnInventoryChanged += GetInfoFromInventory;
+    }
+
+    private void GetInfoFromInventory()
+    {
+        var modifiers = InventoryManager.Instance.Inventory.Where(x => x.modifiersToApply.Count > 0).SelectMany(x => x.modifiersToApply).ToList();
+        Stats.SetLoadedModifiers(modifiers);
     }
 
     public void SetSavePoint(SavePoint savePoint)
@@ -52,15 +60,15 @@ public class PlayerStats : MonoBehaviour
     {
         return new PlayerStatsDataSave()
         {
-            activePlayerModifiers = Stats.Modifiers,
             HP = Health.MaxHealth,
             savePoint = SavePoint
         };
     }
     public void SetSavedData(PlayerStatsDataSave savedData)
     {
-        Stats.SetLoadedModifiers(savedData.activePlayerModifiers);
         Health.SetMaxHealth(savedData.HP);
         SetSavePoint(savedData.savePoint);
+        GetInfoFromInventory();
     }
+
 }

@@ -11,7 +11,7 @@ public class JumpState : PlayerBaseState
             player.GroundJump();
             return;
         }
-        if (player.IsTouchWall || player.TimeLastWallTouch > 0f)
+        if ((player.IsTouchWall || player.TimeLastWallTouch > 0f) && Stats.Stats.HasWallJump)
         {
             player.WallJump();
             return;
