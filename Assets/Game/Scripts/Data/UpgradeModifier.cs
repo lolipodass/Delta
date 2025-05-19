@@ -9,6 +9,7 @@ public enum PlayerStatType
     Speed,
     AirControlFactor,
     FallSpeed,
+    HasCrouch,
     JumpForce,
     AirJumpForce,
     ExtraJumpCount,

@@ -25,7 +25,7 @@ public class MoveState : PlayerBaseState
             stateMachine.ChangeState(player.jumpState);
             return;
         }
-        if (player.ButtonCrouch)
+        if (player.ButtonCrouch && Stats.Stats.HasCrouch)
         {
             stateMachine.ChangeState(player.crouchState);
             return;

@@ -17,6 +17,7 @@ public class PlayerStatsManager
 
     private int _cachedMaxHP;
     private int _cachedDamage;
+    private bool _cachedHasCrouch;
     private float _cachedInvincibilityAfterHit;
     private float _cachedSpeed;
     private float _cachedAirControlFactor;
@@ -38,6 +39,7 @@ public class PlayerStatsManager
     public float MaxSpeed => _cachedSpeed;
     public float AirControlFactor => _cachedAirControlFactor;
     public float MaxFallSpeed => _cachedFallSpeed;
+    public bool HasCrouch => _cachedHasCrouch;
     public float JumpForce => _cachedJumpForce;
     public float AirJumpForce => _cachedAirJumpForce;
     public int ExtraJumpCount => _cachedExtraJumpCount;
@@ -83,6 +85,7 @@ public class PlayerStatsManager
         _cachedHasWallSlide = CalculateBool(PlayerStatType.HasWallSlide);
         _cachedHasWallJump = CalculateBool(PlayerStatType.HasWallJump);
         _cachedHasDash = CalculateBool(PlayerStatType.HasDash);
+        _cachedHasCrouch = CalculateBool(PlayerStatType.HasCrouch);
 
         _cachedMaxHP = (int)CalculateStats(PlayerStatType.MaxHP);
         _cachedDamage = (int)CalculateStats(PlayerStatType.Damage);

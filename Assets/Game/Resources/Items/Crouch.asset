@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b39ad9f5479d8549a6081286c4185ee, type: 3}
-  m_Name: DoubleJump
+  m_Name: Crouch
   m_EditorClassIdentifier: 
-  ID: 1
-  Name: Jump boots
-  Icon: {fileID: 21300000, guid: 902aea4c509c3094584cc7674fca0c7c, type: 3}
+  ID: 4
+  Name: slides
+  Icon: {fileID: 21300000, guid: 77dacc799437b144aa31bd9436ab90bc, type: 3}
   Description: 
   modifiersToApply:
-  - Type: 9
-    ModType: 0
+  - Type: 6
+    ModType: 3
     Value: 1
-    Priority: 1
+    Priority: 0
     SourceID: 

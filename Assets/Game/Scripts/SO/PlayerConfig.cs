@@ -8,6 +8,7 @@ public class PlayerBaseInfo : ScriptableObject
     public float MaxSpeed;
     public float AirControlFactor;
     public float MaxFallSpeed;
+    public bool HashCrouch;
     [Header("Jump")]
     public float jumpForce;
     public float airJumpForce;
@@ -54,6 +55,7 @@ public class PlayerBaseInfo : ScriptableObject
             PlayerStatType.HasWallSlide => HasWallSlide,
             PlayerStatType.HasWallJump => HasWallJump,
             PlayerStatType.HasDash => HasDash,
+            PlayerStatType.HasCrouch => HashCrouch,
             _ => false,
         };
     }

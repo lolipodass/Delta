@@ -29,8 +29,9 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
     {
         HealthText.text = "HP: " + hp;
     }
-    public void OnDestroy()
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
         if (_healthComponent != null)
         {
             _healthComponent.OnHealthChanged -= UpdateHealthUI;

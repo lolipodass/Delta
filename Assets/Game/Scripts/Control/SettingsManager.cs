@@ -46,8 +46,9 @@ public class SettingsManager : MonoSingleton<SettingsManager>
         GameManager.Instance.playerInput.actions.FindAction("Pause").performed += PauseCallback;
     }
 
-    protected void OnDestroy()
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
         if (GameManager.Instance.playerInput != null)
         {
             GameManager.Instance.playerInput.actions.FindAction("Pause").performed -= PauseCallback;

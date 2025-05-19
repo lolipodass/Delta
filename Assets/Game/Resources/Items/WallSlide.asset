@@ -17,12 +17,12 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: 5bf3897bff7ef8f47bccf6aee5fa7b29, type: 3}
   Description: 
   modifiersToApply:
-  - Type: 9
+  - Type: 12
     ModType: 3
     Value: 1
     Priority: 0
     SourceID: 
-  - Type: 11
+  - Type: 10
     ModType: 3
     Value: 1
     Priority: 0

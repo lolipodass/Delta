@@ -35,7 +35,6 @@ public class SceneLoader : PersistSingleton<SceneLoader>
         OnFirstSceneLoaded?.Invoke();
         OnSceneLoaded?.Invoke(initialRoomSceneName);
 
-        Debug.Log(!SceneManager.GetSceneByName(gameplayUISceneName).isLoaded);
         if (!SceneManager.GetSceneByName(gameplayUISceneName).isLoaded)
         {
             yield return SceneManager.LoadSceneAsync(gameplayUISceneName, LoadSceneMode.Additive);

@@ -17,6 +17,7 @@ public class PauseManager : MonoSingleton<PauseManager>
 
     private void Start()
     {
+        Debug.Log("PauseManager");
         if (GameManager.Instance.playerInput != null)
         {
             var pauseAction = GameManager.Instance.playerInput.actions.FindAction("Pause");
@@ -30,6 +31,7 @@ public class PauseManager : MonoSingleton<PauseManager>
 
     public void PauseCallback(InputAction.CallbackContext context)
     {
+        Debug.Log("PauseCallback");
         if (context.performed)
         {
             if (GameManager.Instance.Player == null)
@@ -81,5 +83,13 @@ public class PauseManager : MonoSingleton<PauseManager>
             GameManager.Instance.playerInput.actions.FindAction("Pause").performed -= PauseCallback;
         }
         base.OnDestroy();
+    }
+    protected void OnApplicationQuit()
+    {
+        SceneLoader.QuitGame();
+        if (GameManager.Instance.playerInput != null)
+        {
+            GameManager.Instance.playerInput.actions.FindAction("Pause").performed -= PauseCallback;
+        }
     }
 }
