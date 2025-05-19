@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PauseManager : MonoSingleton<PauseManager>
 {
@@ -8,13 +9,38 @@ public class PauseManager : MonoSingleton<PauseManager>
 
     public void TogglePause()
     {
-        Debug.Log("bam");
         if (isPaused)
             ResumeGame();
         else
             PauseGame();
     }
 
+    private void Start()
+    {
+        if (GameManager.Instance.playerInput != null)
+        {
+            var pauseAction = GameManager.Instance.playerInput.actions.FindAction("Pause");
+            if (pauseAction != null)
+            {
+                pauseAction.performed -= PauseCallback;
+                pauseAction.performed += PauseCallback;
+            }
+        }
+    }
+
+    public void PauseCallback(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            if (GameManager.Instance.Player == null)
+                return;
+
+            if (GameManager.Instance.playerStats.LastSavePoint != null)
+                SaveManager.Instance.SaveGame();
+            else
+                TogglePause();
+        }
+    }
     public void PauseGame()
     {
         if (isPaused)
@@ -47,5 +73,13 @@ public class PauseManager : MonoSingleton<PauseManager>
     {
         FileSaveManager.Instance.SaveGame();
         SceneLoader.LoadMenu();
+    }
+    protected override void OnDestroy()
+    {
+        if (GameManager.Instance.playerInput != null)
+        {
+            GameManager.Instance.playerInput.actions.FindAction("Pause").performed -= PauseCallback;
+        }
+        base.OnDestroy();
     }
 }

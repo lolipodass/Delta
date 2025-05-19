@@ -15,13 +15,11 @@ public class WallSlideState : PlayerBaseState
             stateMachine.ChangeState(player.jumpState);
             return;
         }
-        Debug.Log(player.IsTouchBackWall);
         if (!player.IsTouchBackWall)
             PlayAnimation();
     }
     public override void LogicUpdate()
     {
-        Debug.Log(player.IsTouchBackWall);
         if (player.IsGrounded)
         {
             stateMachine.ChangeState(player.idleState);

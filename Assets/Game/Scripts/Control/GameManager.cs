@@ -19,7 +19,6 @@ public class GameManager : PersistSingleton<GameManager>
 
         SceneLoader.LoadMenu();
         SceneLoader.Instance.OnFirstSceneLoaded += OnFirstSceneLoaded;
-        SceneLoader.Instance.OnGameplayUILoaded += OnGameplayUILoaded;
 #if UNITY_EDITOR
         string previousScenePath = EditorPrefs.GetString(PreviousScenePathKey, "");
         if (!string.IsNullOrEmpty(previousScenePath))
@@ -37,34 +36,6 @@ public class GameManager : PersistSingleton<GameManager>
         return;
 #endif
     }
-    public void OnDestroy()
-    {
-        if (playerInput != null)
-        {
-            playerInput.actions.FindAction("Pause").performed -= PauseCallback;
-        }
-    }
-
-    private bool UILoaded = false;
-    private void OnGameplayUILoaded()
-    {
-        UILoaded = true;
-    }
-
-    public void PauseCallback(InputAction.CallbackContext context)
-    {
-        if (context.performed && UILoaded)
-        {
-            if (ObjectIsNull(Player, "Player"))
-                return;
-
-            Debug.Log(playerStats.LastSavePoint);
-            if (playerStats.LastSavePoint != null)
-                SaveManager.Instance.SaveGame();
-            else
-                PauseManager.Instance.TogglePause();
-        }
-    }
 
     private bool isNewGame = false;
     void OnFirstSceneLoaded()
@@ -74,7 +45,6 @@ public class GameManager : PersistSingleton<GameManager>
             FileSaveManager.Instance.CreateNewGame();
             isNewGame = false;
         }
-
         LoadVariables();
         MovePlayerToSavePoint();
     }
@@ -112,21 +82,12 @@ public class GameManager : PersistSingleton<GameManager>
 
     public void LoadVariables()
     {
-        FileSaveManager.Instance.LoadGame();
         playerInput = FindAnyObjectByType<PlayerInput>();
         playerSFM = FindAnyObjectByType<PlayerSFM>();
         playerStats = FindAnyObjectByType<PlayerStats>();
-
         Camera = FindAnyObjectByType<Camera>();
-        if (playerInput != null)
-        {
-            var pauseAction = playerInput.actions.FindAction("Pause");
-            if (pauseAction != null)
-            {
-                pauseAction.performed -= PauseCallback;
-                pauseAction.performed += PauseCallback;
-            }
-        }
+
+        FileSaveManager.Instance.LoadGame();
     }
 
     public void ExitGame()

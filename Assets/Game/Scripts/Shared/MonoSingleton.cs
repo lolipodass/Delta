@@ -10,4 +10,9 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
         else
             Instance = this as T;
     }
+    protected virtual void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
 }

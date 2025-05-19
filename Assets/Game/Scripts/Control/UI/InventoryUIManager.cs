@@ -18,6 +18,11 @@ public class InventoryUIManager : MonoSingleton<InventoryUIManager>
         UpdateInventory();
     }
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        InventoryManager.Instance.OnInventoryChanged -= UpdateInventory;
+    }
     public void UpdateInventory()
     {
         ClearInventory();

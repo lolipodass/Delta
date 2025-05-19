@@ -30,10 +30,12 @@ public class SceneLoader : PersistSingleton<SceneLoader>
         // loadedRoomScenes.Clear();
         // loadedRoomScenes.Add(initialRoomSceneName);
 
+        Debug.Log("is loaded " + SceneManager.GetSceneByName(gameplayUISceneName).isLoaded);
         Debug.Log($"Scene loaded: {initialRoomSceneName}");
         OnFirstSceneLoaded?.Invoke();
         OnSceneLoaded?.Invoke(initialRoomSceneName);
 
+        Debug.Log(!SceneManager.GetSceneByName(gameplayUISceneName).isLoaded);
         if (!SceneManager.GetSceneByName(gameplayUISceneName).isLoaded)
         {
             yield return SceneManager.LoadSceneAsync(gameplayUISceneName, LoadSceneMode.Additive);
@@ -62,7 +64,7 @@ public class SceneLoader : PersistSingleton<SceneLoader>
 
     public static void LoadMenu()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
     }
     public static void LoadPause()
     {

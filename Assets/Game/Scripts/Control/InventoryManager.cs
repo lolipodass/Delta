@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class InventoryManager : MonoSingleton<InventoryManager>
+public class InventoryManager : PersistSingleton<InventoryManager>
 {
 
     private List<UpgradeItemData> inventory;
@@ -25,7 +25,6 @@ public class InventoryManager : MonoSingleton<InventoryManager>
             itemsRegistry.Add(item.ID, item);
         }
     }
-
     private UpgradeItemData GetByID(string id)
     {
         if (itemsRegistry.TryGetValue(id, out var item))
