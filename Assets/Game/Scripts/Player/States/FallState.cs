@@ -4,15 +4,17 @@ public class FallState : PlayerBaseState
 {
     public FallState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
+    protected override string AnimationName => "fall";
     private bool isHoldOnEnterJumpButton = false;
     public override void Enter()
     {
+        PlayAnimation();
         isHoldOnEnterJumpButton = player.ButtonJump;
     }
     public override void LogicUpdate()
     {
 
-        if (player.IsTouchWall && Stats.Stats.HasWallSlide)
+        if (player.IsTouchFrontWall && Stats.Stats.HasWallSlide)
         {
             stateMachine.ChangeState(player.wallSlideState);
             return;

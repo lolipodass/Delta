@@ -15,17 +15,19 @@ public class WallSlideState : PlayerBaseState
             stateMachine.ChangeState(player.jumpState);
             return;
         }
-        if (player.IsTouchWall && !player.IsTouchBackWall)
+        Debug.Log(player.IsTouchBackWall);
+        if (!player.IsTouchBackWall)
             PlayAnimation();
     }
     public override void LogicUpdate()
     {
+        Debug.Log(player.IsTouchBackWall);
         if (player.IsGrounded)
         {
             stateMachine.ChangeState(player.idleState);
             return;
         }
-        if (!player.IsTouchWall)
+        if (!player.IsTouchFrontWall)
         {
             stateMachine.ChangeState(player.fallState);
             return;
@@ -39,7 +41,7 @@ public class WallSlideState : PlayerBaseState
     }
     public override void PhysicsUpdate()
     {
-        if (!player.IsTouchWall)
+        if (!player.IsTouchFrontWall)
         {
             stateMachine.ChangeState(player.fallState);
             return;

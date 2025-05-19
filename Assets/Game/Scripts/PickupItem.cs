@@ -1,8 +1,5 @@
-using System.Threading.Tasks;
 using PrimeTween;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class PickupItem : MonoBehaviour
 {
@@ -30,12 +27,9 @@ public class PickupItem : MonoBehaviour
     private void Shake()
     {
         var randomShakeY = Random.Range(minShakeStrength, maxShakeStrength);
-        Debug.Log(randomShakeY);
-        Debug.Log(minShakeStrength);
-        Debug.Log(maxShakeStrength);
 
-        Vector3 startRotation = new Vector3(0, 0, -rotationAngle);
-        Vector3 endRotation = new Vector3(0, 0, rotationAngle);
+        Vector3 startRotation = new(0, 0, -rotationAngle);
+        Vector3 endRotation = new(0, 0, rotationAngle);
 
         //dont use sequence here, because cycles bug with setRemainingCycles with cycleMode
         Tween.ShakeLocalPosition(transform,

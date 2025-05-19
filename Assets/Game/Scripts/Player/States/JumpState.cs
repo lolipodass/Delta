@@ -4,14 +4,16 @@ public class JumpState : PlayerBaseState
 {
     public JumpState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
+    protected override string AnimationName => "jump";
     public override void Enter()
     {
+        PlayAnimation();
         if (player.IsGrounded || player.TimeLastGrounded > 0f)
         {
             player.GroundJump();
             return;
         }
-        if ((player.IsTouchWall || player.TimeLastWallTouch > 0f) && Stats.Stats.HasWallJump)
+        if ((player.IsTouchFrontWall || player.TimeLastWallTouch > 0f) && Stats.Stats.HasWallJump)
         {
             player.WallJump();
             return;
@@ -29,10 +31,15 @@ public class JumpState : PlayerBaseState
             stateMachine.ChangeState(player.jumpCutState);
             return;
         }
-        if (YVelocity < 0f)
+    }
+    public override void PhysicsUpdate()
+    {
+        Movement();
+
+        if (YVelocity <= 0f)
         {
             player.ReleaseJumpButton();
-            stateMachine.ChangeState(player.fallState);
+            stateMachine.ChangeState(player.upToFallState);
             return;
         }
         // if (player.LastJumpPressedTime >= player.JumpBufferTime && player.IsHoldJumpButton

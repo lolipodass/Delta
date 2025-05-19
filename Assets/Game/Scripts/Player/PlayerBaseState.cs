@@ -13,13 +13,20 @@ public abstract class PlayerBaseState
     }
     virtual public void Enter() { }
     virtual public void LogicUpdate() { }
+    //<summary>
+    //Override this method to update physics
+    //</summary>
     virtual public void PhysicsUpdate()
     {
         Movement();
     }
     virtual public void Exit() { }
 
-
+    virtual public void Init()
+    {
+        XVelocity = player.rb.linearVelocity.x;
+        YVelocity = player.rb.linearVelocity.y;
+    }
 
     virtual public void Movement()
     {
@@ -43,6 +50,10 @@ public abstract class PlayerBaseState
     protected void PlayAnimation()
     {
         player.animator.Play("Base." + AnimationName);
+    }
+    protected void PlayAnimation(string animationName)
+    {
+        player.animator.Play("Base." + animationName);
     }
     protected virtual string AnimationName => "idle";
     protected float YVelocity;

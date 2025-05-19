@@ -15,7 +15,7 @@ public class MoveState : PlayerBaseState
     }
     public override void LogicUpdate()
     {
-        if (player.ButtonMoveInput == 0f)
+        if (player.ButtonMoveInput == 0f && XVelocity < 0.1f)
         {
             stateMachine.ChangeState(player.idleState);
             return;

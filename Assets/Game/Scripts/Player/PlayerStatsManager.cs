@@ -141,12 +141,15 @@ public class PlayerStatsManager
                 {
                     case ModifierType.UnlockAbility:
                         if (priorityOverride < modifier.Priority)
-                            overrideValue = modifier.Value > 0;
+                        {
+                            priorityOverride = modifier.Priority;
+                            overrideValue = modifier.Value > -1;
+                        }
                         break;
                 }
             }
         }
-        return priorityOverride > -UpgradeModifier.MinPriority ? overrideValue : value;
+        return priorityOverride > UpgradeModifier.MinPriority ? overrideValue : value;
     }
 
     public void SetLoadedModifiers(List<UpgradeModifier> loadedModifiers)

@@ -67,7 +67,7 @@ public class PlayerSFM : MonoBehaviour
     public bool ButtonAttack { get; private set; }
 
     public bool IsGrounded { get; private set; }
-    public bool IsTouchWall { get; private set; }
+    public bool IsTouchFrontWall { get; private set; }
     public bool IsTouchBackWall { get; private set; }
     public int ExtraJumpCountLeft { get; private set; }
     public float YVelocity { get; private set; }
@@ -81,6 +81,7 @@ public class PlayerSFM : MonoBehaviour
     public IdleState idleState;
     public MoveState moveState;
     public JumpState jumpState;
+    public UpToFallState upToFallState;
     public JumpCutState jumpCutState;
     public FallState fallState;
     public WallSlideState wallSlideState;
@@ -149,6 +150,7 @@ public class PlayerSFM : MonoBehaviour
         idleState = new IdleState(this, StateMachine);
         moveState = new MoveState(this, StateMachine);
         jumpState = new JumpState(this, StateMachine);
+        upToFallState = new UpToFallState(this, StateMachine);
         jumpCutState = new JumpCutState(this, StateMachine);
         fallState = new FallState(this, StateMachine);
         wallSlideState = new WallSlideState(this, StateMachine);
@@ -211,6 +213,8 @@ public class PlayerSFM : MonoBehaviour
     {
         UpdatePhysicsChecks();
         StateMachine.CurrentState.PhysicsUpdate();
+        YVelocity = rb.linearVelocity.y;
+        XVelocity = rb.linearVelocity.x;
     }
     void UpdatePhysicsChecks()
     {
@@ -226,8 +230,8 @@ public class PlayerSFM : MonoBehaviour
         //possible move this into state machine
         IsTouchBackWall = Physics2D.OverlapBox(wallCheckPosBack.position, wallCheckSizeBack, 0f, wallMask);
         isTouchWallAnimation = Physics2D.OverlapBox(wallCheckPos.position, wallCheckSize, 0f, wallMask);
-        IsTouchWall = IsTouchBackWall || isTouchWallAnimation;
-        if (IsTouchWall)
+        IsTouchFrontWall = IsTouchBackWall || isTouchWallAnimation;
+        if (IsTouchFrontWall)
         {
             isWallInFront = IsTouchBackWall ? !isFacingRight : isFacingRight;
             TimeLastWallTouch = PlayerStats.Stats.CoyoteTime;
@@ -329,10 +333,10 @@ public class PlayerSFM : MonoBehaviour
 
     public void AttackCallback(InputAction.CallbackContext context)
     {
-        if (context.performed)
-            ButtonAttack = true;
-        else if (context.canceled)
-            ButtonAttack = false;
+        // if (context.performed)
+        //     ButtonAttack = true;
+        // else if (context.canceled)
+        //     ButtonAttack = false;
     }
     #endregion
 
