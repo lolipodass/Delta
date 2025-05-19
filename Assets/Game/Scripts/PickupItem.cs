@@ -1,10 +1,17 @@
 using System.Threading.Tasks;
 using PrimeTween;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PickupItem : MonoBehaviour
 {
+    public float minShakeStrength = 0.001f;
+    public float maxShakeStrength = 0.1f;
+    public float shakeDuration = 1f;
+
+    public float rotationAngle = 5f;
+    public float rotationDuration = 1f;
     [field: SerializeField] private UpgradeItemData Data;
 
     private void Awake()
@@ -17,24 +24,58 @@ public class PickupItem : MonoBehaviour
         }
         var image = GetComponent<SpriteRenderer>();
         image.sprite = Data.Icon;
-        Tween.ShakeLocalPosition(transform, duration: 1f, strength: new Vector3(0, 0.1f, 0), cycles: -1);
-        // Tween.PositionY(transform, end0.01f, duration: 0.5f, cycles: -1, cycleMode: CycleMode.Yoyo);
+        Shake();
     }
 
+    private void Shake()
+    {
+        var randomShakeY = Random.Range(minShakeStrength, maxShakeStrength);
+        Debug.Log(randomShakeY);
+        Debug.Log(minShakeStrength);
+        Debug.Log(maxShakeStrength);
+
+        Vector3 startRotation = new Vector3(0, 0, -rotationAngle);
+        Vector3 endRotation = new Vector3(0, 0, rotationAngle);
+
+        //dont use sequence here, because cycles bug with setRemainingCycles with cycleMode
+        Tween.ShakeLocalPosition(transform,
+                        duration: shakeDuration + randomShakeY,
+                        strength: new Vector3(0, randomShakeY, 0),
+                        cycles: -1);
+
+        Tween.LocalRotation(transform,
+                        duration: rotationDuration + randomShakeY,
+                        startValue: startRotation,
+                        endValue: endRotation,
+                        cycleMode: CycleMode.Rewind,
+                        cycles: -1);
+
+    }
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
             InventoryManager.Instance.AddItem(Data);
-            Tween.Scale(transform, 1, 0f, duration: 0.5f).OnComplete(target: transform, ui => Destroy(gameObject));
+            AnimationPickup();
         }
+    }
+    private void AnimationPickup()
+    {
+        var image = GetComponent<SpriteRenderer>();
+        Sequence.Create()
+            .Group(Tween.Scale(transform, 1, 0.5f, duration: 0.5f))
+            .Group(Tween.Alpha(image, 1, 0f, duration: 0.5f))
+            .OnComplete(target: transform, ui => Destroy(gameObject));
+
+
     }
     private void OnValidate()
     {
-        if (Data != null)
-        {
-            var image = GetComponent<SpriteRenderer>();
+        var image = GetComponent<SpriteRenderer>();
+
+        if (gameObject.scene.name != null)
             image.sprite = Data.Icon;
-        }
+
+        //dont catch because can click on error message and find element if data is null
     }
 }
