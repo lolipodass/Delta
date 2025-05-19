@@ -58,7 +58,15 @@ public class InventoryManager : MonoSingleton<InventoryManager>
         OnInventoryChanged?.Invoke();
     }
 
-
+    public bool HasItemInInventory(string id)
+    {
+        var item = GetByID(id);
+        if (item != null)
+        {
+            return inventory.Contains(item);
+        }
+        return false;
+    }
     public void AddItem(UpgradeItemData item)
     {
         inventory.Add(item);

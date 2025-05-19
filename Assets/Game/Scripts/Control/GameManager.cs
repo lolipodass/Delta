@@ -45,21 +45,20 @@ public class GameManager : PersistSingleton<GameManager>
         }
     }
 
+    private bool UILoaded = false;
     private void OnGameplayUILoaded()
     {
-        if (playerInput != null)
-        {
-            playerInput.actions.FindAction("Pause").performed += PauseCallback;
-        }
+        UILoaded = true;
     }
 
     public void PauseCallback(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && UILoaded)
         {
             if (ObjectIsNull(Player, "Player"))
                 return;
 
+            Debug.Log(playerStats.LastSavePoint);
             if (playerStats.LastSavePoint != null)
                 SaveManager.Instance.SaveGame();
             else
@@ -94,7 +93,6 @@ public class GameManager : PersistSingleton<GameManager>
     public void StartGame()
     {
         SceneLoader.Instance.StartNewGame("FirstLevel");
-
     }
     public void CreateNewGame()
     {
@@ -111,6 +109,7 @@ public class GameManager : PersistSingleton<GameManager>
         Player.GetComponent<PlayerStats>().Health.OnDeath += HandlePlayerDeath;
     }
 
+
     public void LoadVariables()
     {
         FileSaveManager.Instance.LoadGame();
@@ -119,7 +118,15 @@ public class GameManager : PersistSingleton<GameManager>
         playerStats = FindAnyObjectByType<PlayerStats>();
 
         Camera = FindAnyObjectByType<Camera>();
-
+        if (playerInput != null)
+        {
+            var pauseAction = playerInput.actions.FindAction("Pause");
+            if (pauseAction != null)
+            {
+                pauseAction.performed -= PauseCallback;
+                pauseAction.performed += PauseCallback;
+            }
+        }
     }
 
     public void ExitGame()

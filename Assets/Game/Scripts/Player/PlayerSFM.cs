@@ -333,10 +333,10 @@ public class PlayerSFM : MonoBehaviour
 
     public void AttackCallback(InputAction.CallbackContext context)
     {
-        // if (context.performed)
-        //     ButtonAttack = true;
-        // else if (context.canceled)
-        //     ButtonAttack = false;
+        if (context.performed)
+            ButtonAttack = true;
+        else if (context.canceled)
+            ButtonAttack = false;
     }
     #endregion
 

@@ -8,6 +8,7 @@ public class PauseManager : MonoSingleton<PauseManager>
 
     public void TogglePause()
     {
+        Debug.Log("bam");
         if (isPaused)
             ResumeGame();
         else

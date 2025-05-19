@@ -98,6 +98,8 @@ public class PlayerStatsManager
         _cachedDashForce = CalculateStats(PlayerStatType.DashForce);
         _cachedDashCooldown = CalculateStats(PlayerStatType.DashCooldown);
     }
+
+    //rewrite to zlinq
     private float CalculateStats(PlayerStatType type)
     {
         float value = _playerBaseInfo.GetNumericStat(type);

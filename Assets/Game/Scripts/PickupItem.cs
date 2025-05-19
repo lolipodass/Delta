@@ -10,6 +10,7 @@ public class PickupItem : MonoBehaviour
     public float rotationAngle = 5f;
     public float rotationDuration = 1f;
     [field: SerializeField] private UpgradeItemData Data;
+    public bool CanHaveMultiple = false;
 
     private void Awake()
     {
@@ -19,11 +20,20 @@ public class PickupItem : MonoBehaviour
             enabled = false;
             return;
         }
+
         var image = GetComponent<SpriteRenderer>();
         image.sprite = Data.Icon;
         Shake();
     }
 
+    private void Start()
+    {
+
+        if (InventoryManager.Instance.HasItemInInventory(Data.ID) && !CanHaveMultiple)
+        {
+            Destroy(gameObject);
+        }
+    }
     private void Shake()
     {
         var randomShakeY = Random.Range(minShakeStrength, maxShakeStrength);

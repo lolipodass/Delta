@@ -56,30 +56,30 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
             return;
         }
 
-        try
-        {
-            string json = File.ReadAllText(filePath);
+        // try
+        // {
+        string json = File.ReadAllText(filePath);
 
-            GameData = JsonUtility.FromJson<GameDataSave>(json);
+        GameData = JsonUtility.FromJson<GameDataSave>(json);
 
-            PlayerStats playerStats = FindAnyObjectByType<PlayerStats>();
-            if (playerStats != null)
-            {
-                playerStats.SetSavedData(GameData.player);
-            }
-            else
-            {
-                Debug.LogError("LoadGame: PlayerStats component not found!");
-            }
-            if (InventoryManager.Instance != null)
-            {
-                InventoryManager.Instance.LoadInventory(GameData.player.items);
-            }
-        }
-        catch (System.Exception e)
+        PlayerStats playerStats = FindAnyObjectByType<PlayerStats>();
+        if (playerStats != null)
         {
-            Debug.LogError($"LoadGame: Error loading game data: {e.Message}");
+            playerStats.SetSavedData(GameData.player);
         }
+        else
+        {
+            Debug.LogError("LoadGame: PlayerStats component not found!");
+        }
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.LoadInventory(GameData.player.items);
+        }
+        // }
+        // catch (System.Exception e)
+        // {
+        //     Debug.LogError($"LoadGame: Error loading game data: {e.Message}");
+        // }
     }
     public bool IsGameSaved(string slotName = "slot1")
     {
