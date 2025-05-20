@@ -11,7 +11,13 @@ public class EnemyController : MonoBehaviour
         Attack
     }
 
+    [Header("Enemy Settings")]
     public EnemyState currentState;
+    public Animator animator;
+    public Seeker seeker;
+    public Rigidbody2D rb;
+
+
 
     [Header("Patrol Settings")]
     public float patrolSpeed = 1f;
@@ -26,62 +32,42 @@ public class EnemyController : MonoBehaviour
     public string playerTag = "Player";
 
     [Header("Movement & Physics")]
-    public Rigidbody2D rb;
-    public Transform visualsTransform;
+
     public float pathUpdateInterval = 0.5f;
     public float nextWaypointDistance = 0.5f;
-    public float attackRange = 2f;
     public float JumpForce = 4f;
     public float jumpCooldown = 0.5f;
-    public float groundRaycastSize;
+    public float groundRaycastSize = 0.8f;
 
-    [Header("A* Pathfinding")]
-    public Seeker seeker;
-    private Path currentPath;
-    private int currentWaypoint = 0;
-    private bool reachedEndOfPath = false;
-
-    public Transform playerTransform;
+    [Header("Attack Settings")]
+    public float attackRange = 2f;
+    public float attackCooldown = 1.5f;
+    public float attackActiveDuration = 0.2f;
+    public float attackAnimHitTime = 0.3f;
+    public float attackAnimEndTime = 0.4f;
     private bool isPlayerDetected = false;
     private float moveDirection;
     private float jumpCooldownTimer;
+    public Collider2D attackHitbox;
+    private Path currentPath;
+    private int currentWaypoint = 0;
+    private bool reachedEndOfPath = false;
+    public Transform playerTransform;
+    private float currentAttackCooldownTimer;
+
 
     void Awake()
     {
 
         seeker = GetComponent<Seeker>();
-        if (visualsTransform == null)
-        {
-            Debug.LogWarning("Visuals Transform is not assigned! Assign your child GameObject with visuals.");
 
-            if (transform.childCount > 0)
-            {
-                visualsTransform = transform.GetChild(0);
-            }
-        }
+        rb = GetComponent<Rigidbody2D>();
         if (rb == null)
         {
-            if (visualsTransform != null)
-            {
-                rb = visualsTransform.GetComponent<Rigidbody2D>();
-
-                if (rb == null)
-                {
-                    Debug.LogError("Rigidbody2D is not found on the child object");
-                }
-            }
+            Debug.LogError("Rigidbody2D is not found on the child object");
+            enabled = false;
+            return;
         }
-
-    }
-    void Start()
-    {
-        currentState = EnemyState.Patrol;
-        playerTransform = GameObject.FindGameObjectWithTag(playerTag)?.transform;
-        if (playerTransform == null)
-        {
-            Debug.LogWarning($"Player with tag '{playerTag}' not found! Make sure your player has this tag.");
-        }
-
         if (seeker == null)
         {
             Debug.LogError("Seeker component not found on enemy! Please add it.");
@@ -89,33 +75,40 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
-        if (patrolPoints.Length > 0)
-        {
-            RequestPath(patrolPoints[currentPatrolPointIndex].position);
-        }
-        else
-        {
-            Debug.LogWarning("No patrol points assigned for enemy: " + gameObject.name + ". Enemy will stand still in Patrol state.");
-        }
+    }
+    void Start()
+    {
+        currentState = EnemyState.Patrol;
+        playerTransform = GameManager.Instance.Player.transform;
+        if (playerTransform == null)
+            Debug.LogWarning($"Player with tag '{playerTag}' not found! Make sure your player has this tag.");
 
+        if (patrolPoints.Length > 0)
+            RequestPath(patrolPoints[currentPatrolPointIndex].position);
+        else
+            Debug.LogWarning("No patrol points assigned for enemy: " + gameObject.name + ". Enemy will stand still in Patrol state.");
+
+        if (attackHitbox == null)
+
+            Debug.LogError("Attack Hitbox (Collider2D) not set, enemy will not attack!" + gameObject.name);
+        else
+            attackHitbox.enabled = false;
 
         StartCoroutine(UpdatePathRoutine());
     }
 
     void FixedUpdate()
     {
-
         Move();
         UpdateSpriteDirection();
     }
 
     void Update()
     {
-
         float distanceToPlayer = Mathf.Infinity;
         if (playerTransform != null)
         {
-            distanceToPlayer = Vector2.Distance(visualsTransform.position, playerTransform.position);
+            distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
             isPlayerDetected = distanceToPlayer < detectionRange;
         }
 
@@ -128,7 +121,7 @@ public class EnemyController : MonoBehaviour
                 HandleChaseState(distanceToPlayer);
                 break;
             case EnemyState.Attack:
-
+                HandleAttackState(distanceToPlayer);
                 break;
         }
     }
@@ -147,7 +140,27 @@ public class EnemyController : MonoBehaviour
                 RequestPath(patrolPoints[currentPatrolPointIndex].position);
                 yield return new WaitForSeconds(pathUpdateInterval * 2);
             }
+            else
+                yield return new WaitForSeconds(pathUpdateInterval / 2);
         }
+    }
+    IEnumerator PerformAttackCoroutine()
+    {
+        currentAttackCooldownTimer = attackCooldown;
+
+        animator.SetTrigger("AttackTrigger");
+
+        yield return new WaitForSeconds(attackAnimHitTime);
+
+        attackHitbox.enabled = true;
+
+
+        yield return new WaitForSeconds(attackActiveDuration);
+
+        attackHitbox.enabled = false;
+
+        yield return new WaitForSeconds(attackAnimEndTime);
+
     }
 
     void OnPathComplete(Path p)
@@ -174,7 +187,7 @@ public class EnemyController : MonoBehaviour
 
     public bool IsGrounded()
     {
-        return Physics2D.Raycast(visualsTransform.position, Vector2.down, groundRaycastSize).collider != null;
+        return Physics2D.Raycast(transform.position, Vector2.down, groundRaycastSize).collider != null;
 
     }
     void Move()
@@ -190,6 +203,7 @@ public class EnemyController : MonoBehaviour
         if (currentWaypoint >= currentPath.vectorPath.Count)
         {
             reachedEndOfPath = true;
+            return;
         }
 
         Vector2 direction = (Vector2)currentPath.vectorPath[currentWaypoint] - rb.position;
@@ -217,7 +231,7 @@ public class EnemyController : MonoBehaviour
         {
             currentWaypoint++;
         }
-        jumpCooldownTimer -= Time.deltaTime;
+        jumpCooldownTimer -= Time.fixedDeltaTime;
     }
 
 
@@ -231,7 +245,7 @@ public class EnemyController : MonoBehaviour
 
         if (patrolPoints.Length == 0) return;
 
-        if (reachedEndOfPath && Vector2.Distance(visualsTransform.position, patrolPoints[currentPatrolPointIndex].position) < patrolPointReachedThreshold)
+        if (reachedEndOfPath && Vector2.Distance(transform.position, patrolPoints[currentPatrolPointIndex].position) < patrolPointReachedThreshold)
         {
             currentPatrolPointIndex = (currentPatrolPointIndex + 1) % patrolPoints.Length;
             RequestPath(patrolPoints[currentPatrolPointIndex].position);
@@ -258,10 +272,40 @@ public class EnemyController : MonoBehaviour
             TransitionToState(EnemyState.Attack);
             return;
         }
-
-
     }
 
+    void HandleAttackState(float distanceToPlayer)
+    {
+        currentAttackCooldownTimer -= Time.deltaTime;
+        if (playerTransform == null)
+        {
+            TransitionToState(EnemyState.Patrol);
+            return;
+        }
+
+        if (currentAttackCooldownTimer <= 0f)
+        {
+            if (distanceToPlayer <= attackRange)
+            {
+                StartCoroutine(PerformAttackCoroutine());
+            }
+            else
+            {
+                TransitionToState(EnemyState.Chase);
+            }
+        }
+        else
+        {
+            if (distanceToPlayer > attackRange && distanceToPlayer <= losePlayerRange)
+            {
+                TransitionToState(EnemyState.Chase);
+            }
+            else if (distanceToPlayer > losePlayerRange)
+            {
+                TransitionToState(EnemyState.Patrol);
+            }
+        }
+    }
     void TransitionToState(EnemyState newState)
     {
         if (currentState == newState) return;
@@ -300,16 +344,16 @@ public class EnemyController : MonoBehaviour
 
     void UpdateSpriteDirection()
     {
-        if (visualsTransform == null) return;
+        if (transform == null) return;
 
 
         if (moveDirection > 0.1f)
         {
-            visualsTransform.localScale = new Vector3(Mathf.Abs(visualsTransform.localScale.x), visualsTransform.localScale.y, visualsTransform.localScale.z);
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         }
         else if (moveDirection < -0.1f)
         {
-            visualsTransform.localScale = new Vector3(-Mathf.Abs(visualsTransform.localScale.x), visualsTransform.localScale.y, visualsTransform.localScale.z);
+            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         }
 
     }
@@ -317,12 +361,15 @@ public class EnemyController : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(visualsTransform.position, detectionRange);
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
 
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(visualsTransform.position, losePlayerRange);
+        Gizmos.DrawWireSphere(transform.position, losePlayerRange);
+        Gizmos.color = Color.rosyBrown;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
 
-        Debug.DrawRay(visualsTransform.position, Vector2.down * groundRaycastSize, IsGrounded() ? Color.green : Color.red);
+
+        Debug.DrawRay(transform.position, Vector2.down * groundRaycastSize, IsGrounded() ? Color.green : Color.red);
 
         Gizmos.color = Color.blue;
         for (int i = 0; i < patrolPoints.Length; i++)

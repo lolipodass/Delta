@@ -30,7 +30,6 @@ public class SceneLoader : PersistSingleton<SceneLoader>
         // loadedRoomScenes.Clear();
         // loadedRoomScenes.Add(initialRoomSceneName);
 
-        Debug.Log("is loaded " + SceneManager.GetSceneByName(gameplayUISceneName).isLoaded);
         Debug.Log($"Scene loaded: {initialRoomSceneName}");
         OnFirstSceneLoaded?.Invoke();
         OnSceneLoaded?.Invoke(initialRoomSceneName);

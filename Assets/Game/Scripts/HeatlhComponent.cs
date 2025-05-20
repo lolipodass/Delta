@@ -62,7 +62,6 @@ public class HealthComponent : MonoBehaviour
 
     public void ResetHealth()
     {
-        Debug.Log(MaxHealth);
         isDead = false;
         CurrentHealth = MaxHealth;
         OnHealthChanged?.Invoke(MaxHealth);

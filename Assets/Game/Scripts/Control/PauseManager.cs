@@ -1,3 +1,4 @@
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,14 +18,18 @@ public class PauseManager : MonoSingleton<PauseManager>
 
     private void Start()
     {
-        Debug.Log("PauseManager");
         if (GameManager.Instance.playerInput != null)
         {
             var pauseAction = GameManager.Instance.playerInput.actions.FindAction("Pause");
             if (pauseAction != null)
             {
-                pauseAction.performed -= PauseCallback;
+                Debug.Log("PauseManager.action");
+                // pauseAction.performed -= PauseCallback;
+                pauseAction.started += PauseCallback;
                 pauseAction.performed += PauseCallback;
+                pauseAction.canceled += PauseCallback;
+                Debug.Log("PauseManager.action");
+                // Debug.Log(pauseAction.performed.GetMethodInfo().DeclaringType);
             }
         }
     }
