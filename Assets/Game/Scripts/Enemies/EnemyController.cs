@@ -1,6 +1,8 @@
 using UnityEngine;
 using Pathfinding;
 using System.Collections;
+using System;
+using PrimeTween;
 
 public class EnemyController : MonoBehaviour
 {
@@ -8,7 +10,9 @@ public class EnemyController : MonoBehaviour
     {
         Patrol,
         Chase,
-        Attack
+        Attack,
+        Stunned,
+        Dead
     }
 
     [Header("Enemy Settings")]
@@ -16,7 +20,7 @@ public class EnemyController : MonoBehaviour
     public Animator animator;
     public Seeker seeker;
     public Rigidbody2D rb;
-
+    public HealthComponent healthComponent;
 
 
     [Header("Patrol Settings")]
@@ -45,6 +49,11 @@ public class EnemyController : MonoBehaviour
     public float attackActiveDuration = 0.2f;
     public float attackAnimHitTime = 0.3f;
     public float attackAnimEndTime = 0.4f;
+
+    [Header("Stun Settings")]
+    public float stunDuration = 0.5f;
+    private float stunTimer;
+    private bool isStunned = false;
     private bool isPlayerDetected = false;
     private float moveDirection;
     private float jumpCooldownTimer;
@@ -54,8 +63,6 @@ public class EnemyController : MonoBehaviour
     private bool reachedEndOfPath = false;
     public Transform playerTransform;
     private float currentAttackCooldownTimer;
-
-
     void Awake()
     {
 
@@ -74,8 +81,44 @@ public class EnemyController : MonoBehaviour
             enabled = false;
             return;
         }
-
+        if (animator == null)
+        {
+            Debug.LogError("Animator component not found on enemy! Please add it.");
+            enabled = false;
+            return;
+        }
+        if (healthComponent == null)
+        {
+            Debug.LogError("Health component not found on enemy! Please add it.");
+            enabled = false;
+            return;
+        }
+        healthComponent.OnDamage += OnHealthDamage;
+        healthComponent.OnDeath += OnHealthDeath;
     }
+
+    private void OnHealthDeath()
+    {
+        TransitionToState(EnemyState.Dead);
+
+        animator.SetTrigger("death");
+        StartCoroutine(DeathRoutine());
+    }
+    IEnumerator DeathRoutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+        if (TryGetComponent<SpriteRenderer>(out var spriteRenderer))
+            Tween.Alpha(spriteRenderer, endValue: 0f, duration: 0.5f)
+            .OnComplete(target: transform, ui => Destroy(gameObject));
+    }
+
+    private void OnHealthDamage(int value)
+    {
+        TransitionToState(EnemyState.Stunned);
+
+        animator.SetTrigger("hurt");
+    }
+
     void Start()
     {
         currentState = EnemyState.Patrol;
@@ -99,7 +142,10 @@ public class EnemyController : MonoBehaviour
 
     void FixedUpdate()
     {
-        Move();
+        if (currentState != EnemyState.Stunned && currentState != EnemyState.Dead)
+        {
+            Move();
+        }
         UpdateSpriteDirection();
     }
 
@@ -111,6 +157,7 @@ public class EnemyController : MonoBehaviour
             distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
             isPlayerDetected = distanceToPlayer < detectionRange;
         }
+        UpdateAnimation();
 
         switch (currentState)
         {
@@ -123,19 +170,49 @@ public class EnemyController : MonoBehaviour
             case EnemyState.Attack:
                 HandleAttackState(distanceToPlayer);
                 break;
+            case EnemyState.Stunned:
+                HandleStunnedState();
+                break;
+            case EnemyState.Dead:
+                break;
         }
+    }
+
+
+
+
+    private void HandleStunnedState()
+    {
+        stunTimer -= Time.deltaTime;
+        if (stunTimer <= 0f)
+        {
+            isStunned = false;
+            if (playerTransform != null && Vector2.Distance(transform.position, playerTransform.position) < detectionRange)
+            {
+                TransitionToState(EnemyState.Chase);
+            }
+            else
+            {
+                TransitionToState(EnemyState.Patrol);
+            }
+        }
+    }
+
+    private void UpdateAnimation()
+    {
+        animator.SetFloat("XVelocity", rb.linearVelocityX);
     }
 
     IEnumerator UpdatePathRoutine()
     {
         while (true)
         {
-            if (currentState == EnemyState.Chase && playerTransform != null)
+            if (currentState == EnemyState.Chase && playerTransform != null && !isStunned)
             {
                 RequestPath(playerTransform.position);
                 yield return new WaitForSeconds(pathUpdateInterval);
             }
-            else if (currentState == EnemyState.Patrol && patrolPoints.Length > 0 && !reachedEndOfPath)
+            else if (currentState == EnemyState.Patrol && patrolPoints.Length > 0 && !reachedEndOfPath && !isStunned)
             {
                 RequestPath(patrolPoints[currentPatrolPointIndex].position);
                 yield return new WaitForSeconds(pathUpdateInterval * 2);
@@ -148,19 +225,18 @@ public class EnemyController : MonoBehaviour
     {
         currentAttackCooldownTimer = attackCooldown;
 
-        animator.SetTrigger("AttackTrigger");
+        animator.SetFloat("attack", UnityEngine.Random.Range(0f, 1f));
 
         yield return new WaitForSeconds(attackAnimHitTime);
 
         attackHitbox.enabled = true;
-
 
         yield return new WaitForSeconds(attackActiveDuration);
 
         attackHitbox.enabled = false;
 
         yield return new WaitForSeconds(attackAnimEndTime);
-
+        animator.SetFloat("attack", 0f);
     }
 
     void OnPathComplete(Path p)
@@ -198,7 +274,6 @@ public class EnemyController : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
             return;
         }
-
 
         if (currentWaypoint >= currentPath.vectorPath.Count)
         {
@@ -328,7 +403,7 @@ public class EnemyController : MonoBehaviour
                 else
                 {
                     moveDirection = 0;
-                    rb.linearVelocity = Vector2.zero;
+                    rb.linearVelocityX = 0;
                 }
                 break;
             case EnemyState.Chase:
@@ -336,6 +411,15 @@ public class EnemyController : MonoBehaviour
                 break;
             case EnemyState.Attack:
 
+                moveDirection = 0;
+                rb.linearVelocityX = 0;
+                break;
+            case EnemyState.Stunned:
+                moveDirection = 0;
+                rb.linearVelocity = Vector2.zero;
+                stunTimer = stunDuration;
+                break;
+            case EnemyState.Dead:
                 moveDirection = 0;
                 rb.linearVelocity = Vector2.zero;
                 break;
