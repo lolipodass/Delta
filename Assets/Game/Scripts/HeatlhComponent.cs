@@ -28,14 +28,14 @@ public class HealthComponent : MonoBehaviour
         CurrentHealth -= damage;
         try
         {
-            OnDamage?.Invoke(damage);
-            OnHealthChanged?.Invoke(CurrentHealth);
             if (CurrentHealth <= 0)
             {
                 isDead = true;
                 Debug.Log("isDead");
                 OnDeath?.Invoke();
             }
+            OnDamage?.Invoke(damage);
+            OnHealthChanged?.Invoke(CurrentHealth);
         }
         catch (Exception e)
         {

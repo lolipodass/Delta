@@ -15,8 +15,7 @@ public class EnemyController : MonoBehaviour
         Dead
     }
 
-    [Header("Enemy Settings")]
-    public EnemyState currentState;
+    [Header("Enemy Settings")] public EnemyState currentState;
     public Animator animator;
     public Seeker seeker;
     public Rigidbody2D rb;
@@ -33,10 +32,7 @@ public class EnemyController : MonoBehaviour
     public float chaseSpeed = 2f;
     public float detectionRange = 5f;
     public float losePlayerRange = 7f;
-    public string playerTag = "Player";
-
     [Header("Movement & Physics")]
-
     public float pathUpdateInterval = 0.5f;
     public float nextWaypointDistance = 0.5f;
     public float JumpForce = 4f;
@@ -46,9 +42,10 @@ public class EnemyController : MonoBehaviour
     [Header("Attack Settings")]
     public float attackRange = 2f;
     public float attackCooldown = 1.5f;
-    public float attackActiveDuration = 0.2f;
-    public float attackAnimHitTime = 0.3f;
-    public float attackAnimEndTime = 0.4f;
+    public float attackTimeBeforeStart = 0.3f;
+    public float attackAnimBeforeHit = 0.3f;
+    public float attackHitboxActiveDuration = 0.2f;
+    public float attackAnimTimeBeforeEnd = 0.4f;
 
     [Header("Stun Settings")]
     public float stunDuration = 0.5f;
@@ -60,13 +57,19 @@ public class EnemyController : MonoBehaviour
     public Collider2D attackHitbox;
     private Path currentPath;
     private int currentWaypoint = 0;
-    private bool reachedEndOfPath = false;
     public Transform playerTransform;
     private float currentAttackCooldownTimer;
+    private float distanceToPlayer;
+
     void Awake()
     {
-
         seeker = GetComponent<Seeker>();
+        if (seeker == null)
+        {
+            Debug.LogError("Seeker component not found on enemy! Please add it.");
+            enabled = false;
+            return;
+        }
 
         rb = GetComponent<Rigidbody2D>();
         if (rb == null)
@@ -75,61 +78,44 @@ public class EnemyController : MonoBehaviour
             enabled = false;
             return;
         }
+
         if (seeker == null)
         {
             Debug.LogError("Seeker component not found on enemy! Please add it.");
             enabled = false;
             return;
         }
+
         if (animator == null)
         {
             Debug.LogError("Animator component not found on enemy! Please add it.");
             enabled = false;
             return;
         }
+
         if (healthComponent == null)
         {
             Debug.LogError("Health component not found on enemy! Please add it.");
             enabled = false;
             return;
         }
+
         healthComponent.OnDamage += OnHealthDamage;
         healthComponent.OnDeath += OnHealthDeath;
-    }
-
-    private void OnHealthDeath()
-    {
-        TransitionToState(EnemyState.Dead);
-
-        animator.SetTrigger("death");
-        StartCoroutine(DeathRoutine());
-    }
-    IEnumerator DeathRoutine()
-    {
-        yield return new WaitForSeconds(0.5f);
-        if (TryGetComponent<SpriteRenderer>(out var spriteRenderer))
-            Tween.Alpha(spriteRenderer, endValue: 0f, duration: 0.5f)
-            .OnComplete(target: transform, ui => Destroy(gameObject));
-    }
-
-    private void OnHealthDamage(int value)
-    {
-        TransitionToState(EnemyState.Stunned);
-
-        animator.SetTrigger("hurt");
     }
 
     void Start()
     {
         currentState = EnemyState.Patrol;
-        playerTransform = GameManager.Instance.Player.transform;
         if (playerTransform == null)
-            Debug.LogWarning($"Player with tag '{playerTag}' not found! Make sure your player has this tag.");
+            playerTransform = GameManager.Instance.Player.transform;
+
 
         if (patrolPoints.Length > 0)
             RequestPath(patrolPoints[currentPatrolPointIndex].position);
         else
-            Debug.LogWarning("No patrol points assigned for enemy: " + gameObject.name + ". Enemy will stand still in Patrol state.");
+            Debug.LogWarning("No patrol points assigned for enemy: " + gameObject.name +
+                             ". Enemy will stand still in Patrol state.");
 
         if (attackHitbox == null)
 
@@ -137,7 +123,7 @@ public class EnemyController : MonoBehaviour
         else
             attackHitbox.enabled = false;
 
-        StartCoroutine(UpdatePathRoutine());
+        StartCoroutine(UpdatePathCoroutine());
     }
 
     void FixedUpdate()
@@ -146,17 +132,19 @@ public class EnemyController : MonoBehaviour
         {
             Move();
         }
+
         UpdateSpriteDirection();
     }
 
     void Update()
     {
-        float distanceToPlayer = Mathf.Infinity;
+        distanceToPlayer = Mathf.Infinity;
         if (playerTransform != null)
         {
             distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
             isPlayerDetected = distanceToPlayer < detectionRange;
         }
+
         UpdateAnimation();
 
         switch (currentState)
@@ -165,10 +153,10 @@ public class EnemyController : MonoBehaviour
                 HandlePatrolState();
                 break;
             case EnemyState.Chase:
-                HandleChaseState(distanceToPlayer);
+                HandleChaseState();
                 break;
             case EnemyState.Attack:
-                HandleAttackState(distanceToPlayer);
+                HandleAttackState();
                 break;
             case EnemyState.Stunned:
                 HandleStunnedState();
@@ -178,106 +166,11 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-
-
-
-    private void HandleStunnedState()
-    {
-        stunTimer -= Time.deltaTime;
-        if (stunTimer <= 0f)
-        {
-            isStunned = false;
-            if (playerTransform != null && Vector2.Distance(transform.position, playerTransform.position) < detectionRange)
-            {
-                TransitionToState(EnemyState.Chase);
-            }
-            else
-            {
-                TransitionToState(EnemyState.Patrol);
-            }
-        }
-    }
-
-    private void UpdateAnimation()
-    {
-        animator.SetFloat("XVelocity", rb.linearVelocityX);
-    }
-
-    IEnumerator UpdatePathRoutine()
-    {
-        while (true)
-        {
-            if (currentState == EnemyState.Chase && playerTransform != null && !isStunned)
-            {
-                RequestPath(playerTransform.position);
-                yield return new WaitForSeconds(pathUpdateInterval);
-            }
-            else if (currentState == EnemyState.Patrol && patrolPoints.Length > 0 && !reachedEndOfPath && !isStunned)
-            {
-                RequestPath(patrolPoints[currentPatrolPointIndex].position);
-                yield return new WaitForSeconds(pathUpdateInterval * 2);
-            }
-            else
-                yield return new WaitForSeconds(pathUpdateInterval / 2);
-        }
-    }
-    IEnumerator PerformAttackCoroutine()
-    {
-        currentAttackCooldownTimer = attackCooldown;
-
-        animator.SetFloat("attack", UnityEngine.Random.Range(0f, 1f));
-
-        yield return new WaitForSeconds(attackAnimHitTime);
-
-        attackHitbox.enabled = true;
-
-        yield return new WaitForSeconds(attackActiveDuration);
-
-        attackHitbox.enabled = false;
-
-        yield return new WaitForSeconds(attackAnimEndTime);
-        animator.SetFloat("attack", 0f);
-    }
-
-    void OnPathComplete(Path p)
-    {
-
-        if (!p.error)
-        {
-            currentPath = p;
-            currentWaypoint = 0;
-            reachedEndOfPath = false;
-        }
-        else
-        {
-            Debug.LogError("Pathfinding error: " + p.errorLog);
-            currentPath = null;
-        }
-    }
-
-    void RequestPath(Vector3 targetPosition)
-    {
-        if (seeker == null) return;
-        seeker.StartPath(rb.position, targetPosition, OnPathComplete);
-    }
-
-    public bool IsGrounded()
-    {
-        return Physics2D.Raycast(transform.position, Vector2.down, groundRaycastSize).collider != null;
-
-    }
     void Move()
     {
         if (currentPath == null)
         {
             moveDirection = 0;
-            rb.linearVelocity = Vector2.zero;
-            return;
-        }
-
-        if (currentWaypoint >= currentPath.vectorPath.Count)
-        {
-            reachedEndOfPath = true;
             return;
         }
 
@@ -293,24 +186,71 @@ public class EnemyController : MonoBehaviour
         float currentSpeed = (currentState == EnemyState.Chase) ? chaseSpeed : patrolSpeed;
         moveDirection = x * currentSpeed;
 
+        rb.linearVelocityX = moveDirection;
+
+        jumpCooldownTimer -= Time.fixedDeltaTime;
         if (direction.y > 1f && IsGrounded() && jumpCooldownTimer <= 0f)
         {
             jumpCooldownTimer = jumpCooldown;
             rb.linearVelocityY = JumpForce;
         }
 
-        rb.linearVelocityX = moveDirection;
-
         float distance = Vector2.Distance(rb.position, currentPath.vectorPath[currentWaypoint]);
         if (distance < nextWaypointDistance)
         {
-            currentWaypoint++;
+            if (currentPath.vectorPath.Count > currentWaypoint + 1)
+                currentWaypoint++;
         }
-        jumpCooldownTimer -= Time.fixedDeltaTime;
+
     }
 
+    private void UpdateAnimation()
+    {
+        animator.SetFloat("XVelocity", Mathf.Abs(rb.linearVelocityX));
+    }
 
-    void HandlePatrolState()
+    private IEnumerator UpdatePathCoroutine()
+    {
+        while (true)
+        {
+            if (isStunned)
+                yield return null;
+
+            if (currentState == EnemyState.Chase)
+            {
+                RequestPath(playerTransform.position);
+                yield return new WaitForSeconds(pathUpdateInterval);
+            }
+            else if (currentState == EnemyState.Patrol && patrolPoints.Length > 0)
+            {
+                RequestPath(patrolPoints[currentPatrolPointIndex].position);
+                yield return new WaitForSeconds(pathUpdateInterval * 2);
+            }
+            else
+                yield return new WaitForSeconds(pathUpdateInterval / 2);
+        }
+    }
+
+    private void OnPathComplete(Path p)
+    {
+        if (p.error)
+        {
+            Debug.LogError("Pathfinding error: " + p.errorLog);
+            currentPath = null;
+            return;
+        }
+
+        currentPath = p;
+        currentWaypoint = 0;
+    }
+
+    private void RequestPath(Vector3 targetPosition)
+    {
+        if (seeker == null) return;
+        seeker.StartPath(rb.position, targetPosition, OnPathComplete);
+    }
+
+    private void HandlePatrolState()
     {
         if (isPlayerDetected)
         {
@@ -320,22 +260,17 @@ public class EnemyController : MonoBehaviour
 
         if (patrolPoints.Length == 0) return;
 
-        if (reachedEndOfPath && Vector2.Distance(transform.position, patrolPoints[currentPatrolPointIndex].position) < patrolPointReachedThreshold)
+        if (Vector2.Distance(transform.position, patrolPoints[currentPatrolPointIndex].position) <
+            patrolPointReachedThreshold)
         {
             currentPatrolPointIndex = (currentPatrolPointIndex + 1) % patrolPoints.Length;
             RequestPath(patrolPoints[currentPatrolPointIndex].position);
         }
-
     }
 
-    void HandleChaseState(float distanceToPlayer)
-    {
-        if (playerTransform == null)
-        {
-            TransitionToState(EnemyState.Patrol);
-            return;
-        }
 
+    private void HandleChaseState()
+    {
         if (distanceToPlayer > losePlayerRange)
         {
             TransitionToState(EnemyState.Patrol);
@@ -349,41 +284,46 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    void HandleAttackState(float distanceToPlayer)
+    private void HandleAttackState()
     {
         currentAttackCooldownTimer -= Time.deltaTime;
-        if (playerTransform == null)
-        {
-            TransitionToState(EnemyState.Patrol);
-            return;
-        }
 
-        if (currentAttackCooldownTimer <= 0f)
+        if (distanceToPlayer <= attackRange)
         {
-            if (distanceToPlayer <= attackRange)
-            {
+            if (currentAttackCooldownTimer <= 0f)
                 StartCoroutine(PerformAttackCoroutine());
-            }
-            else
-            {
-                TransitionToState(EnemyState.Chase);
-            }
         }
         else
         {
-            if (distanceToPlayer > attackRange && distanceToPlayer <= losePlayerRange)
+            if (distanceToPlayer <= losePlayerRange)
+                TransitionToState(EnemyState.Chase);
+            else
+                TransitionToState(EnemyState.Patrol);
+        }
+    }
+
+    private void HandleStunnedState()
+    {
+        stunTimer -= Time.deltaTime;
+        if (stunTimer <= 0f)
+        {
+            isStunned = false;
+            if (playerTransform != null &&
+                Vector2.Distance(transform.position, playerTransform.position) < detectionRange)
             {
                 TransitionToState(EnemyState.Chase);
             }
-            else if (distanceToPlayer > losePlayerRange)
+            else
             {
                 TransitionToState(EnemyState.Patrol);
             }
         }
     }
-    void TransitionToState(EnemyState newState)
+
+    private void TransitionToState(EnemyState newState)
     {
         if (currentState == newState) return;
+        if (currentState == EnemyState.Dead) return;
 
         Debug.Log($"Enemy transitioning from {currentState} to {newState}");
         currentState = newState;
@@ -391,58 +331,104 @@ public class EnemyController : MonoBehaviour
 
         currentPath = null;
         currentWaypoint = 0;
-        reachedEndOfPath = false;
-
         switch (newState)
         {
             case EnemyState.Patrol:
                 if (patrolPoints.Length > 0)
-                {
                     RequestPath(patrolPoints[currentPatrolPointIndex].position);
-                }
                 else
-                {
-                    moveDirection = 0;
                     rb.linearVelocityX = 0;
-                }
+
                 break;
             case EnemyState.Chase:
+                if (distanceToPlayer > losePlayerRange)
+                {
+                    TransitionToState(EnemyState.Patrol);
+                    return;
+                }
+                else if (distanceToPlayer <= attackRange)
+                {
+                    TransitionToState(EnemyState.Attack);
+                    return;
+                }
+
                 RequestPath(playerTransform.position);
                 break;
             case EnemyState.Attack:
-
-                moveDirection = 0;
                 rb.linearVelocityX = 0;
                 break;
             case EnemyState.Stunned:
-                moveDirection = 0;
-                rb.linearVelocity = Vector2.zero;
+                rb.linearVelocityX = 0;
                 stunTimer = stunDuration;
+                isStunned = true;
                 break;
             case EnemyState.Dead:
-                moveDirection = 0;
-                rb.linearVelocity = Vector2.zero;
+                rb.linearVelocityX = 0;
                 break;
         }
     }
 
-    void UpdateSpriteDirection()
+    public bool IsGrounded()
     {
-        if (transform == null) return;
-
-
-        if (moveDirection > 0.1f)
-        {
-            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-        }
-        else if (moveDirection < -0.1f)
-        {
-            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-        }
-
+        return Physics2D.Raycast(transform.position, Vector2.down, groundRaycastSize).collider != null;
     }
 
-    void OnDrawGizmosSelected()
+    private void OnHealthDeath()
+    {
+        TransitionToState(EnemyState.Dead);
+
+        animator.SetTrigger("death");
+        StartCoroutine(DeathRoutine());
+    }
+
+    private IEnumerator PerformAttackCoroutine()
+    {
+        currentAttackCooldownTimer = attackCooldown;
+        yield return new WaitForSeconds(attackTimeBeforeStart);
+        if (distanceToPlayer <= attackRange)
+        {
+            animator.SetFloat("attack", UnityEngine.Random.Range(0f, 1f));
+
+            yield return new WaitForSeconds(attackAnimBeforeHit);
+
+            attackHitbox.enabled = true;
+
+            yield return new WaitForSeconds(attackHitboxActiveDuration);
+
+            attackHitbox.enabled = false;
+
+            yield return new WaitForSeconds(attackAnimTimeBeforeEnd);
+            animator.SetFloat("attack", 0f);
+        }
+        else TransitionToState(EnemyState.Chase);
+    }
+
+    private IEnumerator DeathRoutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+        if (TryGetComponent<SpriteRenderer>(out var spriteRenderer))
+            Tween.Alpha(spriteRenderer, endValue: 0f, duration: 0.5f)
+                .OnComplete(target: transform, ui => Destroy(gameObject));
+    }
+
+    private void OnHealthDamage(int value)
+    {
+        Debug.Log("damage");
+        TransitionToState(EnemyState.Stunned);
+
+        animator.SetTrigger("hurt");
+    }
+
+    private void UpdateSpriteDirection()
+    {
+        bool isFacingRight = transform.rotation.y > 0;
+        if ((moveDirection < -0.1f && isFacingRight) || (moveDirection > 0.1f && !isFacingRight))
+        {
+            transform.Rotate(0, 180, 0);
+        }
+    }
+
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
@@ -464,6 +450,7 @@ public class EnemyController : MonoBehaviour
                 Gizmos.DrawLine(patrolPoints[i].position, patrolPoints[i + 1].position);
             }
         }
+
         if (patrolPoints.Length > 1)
         {
             Gizmos.DrawLine(patrolPoints[patrolPoints.Length - 1].position, patrolPoints[0].position);

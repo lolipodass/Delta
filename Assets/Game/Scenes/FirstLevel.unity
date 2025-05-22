@@ -11574,6 +11574,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6043831301959160025, guid: 8e13669f515880048bb679dcfc20ecc8, type: 3}
+      propertyPath: <MaxHealth>k__BackingField
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 7714848687201453685, guid: 8e13669f515880048bb679dcfc20ecc8, type: 3}
       propertyPath: m_Name
       value: Player
@@ -11593,11 +11597,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6927358010967859768, guid: 34f7f661ece7c7641beccc95f822e88c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -14.34
+      value: -12.88
       objectReference: {fileID: 0}
     - target: {fileID: 6927358010967859768, guid: 34f7f661ece7c7641beccc95f822e88c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 8.18
+      value: 7.07
       objectReference: {fileID: 0}
     - target: {fileID: 6927358010967859768, guid: 34f7f661ece7c7641beccc95f822e88c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -11632,9 +11636,29 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8727430169979998598, guid: 34f7f661ece7c7641beccc95f822e88c, type: 3}
+      propertyPath: attackCooldown
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8727430169979998598, guid: 34f7f661ece7c7641beccc95f822e88c, type: 3}
       propertyPath: playerTransform
       value: 
       objectReference: {fileID: 1930081145}
+    - target: {fileID: 8727430169979998598, guid: 34f7f661ece7c7641beccc95f822e88c, type: 3}
+      propertyPath: timeBeforeAttack
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8727430169979998598, guid: 34f7f661ece7c7641beccc95f822e88c, type: 3}
+      propertyPath: attackAnimEndTime
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8727430169979998598, guid: 34f7f661ece7c7641beccc95f822e88c, type: 3}
+      propertyPath: attackAnimBeforeHit
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 8727430169979998598, guid: 34f7f661ece7c7641beccc95f822e88c, type: 3}
+      propertyPath: attackAnimTimeBeforeEnd
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 8727430169979998598, guid: 34f7f661ece7c7641beccc95f822e88c, type: 3}
       propertyPath: patrolPoints.Array.size
       value: 2
