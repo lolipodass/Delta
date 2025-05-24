@@ -24,7 +24,8 @@ public class EnemyController : MonoBehaviour
 
     [Header("Patrol Settings")]
     [SerializeField] private float patrolSpeed = 1f;
-    [SerializeField] private Transform[] patrolPoints;
+    [SerializeField] private PatrolGroup patrolGroup;
+    private Transform[] patrolPoints;
     [SerializeField] private float patrolPointReachedThreshold = 0.2f;
     private int currentPatrolPointIndex = 0;
 
@@ -121,6 +122,7 @@ public class EnemyController : MonoBehaviour
         if (animator == null) animator = GetComponent<Animator>();
         if (healthComponent == null) healthComponent = GetComponent<HealthComponent>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        patrolPoints = patrolGroup.Points;
     }
 
     private void ValidateComponents()
@@ -267,7 +269,7 @@ public class EnemyController : MonoBehaviour
         rb.linearVelocityX = moveDirection;
 
         // Handle jumping
-        if (direction.y > 1f && IsGrounded() && jumpCooldownTimer <= 0f)
+        if (direction.y > 0.5f && IsGrounded() && jumpCooldownTimer <= 0f)
         {
             jumpCooldownTimer = jumpCooldown;
             rb.linearVelocityY = jumpForce;
@@ -627,30 +629,7 @@ public class EnemyController : MonoBehaviour
         // Ground check
         Debug.DrawRay(transform.position, Vector2.down * groundRaycastSize, IsGrounded() ? Color.green : Color.red);
 
-        // Patrol points
-        Gizmos.color = Color.blue;
-        if (patrolPoints != null)
-        {
-            for (int i = 0; i < patrolPoints.Length; i++)
-            {
-                if (patrolPoints[i] != null)
-                {
-                    Gizmos.DrawWireSphere(patrolPoints[i].position, 0.3f);
-
-                    // Draw lines between patrol points
-                    if (i < patrolPoints.Length - 1 && patrolPoints[i + 1] != null)
-                    {
-                        Gizmos.DrawLine(patrolPoints[i].position, patrolPoints[i + 1].position);
-                    }
-                }
-            }
-
-            // Connect last to first
-            if (patrolPoints.Length > 1 && patrolPoints[0] != null && patrolPoints[patrolPoints.Length - 1] != null)
-            {
-                Gizmos.DrawLine(patrolPoints[patrolPoints.Length - 1].position, patrolPoints[0].position);
-            }
-        }
+        patrolGroup.OnDrawGizmosSelected();
 
         // Current path
         if (currentPath != null)
