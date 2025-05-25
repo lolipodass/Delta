@@ -42,6 +42,11 @@ public class JumpState : PlayerBaseState
             stateMachine.ChangeState(player.upToFallState);
             return;
         }
+        if (player.IsGrounded)
+        {
+            stateMachine.ChangeState(player.idleState);
+            return;
+        }
         // if (player.LastJumpPressedTime >= player.JumpBufferTime && player.IsHoldJumpButton
         // && (player.IsGrounded || player.IsTouchWall))
         // {

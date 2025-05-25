@@ -33,7 +33,9 @@ public class FallState : PlayerBaseState
     }
     private bool CanJump()
     {
-        return !isHoldOnEnterJumpButton && ((player.TimeLastWallTouch > 0 && Stats.Stats.HasWallJump) || player.ExtraJumpCountLeft > 0);
+        return !isHoldOnEnterJumpButton &&
+        ((player.TimeLastWallTouch > 0 && Stats.Stats.HasWallJump) || player.ExtraJumpCountLeft > 0)
+        || player.TimeLastGrounded > 0;
     }
     public override float HorizontalSpeedMultiplayer => Stats.Stats.AirControlFactor;
 
