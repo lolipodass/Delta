@@ -194,12 +194,12 @@ GameObject:
   m_Component:
   - component: {fileID: 6927358010967859768}
   - component: {fileID: 6433462513996717166}
+  - component: {fileID: 14262345835088335}
   - component: {fileID: 8727430169979998598}
   - component: {fileID: 8105586740448134652}
   - component: {fileID: 8208804710507467966}
   - component: {fileID: 8507961431218063875}
   - component: {fileID: 1981315556098033653}
-  - component: {fileID: 14262345835088335}
   m_Layer: 0
   m_Name: enemy
   m_TagString: Untagged
@@ -252,6 +252,19 @@ MonoBehaviour:
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1
+--- !u!114 &14262345835088335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9202158672011682013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 557b38ff0bb6e3b4b8b1315d8e35af2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <MaxHealth>k__BackingField: 4
 --- !u!114 &8727430169979998598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,7 +283,7 @@ MonoBehaviour:
   rb: {fileID: 8208804710507467966}
   healthComponent: {fileID: 14262345835088335}
   patrolSpeed: 2
-  patrolPoints: []
+  patrolGroup: {fileID: 0}
   patrolPointReachedThreshold: 0.2
   chaseSpeed: 4
   detectionRange: 5
@@ -284,6 +297,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   attackRange: 1.3
+  attackDamage: 1
   attackCooldown: 2
   attackTimeBeforeStart: 0.3
   attackAnimBeforeHit: 0.5
@@ -441,16 +455,3 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &14262345835088335
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9202158672011682013}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 557b38ff0bb6e3b4b8b1315d8e35af2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <MaxHealth>k__BackingField: 4

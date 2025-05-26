@@ -26,7 +26,6 @@ public class AttackEnemy : PatrolEnemy
     }
     protected override void HandleAttackState()
     {
-        Debug.Log($"Attack state");
         if (attackCooldownTimer <= 0f && attackCoroutine == null)
         {
             attackCoroutine = StartCoroutine(PerformAttackCoroutine());
