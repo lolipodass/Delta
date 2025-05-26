@@ -60,8 +60,14 @@ TagManager:
   - name: 4 Player
     uniqueID: 2183121457
     locked: 0
+  - name: before Foreground
+    uniqueID: 1639770621
+    locked: 0
   - name: 5 Foreground
     uniqueID: 3843740925
+    locked: 0
+  - name: Foreground image
+    uniqueID: 3148036843
     locked: 0
   m_RenderingLayers:
   - Default
