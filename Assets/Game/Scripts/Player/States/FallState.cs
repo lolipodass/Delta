@@ -30,6 +30,11 @@ public class FallState : PlayerBaseState
             return;
         }
         isHoldOnEnterJumpButton = player.ButtonJump;
+        if (player.ButtonDash && Stats.Stats.HasDash && player.CanDash)
+        {
+            stateMachine.ChangeState(player.dashState);
+            return;
+        }
     }
     private bool CanJump()
     {

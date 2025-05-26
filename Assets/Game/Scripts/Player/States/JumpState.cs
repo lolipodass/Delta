@@ -31,6 +31,11 @@ public class JumpState : PlayerBaseState
             stateMachine.ChangeState(player.jumpCutState);
             return;
         }
+        if (player.ButtonDash && Stats.Stats.HasDash && player.CanDash)
+        {
+            stateMachine.ChangeState(player.dashState);
+            return;
+        }
     }
     public override void PhysicsUpdate()
     {

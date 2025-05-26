@@ -14,7 +14,8 @@ public class DashState : PlayerBaseState
         dashTime = Stats.Stats.DashTime;
         player.AnimationDash = true;
         gravity = player.rb.gravityScale;
-        player.rb.gravityScale = 0;
+        player.rb.gravityScale = 0f;
+        player.rb.linearVelocityY = 0f;
     }
 
     private float dashTime = 0;
