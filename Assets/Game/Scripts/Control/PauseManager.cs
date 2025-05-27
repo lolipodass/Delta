@@ -25,11 +25,8 @@ public class PauseManager : MonoSingleton<PauseManager>
             {
                 Debug.Log("PauseManager.action");
                 // pauseAction.performed -= PauseCallback;
-                pauseAction.started += PauseCallback;
                 pauseAction.performed += PauseCallback;
-                pauseAction.canceled += PauseCallback;
                 Debug.Log("PauseManager.action");
-                // Debug.Log(pauseAction.performed.GetMethodInfo().DeclaringType);
             }
         }
     }

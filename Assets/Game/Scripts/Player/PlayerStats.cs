@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static GameDataSave;
@@ -10,7 +12,10 @@ public class PlayerStats : MonoBehaviour
 
     [field: SerializeField] public SavePointInfo LastSavePoint { get; private set; }
     [field: SerializeField] public SavePointInfo SavePoint { get; private set; }
-    [SerializeField] private PlayerBaseInfo _playerConfig;
+
+    public event Action<List<UpgradeModifier>> OnModifiersChanged;
+    [SerializeField]
+    private PlayerBaseInfo _playerConfig;
     public void Awake()
     {
         if (_playerConfig == null)
@@ -29,6 +34,7 @@ public class PlayerStats : MonoBehaviour
     {
         var modifiers = InventoryManager.Instance.Inventory.Where(x => x.modifiersToApply.Count > 0).SelectMany(x => x.modifiersToApply).ToList();
         Stats.SetLoadedModifiers(modifiers);
+        OnModifiersChanged?.Invoke(modifiers);
     }
 
     public void SetSavePoint(SavePoint savePoint)
