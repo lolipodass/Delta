@@ -27,6 +27,7 @@ public abstract class BaseEnemy : MonoBehaviour
     [SerializeField] protected Seeker seeker;
     [SerializeField] protected Rigidbody2D rb;
     [SerializeField] protected HealthComponent healthComponent;
+    [SerializeField] protected float RestartWait = 25f;
 
     [Header("Patrol Settings")]
     [SerializeField] protected float patrolSpeed = 1f;
@@ -64,7 +65,6 @@ public abstract class BaseEnemy : MonoBehaviour
     protected readonly WaitForSeconds pathUpdateWait = new(0.5f);
     protected readonly WaitForSeconds patrolUpdateWait = new(1f);
     protected readonly WaitForSeconds shortWait = new(0.25f);
-    protected readonly WaitForSeconds RestartWait = new(25f);
 
     // Public properties
     public EnemyState CurrentState => currentState;
@@ -382,7 +382,6 @@ public abstract class BaseEnemy : MonoBehaviour
                     yield return shortWait;
                     break;
             }
-            Debug.Log($"Enemy {gameObject.name} state: {currentState}");
         }
     }
 
@@ -452,7 +451,7 @@ public abstract class BaseEnemy : MonoBehaviour
 
             gameObject.SetActive(false);
 
-            await UniTask.Delay(System.TimeSpan.FromSeconds(5f));
+            await UniTask.Delay(System.TimeSpan.FromSeconds(RestartWait));
 
             await Restart();
         }

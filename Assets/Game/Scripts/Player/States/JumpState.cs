@@ -5,8 +5,10 @@ public class JumpState : PlayerBaseState
     public JumpState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     protected override string AnimationName => "jump";
+    private int skipFirstFrames = 10;
     public override void Enter()
     {
+        skipFirstFrames = 10;
         PlayAnimation();
         if (player.IsGrounded || player.TimeLastGrounded > 0f)
         {
@@ -26,6 +28,11 @@ public class JumpState : PlayerBaseState
     }
     public override void LogicUpdate()
     {
+        if (skipFirstFrames > 0)
+        {
+            skipFirstFrames--;
+            return;
+        }
         if (!player.ButtonJump)
         {
             stateMachine.ChangeState(player.jumpCutState);
@@ -41,6 +48,11 @@ public class JumpState : PlayerBaseState
     {
         Movement();
 
+        if (skipFirstFrames > 0)
+        {
+            skipFirstFrames--;
+            return;
+        }
         if (YVelocity <= 0f)
         {
             player.ReleaseJumpButton();
@@ -49,6 +61,7 @@ public class JumpState : PlayerBaseState
         }
         if (player.IsGrounded)
         {
+            player.ReleaseJumpButton();
             stateMachine.ChangeState(player.idleState);
             return;
         }
