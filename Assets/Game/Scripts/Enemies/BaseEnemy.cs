@@ -2,6 +2,8 @@ using System.Collections;
 using Pathfinding;
 using PrimeTween;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Seeker))]
@@ -62,10 +64,13 @@ public abstract class BaseEnemy : MonoBehaviour
     protected readonly WaitForSeconds pathUpdateWait = new(0.5f);
     protected readonly WaitForSeconds patrolUpdateWait = new(1f);
     protected readonly WaitForSeconds shortWait = new(0.25f);
+    protected readonly WaitForSeconds RestartWait = new(25f);
 
     // Public properties
     public EnemyState CurrentState => currentState;
     public bool IsPlayerDetected => isPlayerDetected;
+
+    private Vector3 initialPosition;
 
     #region Unity Lifecycle
     protected virtual void Awake()
@@ -127,6 +132,7 @@ public abstract class BaseEnemy : MonoBehaviour
         if (healthComponent == null) healthComponent = GetComponent<HealthComponent>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         patrolPoints = patrolGroup.Points;
+        initialPosition = transform.position;
     }
 
     protected virtual void ValidateComponents()
@@ -376,6 +382,7 @@ public abstract class BaseEnemy : MonoBehaviour
                     yield return shortWait;
                     break;
             }
+            Debug.Log($"Enemy {gameObject.name} state: {currentState}");
         }
     }
 
@@ -422,7 +429,7 @@ public abstract class BaseEnemy : MonoBehaviour
         }
     }
 
-    private void OnHealthDeath()
+    private async void OnHealthDeath()
     {
         TransitionToState(EnemyState.Dead);
 
@@ -431,22 +438,37 @@ public abstract class BaseEnemy : MonoBehaviour
             animator.SetTrigger("death");
         }
 
-        StartCoroutine(DeathRoutine());
+        await DeathTask();
     }
 
-    private IEnumerator DeathRoutine()
+    private async UniTask DeathTask()
     {
-        yield return new WaitForSeconds(0.5f);
+        await UniTask.Delay(System.TimeSpan.FromSeconds(0.5f));
+
 
         if (spriteRenderer != null)
         {
-            Tween.Alpha(spriteRenderer, endValue: 0f, duration: 0.5f)
-                .OnComplete(target: transform, _ => Destroy(gameObject));
+            await Tween.Alpha(spriteRenderer, endValue: 0f, duration: 0.5f);
+
+            gameObject.SetActive(false);
+
+            await UniTask.Delay(System.TimeSpan.FromSeconds(5f));
+
+            await Restart();
         }
         else
         {
             Destroy(gameObject);
         }
+    }
+
+    protected virtual async Task Restart()
+    {
+        gameObject.SetActive(true);
+        await Tween.Alpha(spriteRenderer, endValue: 1f, duration: 0.5f);
+        transform.position = initialPosition;
+        EnterNewState(EnemyState.Patrol);
+        healthComponent.ResetHealth();
     }
     #endregion
 
