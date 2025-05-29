@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using MemoryPack;
 using UnityEngine;
 
 [System.Serializable]
-public class GameDataSave
+[MemoryPackable]
+public partial class GameDataSave
 {
-
+    [MemoryPackable]
     [System.Serializable]
-    public class PlayerStatsDataSave
+    public partial class PlayerStatsDataSave
     {
         public string[] items;
         public int HP;
@@ -17,8 +19,10 @@ public class GameDataSave
             HP = 0;
             savePoint = new SavePointInfo();
         }
+        [MemoryPackable]
+
         [System.Serializable]
-        public class SavePointInfo
+        public partial class SavePointInfo
         {
             public string Name;
             public Vector3 Position;
@@ -27,7 +31,7 @@ public class GameDataSave
                 Name = "";
                 Position = Vector3.zero;
             }
-
+            [MemoryPackConstructor]
             public SavePointInfo(string name, Vector3 position)
             {
                 Name = name;
