@@ -37,6 +37,7 @@ public partial class GameDataSave
                 Name = name;
                 Position = position;
             }
+
             public SavePointInfo(SavePoint savePoint)
             {
                 Name = savePoint.Name;

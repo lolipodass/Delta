@@ -19,9 +19,9 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
     public void SaveGame(string slotName = "slot1")
     {
 #if UNITY_EDITOR
-        string filePath = GetSaveFilePath(slotName, true);
-#else
         string filePath = GetSaveFilePath(slotName, false);
+#else
+        string filePath = GetSaveFilePath(slotName, true);
 #endif
 
         if (GameManager.Instance.Player.TryGetComponent<PlayerStats>(out var playerStats))
@@ -43,14 +43,15 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
         {
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 #if UNITY_EDITOR
-            byte[] bytes = MemoryPackSerializer.Serialize(GameData);
-            File.WriteAllBytes(filePath, bytes);
-            Debug.Log("Game saved to file (MemoryPack Binary): " + filePath);
-#else
             string json = JsonUtility.ToJson(GameData);
             File.WriteAllText(filePath, json);
             Debug.Log(json);
             Debug.Log("Game saved to file (JSON): " + filePath);
+#else
+            byte[] bytes = MemoryPackSerializer.Serialize(GameData);
+            File.WriteAllBytes(filePath, bytes);
+            Debug.Log("Game saved to file (MemoryPack Binary): " + filePath);
+
 #endif
         }
         catch (System.Exception e)
@@ -64,7 +65,7 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
 #if UNITY_EDITOR
         string filePath = GetSaveFilePath(slotName, false);
 #else
-        string filePath = GetSaveFilePath(slotName, true); 
+        string filePath = GetSaveFilePath(slotName, true);
 #endif
         if (!File.Exists(filePath))
         {
@@ -75,13 +76,13 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
         try
         {
 #if UNITY_EDITOR
-            byte[] bytes = File.ReadAllBytes(filePath);
-            GameData = MemoryPackSerializer.Deserialize<GameDataSave>(bytes);
-            Debug.Log("Game loaded from file (MemoryPack Binary): " + filePath);
-#else
             string json = File.ReadAllText(filePath);
             GameData = JsonUtility.FromJson<GameDataSave>(json);
             Debug.Log("Game loaded from file (JSON): " + filePath);
+#else
+            byte[] bytes = File.ReadAllBytes(filePath);
+            GameData = MemoryPackSerializer.Deserialize<GameDataSave>(bytes);
+            Debug.Log("Game loaded from file (MemoryPack Binary): " + filePath);
 #endif
 
             PlayerStats playerStats = FindAnyObjectByType<PlayerStats>();
@@ -106,9 +107,9 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
     public bool IsGameSaved(string slotName = "slot1")
     {
 #if UNITY_EDITOR
-        return File.Exists(GetSaveFilePath(slotName, true));
-#else
         return File.Exists(GetSaveFilePath(slotName, false));
+#else
+        return File.Exists(GetSaveFilePath(slotName, true));
 #endif
     }
 

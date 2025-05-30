@@ -36,7 +36,6 @@ public class PlayerStats : MonoBehaviour
         Stats.SetLoadedModifiers(modifiers);
         OnModifiersChanged?.Invoke(modifiers);
     }
-
     public void SetSavePoint(SavePoint savePoint)
     {
         SavePoint = new(savePoint);
