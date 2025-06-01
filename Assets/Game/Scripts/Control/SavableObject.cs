@@ -14,6 +14,15 @@ public class SavableObject : MonoBehaviour
         Debug.Log($"Generated new ID for {gameObject.name}: {id}");
     }
 
+    protected virtual void Awake()
+    {
+        if (id.CompareTo(Ulid.Empty) == 0)
+        {
+            GenerateId();
+        }
+
+        FileSaveManager.Instance.LoadElement(this);
+    }
     public virtual int CaptureState()
     {
         return 0;
@@ -21,14 +30,6 @@ public class SavableObject : MonoBehaviour
 
     public virtual void RestoreState(int state)
     {
-    }
-
-    private void Awake()
-    {
-        if (id.CompareTo(Ulid.Empty) == 0)
-        {
-            GenerateId();
-        }
     }
 
 }

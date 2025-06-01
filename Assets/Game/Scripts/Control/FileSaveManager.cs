@@ -1,10 +1,15 @@
 using System.IO;
 using UnityEngine;
 using MemoryPack;
+using System;
+using Newtonsoft.Json;
 
 public class FileSaveManager : PersistSingleton<FileSaveManager>
 {
     public GameDataSave GameData { get; private set; }
+
+    public event Action OnGameLoaded;
+    public event Action OnGameSaved;
 
     private string GetSaveFilePath(string slotName, bool isBinary = false)
     {
@@ -43,7 +48,7 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
         {
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 #if UNITY_EDITOR
-            string json = JsonUtility.ToJson(GameData);
+            string json = JsonConvert.SerializeObject(GameData);
             File.WriteAllText(filePath, json);
             Debug.Log(json);
             Debug.Log("Game saved to file (JSON): " + filePath);
@@ -53,8 +58,9 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
             Debug.Log("Game saved to file (MemoryPack Binary): " + filePath);
 
 #endif
+            OnGameSaved?.Invoke();
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             Debug.LogError($"SaveGame: Error saving game data: {e.Message}");
         }
@@ -77,7 +83,7 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
         {
 #if UNITY_EDITOR
             string json = File.ReadAllText(filePath);
-            GameData = JsonUtility.FromJson<GameDataSave>(json);
+            GameData = JsonConvert.DeserializeObject<GameDataSave>(json);
             Debug.Log("Game loaded from file (JSON): " + filePath);
 #else
             byte[] bytes = File.ReadAllBytes(filePath);
@@ -85,6 +91,7 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
             Debug.Log("Game loaded from file (MemoryPack Binary): " + filePath);
 #endif
 
+            OnGameLoaded?.Invoke();
             PlayerStats playerStats = FindAnyObjectByType<PlayerStats>();
             if (playerStats != null)
             {
@@ -99,7 +106,7 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
                 InventoryManager.Instance.LoadInventory(GameData.player.items);
             }
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             Debug.LogError($"LoadGame: Error loading game data: {e.Message}");
         }
@@ -113,4 +120,16 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
 #endif
     }
 
+    public void SaveElement(SavableObject element)
+    {
+        GameData.saveAbles[element.Id] = element.CaptureState();
+        SaveGame();
+        Debug.Log(GameData.saveAbles.Count);
+        Debug.Log(JsonConvert.SerializeObject(GameData.saveAbles));
+    }
+    public void LoadElement(SavableObject element)
+    {
+        if (GameData != null && GameData.saveAbles.ContainsKey(element.Id))
+            element.RestoreState(GameData.saveAbles[element.Id]);
+    }
 }

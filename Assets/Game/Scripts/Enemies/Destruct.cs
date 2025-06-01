@@ -7,21 +7,22 @@ public class Destruct : SavableObject
     private HealthComponent healthComponent;
     private bool isBroken = false;
 
-    public void Break()
+    protected override void Awake()
     {
-        if (!isBroken)
-        {
-            isBroken = true;
-            UpdateWallVisual();
-            Debug.Log($"Wall {Id} is now broken.");
-        }
-    }
-
-    protected void Awake()
-    {
+        base.Awake();
         healthComponent = GetComponent<HealthComponent>();
         healthComponent.OnDamage += OnDamage;
         healthComponent.OnDeath += OnDeath;
+    }
+
+    public override int CaptureState()
+    {
+        return isBroken ? 1 : 0;
+    }
+    public override void RestoreState(int state)
+    {
+        isBroken = state == 1;
+        UpdateState();
     }
 
     private void OnDamage(int damage)
@@ -30,16 +31,23 @@ public class Destruct : SavableObject
     }
     private void OnDeath()
     {
-        Break();
+        if (!isBroken)
+        {
+            isBroken = true;
+            UpdateState();
+            FileSaveManager.Instance.SaveElement(this);
+
+            Debug.Log($"Wall {Id} is now broken.");
+        }
     }
 
-    private void UpdateWallVisual()
+    private void UpdateState()
     {
         gameObject.SetActive(!isBroken);
     }
 
     private void Start()
     {
-        UpdateWallVisual();
+        UpdateState();
     }
 }

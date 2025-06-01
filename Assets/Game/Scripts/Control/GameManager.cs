@@ -24,7 +24,7 @@ public class GameManager : PersistSingleton<GameManager>
         if (!string.IsNullOrEmpty(previousScenePath))
         {
             Debug.Log($"Loading previous scene: {previousScenePath}");
-            if (previousScenePath.Contains("MainMenu") || previousScenePath.Contains("Pause"))
+            if (previousScenePath.Contains("MainMenu") || previousScenePath.Contains("Pause") || previousScenePath.Contains("GameManager"))
                 SceneLoader.LoadMenu();
             else
                 SceneLoader.Instance.StartNewGame(previousScenePath);
@@ -62,11 +62,11 @@ public class GameManager : PersistSingleton<GameManager>
 
     public void StartGame()
     {
-        SceneLoader.Instance.StartNewGame("FirstLevel");
+        SceneLoader.Instance.StartNewGame("Level1");
     }
     public void CreateNewGame()
     {
-        SceneLoader.Instance.StartNewGame("FirstLevel");
+        SceneLoader.Instance.StartNewGame("Level1");
         isNewGame = true;
     }
 

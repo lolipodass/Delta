@@ -21,6 +21,13 @@
       "dependencies": {},
       "hash": "f213ff497e4ff462a77319cf677cf20cc0860ca9"
     },
+    "com.ecasillas.missingrefsfinder": {
+      "version": "https://github.com/edcasillas/unity-missing-references-finder.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "2df043726063239c034ca97d1ec1eb1f4396e173"
+    },
     "com.github-glitchenzo.nugetforunity": {
       "version": "4.4.0",
       "depth": 0,
@@ -290,7 +297,7 @@
     },
     "com.unity.settings-manager": {
       "version": "2.1.0",
-      "depth": 2,
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -355,6 +362,15 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
       }
+    },
+    "com.xsduan.hierarchy-folders": {
+      "version": "0.3.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.settings-manager": "1.0.1"
+      },
+      "url": "https://package.openupm.com"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
