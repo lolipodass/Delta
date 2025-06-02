@@ -3,6 +3,7 @@ using UnityEngine;
 using MemoryPack;
 using System;
 using Newtonsoft.Json;
+using System.Linq.Expressions;
 
 public class FileSaveManager : PersistSingleton<FileSaveManager>
 {
@@ -66,6 +67,7 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
         }
     }
 
+    //make async because it's can running really often
     public void LoadGame(string slotName = "slot1")
     {
 #if UNITY_EDITOR
@@ -120,16 +122,34 @@ public class FileSaveManager : PersistSingleton<FileSaveManager>
 #endif
     }
 
-    public void SaveElement(SavableObject element)
+    public bool SaveElement(SavableObject element)
     {
-        GameData.saveAbles[element.Id] = element.CaptureState();
-        SaveGame();
-        Debug.Log(GameData.saveAbles.Count);
-        Debug.Log(JsonConvert.SerializeObject(GameData.saveAbles));
+        try
+        {
+            GameData.saveAbles[element.Id] = element.CaptureState();
+            SaveGame();
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+
     }
-    public void LoadElement(SavableObject element)
+    public bool LoadElement(SavableObject element)
     {
-        if (GameData != null && GameData.saveAbles.ContainsKey(element.Id))
-            element.RestoreState(GameData.saveAbles[element.Id]);
+        try
+        {
+            if (GameData != null && GameData.saveAbles.ContainsKey(element.Id))
+            {
+                element.RestoreState(GameData.saveAbles[element.Id]);
+                return true;
+            }
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+        return false;
     }
 }

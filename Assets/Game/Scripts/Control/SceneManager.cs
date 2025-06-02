@@ -8,7 +8,6 @@ using UnityEngine.SceneManagement;
 public class SceneLoader : PersistSingleton<SceneLoader>
 {
     public event Action<string> OnSceneLoaded;
-    public event Action<string> OnSceneUnloaded;
     public event Action OnGameplayUILoaded;
     public event Action OnFirstSceneLoaded;
 

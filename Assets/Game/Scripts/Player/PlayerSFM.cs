@@ -1,4 +1,4 @@
-using NaughtyAttributes;
+// using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -22,20 +22,31 @@ public class PlayerSFM : MonoBehaviour
 
     #region Masks
 
-    [Foldout("Ground check")][SerializeField] private Transform groundCheckPos;
-    [Foldout("Ground check")][SerializeField] private Vector2 groundCheckSize = new(0.5f, 0.5f);
-    [Foldout("Ground check")][SerializeField] private LayerMask groundMask;
+    // [Foldout("Ground check")]
+    [SerializeField] private Transform groundCheckPos;
+    // [Foldout("Ground check")]
+    [SerializeField] private Vector2 groundCheckSize = new(0.5f, 0.5f);
+    // [Foldout("Ground check")]
+    [SerializeField] private LayerMask groundMask;
 
-    [Foldout("Wall check")][SerializeField] private Transform wallCheckPos;
-    [Foldout("Wall check")][SerializeField] private Vector2 wallCheckSize = new(0.5f, 0.5f);
-    [Foldout("Wall check")][SerializeField] private Transform wallCheckPosBack;
+    // [Foldout("Wall check")]
+    [SerializeField] private Transform wallCheckPos;
+    // [Foldout("Wall check")]
+    [SerializeField] private Vector2 wallCheckSize = new(0.5f, 0.5f);
+    // [Foldout("Wall check")]
+    [SerializeField] private Transform wallCheckPosBack;
 
-    [Foldout("Wall check")][SerializeField] private Vector2 wallCheckSizeBack = new(0.5f, 0.5f);
-    [Foldout("Wall check")][SerializeField] private LayerMask wallMask;
+    // [Foldout("Wall check")]
+    [SerializeField] private Vector2 wallCheckSizeBack = new(0.5f, 0.5f);
+    // [Foldout("Wall check")]
+    [SerializeField] private LayerMask wallMask;
 
-    [Foldout("Crouch check")][SerializeField] private Transform crouchCheckPos;
-    [Foldout("Crouch check")][SerializeField] private Vector2 crouchCheckSize = new(0.5f, 0.5f);
-    [Foldout("Crouch check")][SerializeField] private LayerMask crouchMask;
+    // [Foldout("Crouch check")]
+    [SerializeField] private Transform crouchCheckPos;
+    // [Foldout("Crouch check")]
+    [SerializeField] private Vector2 crouchCheckSize = new(0.5f, 0.5f);
+    // [Foldout("Crouch check")]
+    [SerializeField] private LayerMask crouchMask;
 
     [Header("Attack Settings")]
     [field: SerializeField] public Transform AttackCheckPos { get; private set; }

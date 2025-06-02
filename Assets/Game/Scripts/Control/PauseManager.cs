@@ -23,10 +23,8 @@ public class PauseManager : MonoSingleton<PauseManager>
             var pauseAction = GameManager.Instance.playerInput.actions.FindAction("Pause");
             if (pauseAction != null)
             {
-                Debug.Log("PauseManager.action");
                 // pauseAction.performed -= PauseCallback;
                 pauseAction.performed += PauseCallback;
-                Debug.Log("PauseManager.action");
             }
         }
     }

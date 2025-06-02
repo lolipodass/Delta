@@ -3,25 +3,47 @@ using UnityEngine;
 
 public class SavableObject : MonoBehaviour
 {
-    [SerializeField] private Ulid id;
 
-    public Ulid Id { get => id; set => id = value; }
+    [SerializeField, Ulid] private string _ulidString;
 
-    [ContextMenu("Generate New ID")]
-    private void GenerateId()
+    public Ulid Id
     {
-        id = Ulid.NewUlid();
-        Debug.Log($"Generated new ID for {gameObject.name}: {id}");
+        get
+        {
+            if (string.IsNullOrEmpty(_ulidString) || !Ulid.TryParse(_ulidString, out Ulid parsedUlid))
+            {
+                return Ulid.Empty;
+            }
+            return parsedUlid;
+        }
+        set
+        {
+            _ulidString = value.ToString();
+        }
+
     }
+
 
     protected virtual void Awake()
     {
-        if (id.CompareTo(Ulid.Empty) == 0)
+
+        if (Id.CompareTo(Ulid.Empty) == 0)
         {
-            GenerateId();
+            Debug.LogError($"SavableObject {gameObject.name} has empty ID!", this);
+            gameObject.SetActive(false);
+            return;
+            //     GenerateId();
         }
 
+        if (!FileSaveManager.Instance.LoadElement(this))
+        {
+            FileSaveManager.Instance.OnGameLoaded += OnGameLoaded;
+        }
+    }
+    private void OnGameLoaded()
+    {
         FileSaveManager.Instance.LoadElement(this);
+        FileSaveManager.Instance.OnGameLoaded -= OnGameLoaded;
     }
     public virtual int CaptureState()
     {

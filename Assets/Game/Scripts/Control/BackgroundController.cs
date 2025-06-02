@@ -1,4 +1,4 @@
-using NaughtyAttributes;
+// using NaughtyAttributes;
 using UnityEngine;
 
 public class BackgroundController : MonoBehaviour
@@ -6,7 +6,7 @@ public class BackgroundController : MonoBehaviour
     private float startPos;
     private float SpriteLength;
     [Range(0, 1f)][SerializeField] private float ParallaxEffect;
-    [Label("Camera")][SerializeField] private GameObject cam;
+    [SerializeField] private GameObject cam;
     void Start()
     {
         startPos = transform.position.x;
