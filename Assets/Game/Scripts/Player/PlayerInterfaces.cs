@@ -14,7 +14,7 @@ public interface IAttackHandler
             if (enemy.CompareTag("Player")) continue;
             if (enemy.TryGetComponent<HealthComponent>(out var healthComponent))
             {
-                healthComponent.TakeDamage(Damage);
+                healthComponent.TakeDamage(Damage, Position);
             }
         }
     }

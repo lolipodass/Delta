@@ -48,7 +48,7 @@ public class GameManager : PersistSingleton<GameManager>
         LoadVariables();
         MovePlayerToSavePoint();
     }
-    public void HandlePlayerDeath()
+    public void HandlePlayerDeath(Vector2 position)
     {
         DeathManager.Instance.HandleDeath();
         FileSaveManager.Instance.SaveGame();

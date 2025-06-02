@@ -4,7 +4,9 @@ using UnityEngine;
 public class Destruct : SavableObject
 {
     private HealthComponent healthComponent;
+    [SerializeField] private Transform breakPosition;
     private bool isBroken = false;
+    [SerializeField] private float breakRange = 0.5f;
 
     protected override void Awake()
     {
@@ -12,6 +14,24 @@ public class Destruct : SavableObject
         healthComponent = GetComponent<HealthComponent>();
         healthComponent.OnDamage += OnDamage;
         healthComponent.OnDeath += OnDeath;
+        if (breakPosition == null)
+        {
+            Debug.Log("Destruct: Break position not found");
+            enabled = false;
+            return;
+        }
+        breakPosition.gameObject.SetActive(false);
+
+        healthComponent.OnDamageCheck += OnDamageCheck;
+    }
+    private bool OnDamageCheck(int damage, Vector2 position)
+    {
+        if (Vector3.Distance(position, breakPosition.position) < breakRange)
+        {
+            Debug.Log("Destruct: Damage check passed");
+            return true;
+        }
+        return false;
     }
 
     public override int CaptureState()
@@ -25,11 +45,11 @@ public class Destruct : SavableObject
         UpdateState();
     }
 
-    private void OnDamage(int damage)
+    private void OnDamage(int damage, Vector2 position)
     {
         //animation 
     }
-    private void OnDeath()
+    private void OnDeath(Vector2 position)
     {
         if (!isBroken)
         {
@@ -49,5 +69,15 @@ public class Destruct : SavableObject
     private void Start()
     {
         UpdateState();
+    }
+    private void OnDrawGizmosSelected()
+    {
+
+        if (breakPosition != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(breakPosition.position, breakRange);
+        }
+
     }
 }

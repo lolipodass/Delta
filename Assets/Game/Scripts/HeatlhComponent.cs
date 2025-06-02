@@ -13,18 +13,26 @@ public class HealthComponent : MonoBehaviour
             _currentHealth = Mathf.Clamp(value, 0, MaxHealth);
     }
     private bool isDead = false;
-    public event Action<int> OnHealthChanged;
-    public event Action<int> OnDamage;
-    public event Action<int> OnHeal;
-    public event Action OnDeath;
+    public event Action<int, Vector2> OnHealthChanged;
+    public event Action<int, Vector2> OnDamage;
+    public event Action<int, Vector2> OnHeal;
+    public event Action<Vector2> OnDeath;
+    public event Func<int, Vector2, bool> OnDamageCheck;
     void Awake()
     {
         CurrentHealth = MaxHealth;
     }
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, Vector3 attackPosition)
     {
         if (isDead)
             return;
+        if (OnDamageCheck != null)
+        {
+            if (!OnDamageCheck(damage, attackPosition))
+            {
+                return;
+            }
+        }
         CurrentHealth -= damage;
         try
         {
@@ -32,10 +40,10 @@ public class HealthComponent : MonoBehaviour
             {
                 isDead = true;
                 Debug.Log("isDead");
-                OnDeath?.Invoke();
+                OnDeath?.Invoke(attackPosition);
             }
-            OnDamage?.Invoke(damage);
-            OnHealthChanged?.Invoke(CurrentHealth);
+            OnDamage?.Invoke(damage, attackPosition);
+            OnHealthChanged?.Invoke(CurrentHealth, attackPosition);
         }
         catch (Exception e)
         {
@@ -43,7 +51,7 @@ public class HealthComponent : MonoBehaviour
         }
     }
 
-    public void Heal(int heal)
+    public void Heal(int heal, Vector3 attackPosition)
     {
         if (isDead)
             return;
@@ -51,8 +59,8 @@ public class HealthComponent : MonoBehaviour
 
         try
         {
-            OnHeal?.Invoke(heal);
-            OnHealthChanged?.Invoke(CurrentHealth);
+            OnHeal?.Invoke(heal, attackPosition);
+            OnHealthChanged?.Invoke(CurrentHealth, attackPosition);
         }
         catch (Exception e)
         {
@@ -64,7 +72,7 @@ public class HealthComponent : MonoBehaviour
     {
         isDead = false;
         CurrentHealth = MaxHealth;
-        OnHealthChanged?.Invoke(MaxHealth);
+        OnHealthChanged?.Invoke(MaxHealth, Vector2.zero);
     }
     public void SetMaxHealth(int maxHealth)
     {

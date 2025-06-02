@@ -144,7 +144,7 @@ public class PlayerSFM : MonoBehaviour
 
         if (collision.TryGetComponent<DamageDealer>(out var damageDealer))
         {
-            PlayerStats.Health.TakeDamage(damageDealer.damageAmount);
+            PlayerStats.Health.TakeDamage(damageDealer.damageAmount, transform.position);
         }
     }
 
@@ -351,7 +351,7 @@ public class PlayerSFM : MonoBehaviour
     #endregion
 
     #region CallBacks
-    private void OnHurt(int amount)
+    private void OnHurt(int amount, Vector2 position)
     {
         Debug.Log("onHurt");
         StateMachine.ChangeState(hurtState);
@@ -359,7 +359,7 @@ public class PlayerSFM : MonoBehaviour
             EffectManager.Instance.PlayEffect(HurtEffect);
     }
 
-    private void OnDeath()
+    private void OnDeath(Vector2 position)
     {
         Debug.Log("OnDeath");
         StateMachine.ChangeState(deathState);

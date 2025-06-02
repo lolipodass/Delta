@@ -23,9 +23,9 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
         }
         _healthComponent = playerStats.Health;
         _healthComponent.OnHealthChanged += UpdateHealthUI;
-        UpdateHealthUI(_healthComponent.CurrentHealth);
+        UpdateHealthUI(_healthComponent.CurrentHealth, Vector2.zero);
     }
-    public void UpdateHealthUI(int hp)
+    public void UpdateHealthUI(int hp, Vector2 position)
     {
         HealthText.text = "HP: " + hp;
     }

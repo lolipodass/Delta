@@ -547,7 +547,7 @@ public class EnemyController : MonoBehaviour
     #endregion
 
     #region Health Events
-    private void OnHealthDamage(int damage)
+    private void OnHealthDamage(int damage, Vector2 position)
     {
         Debug.Log($"Enemy {gameObject.name} took {damage} damage");
         TransitionToState(EnemyState.Stunned);
@@ -558,7 +558,7 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void OnHealthDeath()
+    private void OnHealthDeath(Vector2 position)
     {
         TransitionToState(EnemyState.Dead);
 
