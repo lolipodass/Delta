@@ -18,7 +18,7 @@ MonoBehaviour:
   AirControlFactor: 0.98
   MaxFallSpeed: 20
   HashCrouch: 0
-  jumpForce: 18
+  jumpForce: 18.5
   airJumpForce: 16
   ExtraJumpCount: 0
   CoyoteTime: 0.1
