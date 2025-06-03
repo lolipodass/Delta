@@ -7169,6 +7169,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Wall
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 208
+        width: 16
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5a50fa7bf9a1a44faefa5d0d5802c91
+      internalID: -1779359191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -7227,7 +7249,6 @@ TextureImporter:
       Tiles_127: -2104702498
       Tiles_128: 1313860971
       Tiles_129: -843954387
-      Tiles_13: 9045646400296435942
       Tiles_130: 1704471189
       Tiles_131: -887821323
       Tiles_132: 1477983681
@@ -7647,6 +7668,7 @@ TextureImporter:
       Tiles_97: 28352107
       Tiles_98: -208677109
       Tiles_99: 1994264251
+      Wall: 9045646400296435942
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

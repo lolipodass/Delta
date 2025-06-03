@@ -13,6 +13,11 @@ public class UpToFallState : PlayerBaseState
     }
     public override void LogicUpdate()
     {
+        if (player.IsGrounded)
+        {
+            stateMachine.ChangeState(player.idleState);
+            return;
+        }
         if (YVelocity < 0.1f)
             PlayAnimation();
         if (timer > 0f)

@@ -53,18 +53,19 @@ public class JumpState : PlayerBaseState
             skipFirstFrames--;
             return;
         }
-        if (YVelocity <= 0f)
-        {
-            player.ReleaseJumpButton();
-            stateMachine.ChangeState(player.upToFallState);
-            return;
-        }
         if (player.IsGrounded)
         {
             player.ReleaseJumpButton();
             stateMachine.ChangeState(player.idleState);
             return;
         }
+        if (YVelocity <= 0f)
+        {
+            player.ReleaseJumpButton();
+            stateMachine.ChangeState(player.upToFallState);
+            return;
+        }
+
         // if (player.LastJumpPressedTime >= player.JumpBufferTime && player.IsHoldJumpButton
         // && (player.IsGrounded || player.IsTouchWall))
         // {
