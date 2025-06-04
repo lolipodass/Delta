@@ -37,6 +37,9 @@ public class PauseManager : MonoSingleton<PauseManager>
             if (GameManager.Instance.Player == null)
                 return;
 
+            // Debug.Log(GameManager.Instance.playerStats.LastSavePoint.Name);
+            // Debug.Log(GameManager.Instance.playerStats.LastSavePoint.Position.x);
+            // Debug.Log(GameManager.Instance.playerStats.LastSavePoint.Position.y);
             if (GameManager.Instance.playerStats.LastSavePoint != null)
                 SaveManager.Instance.SaveGame();
             else

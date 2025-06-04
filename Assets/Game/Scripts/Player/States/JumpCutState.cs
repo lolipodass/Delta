@@ -9,6 +9,19 @@ public class JumpCutState : PlayerBaseState
     {
         PlayAnimation();
     }
+    public override void LogicUpdate()
+    {
+        if (player.ButtonJump && CanJump())
+        {
+            stateMachine.ChangeState(player.jumpState);
+            return;
+        }
+        if (player.ButtonDash && Stats.Stats.HasDash && player.CanDash)
+        {
+            stateMachine.ChangeState(player.dashState);
+            return;
+        }
+    }
     public override void PhysicsUpdate()
     {
         Movement();
@@ -22,5 +35,11 @@ public class JumpCutState : PlayerBaseState
             stateMachine.ChangeState(player.fallState);
             return;
         }
+    }
+    private bool CanJump()
+    {
+        return
+        (player.TimeLastWallTouch > 0 && Stats.Stats.HasWallJump) || player.ExtraJumpCountLeft > 0
+        || player.TimeLastGrounded > 0;
     }
 }

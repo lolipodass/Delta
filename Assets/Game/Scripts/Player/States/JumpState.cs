@@ -5,7 +5,7 @@ public class JumpState : PlayerBaseState
     public JumpState(PlayerSFM player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     protected override string AnimationName => "jump";
-    private int skipFirstFrames = 10;
+    private int skipFirstFrames = 5;
     public override void Enter()
     {
         skipFirstFrames = 10;
@@ -28,14 +28,14 @@ public class JumpState : PlayerBaseState
     }
     public override void LogicUpdate()
     {
-        if (skipFirstFrames > 0)
-        {
-            skipFirstFrames--;
-            return;
-        }
         if (!player.ButtonJump)
         {
             stateMachine.ChangeState(player.jumpCutState);
+            return;
+        }
+        if (skipFirstFrames > 0)
+        {
+            skipFirstFrames--;
             return;
         }
         if (player.ButtonDash && Stats.Stats.HasDash && player.CanDash)
@@ -43,6 +43,7 @@ public class JumpState : PlayerBaseState
             stateMachine.ChangeState(player.dashState);
             return;
         }
+
     }
     public override void PhysicsUpdate()
     {
@@ -66,13 +67,6 @@ public class JumpState : PlayerBaseState
             return;
         }
 
-        // if (player.LastJumpPressedTime >= player.JumpBufferTime && player.IsHoldJumpButton
-        // && (player.IsGrounded || player.IsTouchWall))
-        // {
-        //     Debug.Log("redundant jump");
-        //     stateMachine.ChangeState(player.jumpState);
-        //     return;
-        // }
     }
 
     public override float HorizontalSpeedMultiplayer => Stats.Stats.AirControlFactor;

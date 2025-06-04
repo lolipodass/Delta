@@ -322,7 +322,9 @@ public class PlayerSFM : MonoBehaviour
             TimeLastJumpPressed = PlayerStats.Stats.JumpBufferTime;
         }
         else if (context.canceled)
+        {
             ButtonJump = false;
+        }
     }
 
     public void CrouchCallback(InputAction.CallbackContext context)

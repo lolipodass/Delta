@@ -6,7 +6,6 @@ public class SaveManager : MonoSingleton<SaveManager>
     private float lastPauseCallTime = 0f;
     public void SaveGame()
     {
-        Debug.Log("SaveGame");
         if (Time.time - lastPauseCallTime < 0.5f)
         {
             PauseManager.Instance.TogglePause();
