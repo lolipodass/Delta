@@ -7,6 +7,7 @@ public class DeathState : PlayerBaseState
     protected override string AnimationName => "death";
     public override void Enter()
     {
+        Debug.Log("Enter DeathState");
         PlayAnimation();
         player.animator.SetBool("isDead", true);
     }

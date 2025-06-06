@@ -3,9 +3,11 @@ using UnityEngine;
 
 public class HealthComponent : MonoBehaviour
 {
-    [field: SerializeField]
-    public int MaxHealth { get; private set; }
-    private int _currentHealth;
+    // [field: SerializeField]
+    // public int MaxHealth { get; private set; }
+    // private int _currentHealth;
+    [field: SerializeField] public ObfuscatedInt MaxHealth { get; private set; }
+    private ObfuscatedInt _currentHealth;
     public int CurrentHealth
     {
         get => _currentHealth;
@@ -20,6 +22,11 @@ public class HealthComponent : MonoBehaviour
     public event Func<int, Vector2, bool> OnDamageCheck;
     void Awake()
     {
+        if (MaxHealth == null)
+        {
+            MaxHealth = new ObfuscatedInt(1);
+        }
+        _currentHealth = new ObfuscatedInt();
         CurrentHealth = MaxHealth;
     }
     public void TakeDamage(int damage, Vector3 attackPosition)

@@ -40,7 +40,6 @@ public class Destruct : SavableObject
     }
     public override void RestoreState(int state)
     {
-        Debug.Log("Restoring state " + state);
         isBroken = state == 1;
         UpdateState();
     }

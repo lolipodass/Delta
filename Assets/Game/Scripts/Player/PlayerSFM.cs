@@ -355,15 +355,14 @@ public class PlayerSFM : MonoBehaviour
     #region CallBacks
     private void OnHurt(int amount, Vector2 position)
     {
-        Debug.Log("onHurt");
-        StateMachine.ChangeState(hurtState);
+        if (StateMachine.CurrentState is not DeathState)
+            StateMachine.ChangeState(hurtState);
         if (HurtEffect != null)
             EffectManager.Instance.PlayEffect(HurtEffect);
     }
 
     private void OnDeath(Vector2 position)
     {
-        Debug.Log("OnDeath");
         StateMachine.ChangeState(deathState);
     }
     public void AnimationEvent_Attack()

@@ -6,9 +6,11 @@ public class HurtState : PlayerBaseState
     public override bool CanRotate => false;
     public override bool CanHurt => false;
     private float hurtTime = 0;
+    protected override string AnimationName => "hurt";
     public override void Enter()
     {
         player.animator.SetTrigger("Hurt");
+        PlayAnimation();
         hurtTime = Stats.Stats.InvincibilityAfterHit;
     }
 

@@ -47,6 +47,7 @@ public abstract class BaseEnemy : MonoBehaviour
 
     [Header("Stun Settings")]
     [SerializeField] protected float stunDuration = 0.5f;
+    [SerializeField] protected bool isDebug = false;
 
     // Protected fields for inheritance
     protected float stunTimer;
@@ -315,7 +316,8 @@ public abstract class BaseEnemy : MonoBehaviour
     {
         if (currentState == newState || currentState == EnemyState.Dead) return;
 
-        Debug.Log($"Enemy {gameObject.name} transitioning from {currentState} to {newState}");
+        if (isDebug)
+            Debug.Log($"Enemy {gameObject.name} transitioning from {currentState} to {newState}");
 
         ExitCurrentState();
         currentState = newState;
