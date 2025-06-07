@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class HealthComponent : MonoBehaviour
 {
-    // [field: SerializeField]
     // public int MaxHealth { get; private set; }
     // private int _currentHealth;
     [field: SerializeField] public ObfuscatedInt MaxHealth { get; private set; }

@@ -171,7 +171,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 557b38ff0bb6e3b4b8b1315d8e35af2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <MaxHealth>k__BackingField: 4
+  <MaxHealth>k__BackingField:
+    _mask: -1445034870
+    _masked: -1445034871
 --- !u!114 &985189490737148280
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,6 +191,7 @@ MonoBehaviour:
   seeker: {fileID: 4543144421146790478}
   rb: {fileID: 1706782558412964510}
   healthComponent: {fileID: 7383253922052988911}
+  RestartWait: 25
   patrolSpeed: 1
   patrolGroup: {fileID: 0}
   patrolPointReachedThreshold: 0.2
@@ -198,6 +201,7 @@ MonoBehaviour:
   pathUpdateInterval: 0.5
   nextWaypointDistance: 0.5
   stunDuration: 0.5
+  isDebug: 0
 --- !u!61 &1601286834063102940
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class AttackEnemy : PatrolEnemy
 {
+    [SerializeField] private DamageDealer damageDealer;
     [Header("Attack Settings")]
     [SerializeField] private float attackRange = 2f;
     [SerializeField] private int attackDamage = 1;
@@ -19,6 +20,14 @@ public class AttackEnemy : PatrolEnemy
     protected override bool CanChase() => true;
     protected override float GetAttackRange() => attackRange;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        if (damageDealer != null)
+        {
+            damageDealer.damageAmount = attackDamage;
+        }
+    }
     protected override void InitializeSpecific()
     {
         base.InitializeSpecific();

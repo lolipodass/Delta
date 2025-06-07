@@ -21,13 +21,28 @@ public struct ObfuscatedInt
         return UnityEngine.Random.Range(int.MinValue, int.MaxValue);
     }
 
+    public void SetMaskAndMasked(int mask, int masked)
+    {
+        _mask = mask;
+        _masked = masked;
+    }
+    public readonly int GetInternalMask()
+    {
+        return _mask;
+    }
+
+    public int GetInternalMasked()
+    {
+        return _masked;
+    }
+
     public int Value
     {
-        get
+        readonly get
         {
             if (_mask == 0 && _masked != 0)
             {
-                Debug.LogError("ObfuscatedInt: Mask is zero, but value is not!");
+                // Debug.LogError("ObfuscatedInt: Mask is zero, but value is not!");
                 return 0;
             }
             return _masked ^ _mask;
@@ -80,7 +95,7 @@ public struct ObfuscatedInt
         return Value.GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override readonly bool Equals(object obj)
     {
         if (obj is ObfuscatedInt obfuscatedInt)
         {
@@ -88,12 +103,12 @@ public struct ObfuscatedInt
         }
         return false;
     }
-    public bool Equals(ObfuscatedInt other)
+    public readonly bool Equals(ObfuscatedInt other)
     {
         return Value == other.Value;
     }
 
-    public override string ToString()
+    public override readonly string ToString()
     {
         return Value.ToString();
     }
