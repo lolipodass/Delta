@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class SavableObject : MonoBehaviour
 {
-
+    public bool IsLoaded { get; set; } = false;
+    public event Action Loaded;
     [SerializeField, Ulid] private string _ulidString;
 
     public Ulid Id
@@ -39,10 +40,17 @@ public class SavableObject : MonoBehaviour
         {
             FileSaveManager.Instance.OnGameLoaded += OnGameLoaded;
         }
+        else
+        {
+            IsLoaded = true;
+            Loaded?.Invoke();
+        }
     }
     private void OnGameLoaded()
     {
         FileSaveManager.Instance.LoadElement(this);
+        IsLoaded = true;
+        Loaded?.Invoke();
         FileSaveManager.Instance.OnGameLoaded -= OnGameLoaded;
     }
     public virtual int CaptureState()

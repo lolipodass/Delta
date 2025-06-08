@@ -180,7 +180,7 @@ MonoBehaviour:
   RestartWait: 25
   patrolSpeed: 1
   patrolGroup: {fileID: 0}
-  patrolPointReachedThreshold: 0.2
+  patrolPointReachedThreshold: 0.3
   chaseSpeed: 2
   detectionRange: 5
   losePlayerRange: 7

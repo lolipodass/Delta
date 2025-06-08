@@ -4,6 +4,7 @@ using PrimeTween;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using System.Threading.Tasks;
+using System;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Seeker))]
@@ -60,6 +61,7 @@ public abstract class BaseEnemy : MonoBehaviour
     protected float distanceToPlayer = Mathf.Infinity;
     protected Coroutine pathUpdateCoroutine;
     protected SpriteRenderer spriteRenderer;
+    protected bool SingleLife = false;
 
 
     // Cached waits
@@ -134,6 +136,27 @@ public abstract class BaseEnemy : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         patrolPoints = patrolGroup.Points;
         initialPosition = transform.position;
+        if (TryGetComponent<EnemySave>(out var savableObject))
+        {
+            SingleLife = true;
+            if (savableObject.IsDead || savableObject.IsLoaded)
+            {
+                Destroy(gameObject);
+            }
+            if (!savableObject.IsLoaded) savableObject.Loaded += OnSavableObjectLoaded;
+        }
+    }
+
+    private void OnSavableObjectLoaded()
+    {
+        if (TryGetComponent<EnemySave>(out var savableObject))
+        {
+            if (savableObject.IsDead)
+            {
+                Destroy(gameObject);
+            }
+            if (savableObject.IsLoaded) savableObject.Loaded -= OnSavableObjectLoaded;
+        }
     }
 
     protected virtual void ValidateComponents()
@@ -449,7 +472,20 @@ public abstract class BaseEnemy : MonoBehaviour
 
         if (spriteRenderer != null)
         {
+
+
             await Tween.Alpha(spriteRenderer, endValue: 0f, duration: 0.5f);
+
+            if (SingleLife)
+            {
+                if (TryGetComponent<EnemySave>(out var savableObject))
+                {
+                    savableObject.IsDead = true;
+                    savableObject.Save();
+                    Destroy(gameObject);
+                    return;
+                }
+            }
 
             gameObject.SetActive(false);
 
