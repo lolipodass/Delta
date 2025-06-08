@@ -183,12 +183,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Health>k__BackingField: {fileID: 6043831301959160025}
+  _score:
+    _mask: 0
+    _masked: 0
+  _deaths:
+    _mask: 0
+    _masked: 0
   <LastSavePoint>k__BackingField:
     Name: 
-    Position: {x: 0, y: 0, z: 0}
   <SavePoint>k__BackingField:
     Name: 
-    Position: {x: 0, y: 0, z: 0}
   _playerConfig: {fileID: 11400000, guid: d1367ad4b54292c4f96435c82b1fa7c0, type: 2}
 --- !u!114 &6043831301959160025
 MonoBehaviour:
@@ -202,7 +206,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 557b38ff0bb6e3b4b8b1315d8e35af2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <MaxHealth>k__BackingField: 2
+  <MaxHealth>k__BackingField:
+    _mask: 0
+    _masked: 0
 --- !u!114 &5320085466607737051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,19 +232,19 @@ MonoBehaviour:
   groundCheckSize: {x: 0.6, y: -0.06}
   groundMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 520
   wallCheckPos: {fileID: 2997434093389830511}
   wallCheckSize: {x: 0.07, y: 1.8}
   wallCheckPosBack: {fileID: 8414860648701581051}
   wallCheckSizeBack: {x: 0.06, y: 1.8}
   wallMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 512
   crouchCheckPos: {fileID: 462381873507765088}
   crouchCheckSize: {x: 0.6, y: 0.8}
   crouchMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 520
   <AttackCheckPos>k__BackingField: {fileID: 3194854574685073454}
   <DashAttackCheckPos>k__BackingField: {fileID: 3621776751198488418}
   AnimationDash: 0

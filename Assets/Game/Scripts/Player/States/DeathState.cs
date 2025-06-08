@@ -8,7 +8,9 @@ public class DeathState : PlayerBaseState
     public override void Enter()
     {
         Debug.Log("Enter DeathState");
+        Stats.AddDeath();
         PlayAnimation();
+        FileSaveManager.Instance.SaveGame();
         player.animator.SetBool("isDead", true);
     }
     public override void PhysicsUpdate()

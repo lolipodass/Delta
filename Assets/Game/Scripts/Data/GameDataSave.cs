@@ -22,6 +22,8 @@ public partial class GameDataSave
     {
         public string[] items;
         public int HP;
+        public int score;
+        public int deaths;
         public SavePointInfo savePoint;
         public PlayerStatsDataSave()
         {

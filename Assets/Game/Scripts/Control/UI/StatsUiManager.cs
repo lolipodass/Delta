@@ -15,14 +15,7 @@ public class StatsUiManager : MonoSingleton<StatsUiManager>
             enabled = false;
             return;
         }
-        GameManager.Instance.playerStats.OnModifiersChanged += UpdateStats;
-        UpdateStats(null);
-
-    }
-
-    private void UpdateStats(List<UpgradeModifier> modifiers)
-    {
-        UpdateStats();
+        GameManager.Instance.playerStats.OnStatsChanged += UpdateStats;
     }
 
     public void UpdateStats()
@@ -30,6 +23,8 @@ public class StatsUiManager : MonoSingleton<StatsUiManager>
         var stats = GameManager.Instance.playerStats;
         statsUI.text = "Stats:\n" +
          $"HP: {stats.Health.MaxHealth}\n" +
+            $"Deaths: {stats.Deaths}\n" +
+            $"Score: {stats.Score}\n" +
             $"Damage: {stats.Stats.Damage}\n" +
             $"Speed: {stats.Stats.MaxSpeed}\n" +
             $"Dash cooldown: {stats.Stats.DashCooldown}";

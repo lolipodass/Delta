@@ -29,6 +29,7 @@ public abstract class BaseEnemy : MonoBehaviour
     [SerializeField] protected Rigidbody2D rb;
     [SerializeField] protected HealthComponent healthComponent;
     [SerializeField] protected float RestartWait = 25f;
+    [SerializeField] protected int score = 1;
 
     [Header("Patrol Settings")]
     [SerializeField] protected float patrolSpeed = 1f;
@@ -456,6 +457,7 @@ public abstract class BaseEnemy : MonoBehaviour
     private async void OnHealthDeath(Vector2 position)
     {
         TransitionToState(EnemyState.Dead);
+        GameManager.Instance.playerStats.AddScore(score);
 
         if (animator != null)
         {

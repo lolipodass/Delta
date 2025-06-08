@@ -9,11 +9,16 @@ public class PlayerStats : MonoBehaviour
 {
     public PlayerStatsManager Stats { get; private set; }
     [field: SerializeField] public HealthComponent Health { get; private set; }
+    [SerializeField] private ObfuscatedInt _score;
+    [SerializeField] private ObfuscatedInt _deaths;
+    public int Score { get { return _score; } private set { _score = value; } }
+    public int Deaths { get { return _deaths; } private set { _deaths = value; } }
 
     [field: SerializeField] public SavePointInfo LastSavePoint { get; private set; }
     [field: SerializeField] public SavePointInfo SavePoint { get; private set; }
 
     public event Action<List<UpgradeModifier>> OnModifiersChanged;
+    public event Action OnStatsChanged;
     [SerializeField]
     private PlayerBaseInfo _playerConfig;
     public void Awake()
@@ -35,6 +40,7 @@ public class PlayerStats : MonoBehaviour
         var modifiers = InventoryManager.Instance.Inventory.Where(x => x.modifiersToApply.Count > 0).SelectMany(x => x.modifiersToApply).ToList();
         Stats.SetLoadedModifiers(modifiers);
         OnModifiersChanged?.Invoke(modifiers);
+        OnStatsChanged?.Invoke();
     }
     public void SetSavePoint(SavePoint savePoint)
     {
@@ -66,14 +72,29 @@ public class PlayerStats : MonoBehaviour
         return new PlayerStatsDataSave()
         {
             HP = Health.MaxHealth,
+            score = Score,
+            deaths = Deaths,
             savePoint = SavePoint
         };
     }
     public void SetSavedData(PlayerStatsDataSave savedData)
     {
         Health.SetMaxHealth(savedData.HP);
+        Score = savedData.score;
+        Deaths = savedData.deaths;
         SetSavePoint(savedData.savePoint);
         GetInfoFromInventory();
+    }
+
+    public void AddScore(int score)
+    {
+        Score += score;
+        OnStatsChanged?.Invoke();
+    }
+    public void AddDeath()
+    {
+        Deaths++;
+        OnStatsChanged?.Invoke();
     }
 
 }
