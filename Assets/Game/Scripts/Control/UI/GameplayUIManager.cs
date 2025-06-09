@@ -4,37 +4,39 @@ using UnityEngine;
 public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 {
     public TextMeshProUGUI HealthText;
-    private HealthComponent _healthComponent;
+    private PlayerStats stats;
 
     public void Start()
     {
-        PlayerStats playerStats = FindAnyObjectByType<PlayerStats>();
-        if (playerStats == null)
+        if (GameManager.Instance.playerStats != null)
+            stats = GameManager.Instance.playerStats;
+        else
+            stats = FindAnyObjectByType<PlayerStats>();
+
+        if (stats == null)
         {
             Debug.LogError("HealthUIManager: PlayerStats component not found!");
             enabled = false;
             return;
         }
-        if (playerStats.Health == null)
+        if (stats.Health == null)
         {
             Debug.LogError("HealthUIManager: HealthComponent component not found!");
             enabled = false;
             return;
         }
-        _healthComponent = playerStats.Health;
-        _healthComponent.OnHealthChanged += UpdateHealthUI;
-        UpdateHealthUI(_healthComponent.CurrentHealth, Vector2.zero);
+
+        stats.OnStatsChanged += UpdateUI;
+        UpdateUI();
     }
-    public void UpdateHealthUI(int hp, Vector2 position)
+    public void UpdateUI()
     {
-        HealthText.text = "HP: " + hp;
+        HealthText.text = $"Health: {stats.Health.CurrentHealth}\n" +
+            $"Score: {stats.Score} ";
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        if (_healthComponent != null)
-        {
-            _healthComponent.OnHealthChanged -= UpdateHealthUI;
-        }
+        stats.OnStatsChanged -= UpdateUI;
     }
 }
