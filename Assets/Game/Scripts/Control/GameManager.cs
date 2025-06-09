@@ -105,4 +105,9 @@ public class GameManager : PersistSingleton<GameManager>
         }
         return false;
     }
+
+    internal void Finish()
+    {
+        SceneLoader.BackToMainMenu();
+    }
 }

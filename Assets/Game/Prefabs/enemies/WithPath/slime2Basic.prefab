@@ -33,6 +33,10 @@ PrefabInstance:
       value: -0.33
       objectReference: {fileID: 0}
     - target: {fileID: 4842859632358555578, guid: 342a45437e39b1649a7d3749bb05c282, type: 3}
+      propertyPath: score
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4842859632358555578, guid: 342a45437e39b1649a7d3749bb05c282, type: 3}
       propertyPath: chaseSpeed
       value: 3
       objectReference: {fileID: 0}

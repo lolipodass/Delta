@@ -193,6 +193,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 854264735334188093, guid: 330ba9d1ae99a004cb6a603db81d3a05, type: 3}
+      propertyPath: score
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 854264735334188093, guid: 330ba9d1ae99a004cb6a603db81d3a05, type: 3}
       propertyPath: patrolGroup
       value: 
       objectReference: {fileID: 4174598890615937762}

@@ -21,6 +21,10 @@ PrefabInstance:
       value: 0.6792453
       objectReference: {fileID: 0}
     - target: {fileID: 1169227181038682918, guid: 2e9e5363d4b7b284c9981aaaac425199, type: 3}
+      propertyPath: score
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1169227181038682918, guid: 2e9e5363d4b7b284c9981aaaac425199, type: 3}
       propertyPath: chaseSpeed
       value: 4
       objectReference: {fileID: 0}
@@ -38,7 +42,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6431312110455693616, guid: 2e9e5363d4b7b284c9981aaaac425199, type: 3}
       propertyPath: m_Name
-      value: fly39 Variant
+      value: fly3small
       objectReference: {fileID: 0}
     - target: {fileID: 7324575061702158713, guid: 2e9e5363d4b7b284c9981aaaac425199, type: 3}
       propertyPath: m_LocalPosition.x
