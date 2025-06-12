@@ -2,6 +2,7 @@ using UnityEngine;
 using PrimeTween;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class UIManager : MonoSingleton<UIManager>
 {
@@ -9,6 +10,9 @@ public class UIManager : MonoSingleton<UIManager>
     [field: SerializeField] public GameObject GameplayUI { get; private set; }
     [field: SerializeField] public GameObject DeathUI { get; private set; }
     [field: SerializeField] public GameObject SaveUI { get; private set; }
+
+    public event Action OnShowPauseMenu;
+
     protected override void Awake()
     {
         base.Awake();
@@ -64,6 +68,7 @@ public class UIManager : MonoSingleton<UIManager>
     public void ShowPauseMenu()
     {
         PauseMenu.SetActive(true);
+        OnShowPauseMenu?.Invoke();
     }
     public void HidePauseMenu()
     {

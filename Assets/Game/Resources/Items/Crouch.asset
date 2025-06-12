@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b39ad9f5479d8549a6081286c4185ee, type: 3}
   m_Name: Crouch
   m_EditorClassIdentifier: 
-  ID: 4
+  ID: 3
   Name: slides
   Icon: {fileID: 21300000, guid: 77dacc799437b144aa31bd9436ab90bc, type: 3}
   Description: allow to crouch

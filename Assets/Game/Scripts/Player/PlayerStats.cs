@@ -33,7 +33,10 @@ public class PlayerStats : MonoBehaviour
         Stats = new PlayerStatsManager(_playerConfig);
         Health = GetComponent<HealthComponent>();
         InventoryManager.Instance.OnInventoryChanged += GetInfoFromInventory;
+        Health.OnHealthChanged += OnHealthChanged;
     }
+
+    private void OnHealthChanged(int _, Vector2 __) => OnStatsChanged?.Invoke();
 
     private void GetInfoFromInventory()
     {

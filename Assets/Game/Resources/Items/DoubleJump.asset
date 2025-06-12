@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b39ad9f5479d8549a6081286c4185ee, type: 3}
   m_Name: DoubleJump
   m_EditorClassIdentifier: 
-  ID: 1
+  ID: 6
   Name: Jump boots
   Icon: {fileID: 21300000, guid: 902aea4c509c3094584cc7674fca0c7c, type: 3}
   Description: add double jump

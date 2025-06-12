@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b39ad9f5479d8549a6081286c4185ee, type: 3}
   m_Name: invincibiliy
   m_EditorClassIdentifier: 
-  ID: 3
+  ID: 8
   Name: slides
   Icon: {fileID: -3641270833586523144, guid: bc4b66ed15e3d9b43b407f3f46a15b6e, type: 3}
   Description: make invinciblity +0.4
