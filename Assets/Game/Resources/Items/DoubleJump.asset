@@ -15,7 +15,7 @@ MonoBehaviour:
   ID: 1
   Name: Jump boots
   Icon: {fileID: 21300000, guid: 902aea4c509c3094584cc7674fca0c7c, type: 3}
-  Description: 
+  Description: add double jump
   modifiersToApply:
   - Type: 9
     ModType: 0

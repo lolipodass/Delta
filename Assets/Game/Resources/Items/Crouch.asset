@@ -15,7 +15,7 @@ MonoBehaviour:
   ID: 4
   Name: slides
   Icon: {fileID: 21300000, guid: 77dacc799437b144aa31bd9436ab90bc, type: 3}
-  Description: 
+  Description: allow to crouch
   modifiersToApply:
   - Type: 6
     ModType: 3

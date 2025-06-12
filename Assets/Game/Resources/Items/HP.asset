@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b39ad9f5479d8549a6081286c4185ee, type: 3}
+  m_Name: HP
+  m_EditorClassIdentifier: 
+  ID: 3
+  Name: slides
+  Icon: {fileID: 621540933, guid: bc4b66ed15e3d9b43b407f3f46a15b6e, type: 3}
+  Description: add +2 HP
+  modifiersToApply:
+  - Type: 0
+    ModType: 0
+    Value: 2
+    Priority: 0
+    SourceID: 

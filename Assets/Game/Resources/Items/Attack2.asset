@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b39ad9f5479d8549a6081286c4185ee, type: 3}
+  m_Name: Attack2
+  m_EditorClassIdentifier: 
+  ID: 3
+  Name: slides
+  Icon: {fileID: -5399867251237335504, guid: bc4b66ed15e3d9b43b407f3f46a15b6e, type: 3}
+  Description: multiply damage by 1.5
+  modifiersToApply:
+  - Type: 1
+    ModType: 1
+    Value: 1.5
+    Priority: 0
+    SourceID: 
