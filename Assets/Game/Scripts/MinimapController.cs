@@ -22,9 +22,10 @@ public class MinimapController : MonoSingleton<MinimapController>
     {
 
         var playerPosition = GameManager.Instance.playerSFM.transform.position;
+        Debug.Log("indicatorPosition: " + playerPosition);
         var indicatorPosition = (playerPosition + centerOffset) * minimapScale;
         indicatorPosition.z = 0;
+        Debug.Log("indicatorPosition: " + indicatorPosition);
         indicator.anchoredPosition = indicatorPosition;
-        Debug.Log("indicator position: " + indicator.transform.localPosition);
     }
 }

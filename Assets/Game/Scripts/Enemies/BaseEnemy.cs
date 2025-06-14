@@ -197,6 +197,7 @@ public abstract class BaseEnemy : MonoBehaviour
 
     private void InitializeEnemy()
     {
+        currentState = EnemyState.Patrol;
         playerTransform = GameManager.Instance.Player.transform;
 
         if (patrolPoints.Length == 0)
@@ -445,7 +446,6 @@ public abstract class BaseEnemy : MonoBehaviour
     #region Health Events
     private void OnHealthDamage(int damage, Vector2 position)
     {
-        Debug.Log($"Enemy {gameObject.name} took {damage} damage");
         TransitionToState(EnemyState.Stunned);
 
         if (animator != null)
@@ -469,13 +469,11 @@ public abstract class BaseEnemy : MonoBehaviour
 
     private async UniTask DeathTask()
     {
-        await UniTask.Delay(System.TimeSpan.FromSeconds(0.5f));
+        await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
 
 
         if (spriteRenderer != null)
         {
-
-
             await Tween.Alpha(spriteRenderer, endValue: 0f, duration: 0.5f);
 
             if (SingleLife)
@@ -491,7 +489,7 @@ public abstract class BaseEnemy : MonoBehaviour
 
             gameObject.SetActive(false);
 
-            await UniTask.Delay(System.TimeSpan.FromSeconds(RestartWait));
+            await UniTask.Delay(TimeSpan.FromSeconds(RestartWait));
 
             await Restart();
         }
@@ -504,10 +502,11 @@ public abstract class BaseEnemy : MonoBehaviour
     protected virtual async Task Restart()
     {
         gameObject.SetActive(true);
-        await Tween.Alpha(spriteRenderer, endValue: 1f, duration: 0.5f);
         transform.position = initialPosition;
+        await Tween.Alpha(spriteRenderer, endValue: 1f, duration: 0.5f);
         EnterNewState(EnemyState.Patrol);
         healthComponent.ResetHealth();
+        InitializeEnemy();
     }
     #endregion
 
